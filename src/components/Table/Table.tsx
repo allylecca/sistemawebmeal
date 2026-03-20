@@ -119,7 +119,6 @@ export function Table<T extends { id: string | number }>({
             const isStickyLeft = col.sticky === 'left' || col.key === 'checkbox'
             const isStickyRight = col.sticky === 'right' || col.key === 'actions'
             const isMovable = reorderableColumns && !isStickyLeft && !isStickyRight
-            const isSelect = col.key === 'checkbox'
             const isActions = col.key === 'actions'
 
             // Calculate sticky right offset
