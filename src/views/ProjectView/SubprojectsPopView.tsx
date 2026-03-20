@@ -9,7 +9,7 @@ import { Input } from '../../components/Input/Input'
 import { Modal } from '../../components/Modal/Modal'
 import { AlertModal } from '../../components/AlertDialog/AlertModal'
 import { Button } from '../../components/Button/Button'
-import { subprojectsPopData, subprojectCodesData, projectCodesData, strategicLinesData, gapsData, locationsData } from '../../data/mockData'
+import { subprojectsPopData, subprojectCodesData, projectCodesData, locationsData } from '../../data/mockData'
 import type { SubprojectPop, LocationNode } from '../../data/types'
 import styles from './GapsView.module.css'
 
