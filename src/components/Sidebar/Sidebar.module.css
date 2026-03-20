@@ -1,0 +1,208 @@
+.sidebar {
+  width: 280px;
+  background-color: #ffffff;
+  border-right: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: width 0.3s ease;
+}
+
+.collapsed {
+  width: 80px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.collapsed .header {
+  justify-content: center;
+  padding: 12px 0;
+}
+
+.actionSection {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.logo {
+  height: 32px;
+}
+
+.menuButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #a0a0a0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.menuButton:hover {
+  color: #382e2c;
+}
+
+.scrollArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 0;
+}
+
+.scrollArea::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollArea::-webkit-scrollbar-thumb {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.navSection {
+  margin-bottom: 24px;
+  padding: 0 12px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  color: #a0a0a0;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: pointer;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+}
+
+.collapsed .navItem {
+  justify-content: center;
+  padding: 12px 0;
+}
+
+.navItem:hover {
+  background-color: #fcfcfc;
+  color: #382e2c;
+}
+
+.navItemActive {
+  background-color: rgba(248, 124, 86, 0.24);
+  color: #382e2c;
+  font-weight: 600;
+}
+
+.navIcon {
+  margin-right: 16px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collapsed .navIcon {
+  margin-right: 0;
+}
+
+.navChevron {
+  margin-left: auto;
+  color: #d0d0d0;
+  transition: transform 0.2s;
+}
+
+.navChevronOpen {
+  transform: rotate(180deg);
+}
+
+.subMenuContainer {
+  display: flex;
+  padding-left: 22px; /* Alinear con el centro del ícono (12px padding + 10px centro ícono 20px) */
+}
+
+.subMenuLine {
+  width: 2px;
+  background-color: #ff7c5633;
+  flex-shrink: 0;
+}
+
+.subMenu {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding-left: 8px; /* Separación de 8px entre línea y botón */
+}
+
+.subNavItem {
+  display: flex;
+  align-items: center;
+  padding: 12px 24px;
+  color: #a0a0a0;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-align: left;
+  width: 100%;
+}
+
+.subNavItem:hover {
+  color: #382e2c;
+}
+
+.subNavItemActive {
+  background-color: rgba(248, 124, 86, 0.24);
+  color: #382e2c;
+  font-weight: 600;
+}
+
+.footer {
+  padding: 12px 24px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.collapsed .footer {
+  justify-content: center;
+  padding: 12px 0;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.userName {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.userRole {
+  font-size: 11px;
+  color: #a0a0a0;
+}

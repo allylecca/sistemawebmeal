@@ -1,0 +1,132 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: var(--button-radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-bogart);
+  font-weight: 400;
+  text-decoration: none;
+  white-space: nowrap;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.button[data-full-width="true"] {
+  width: 100%;
+}
+
+.button[data-circle="true"] {
+  padding: 0;
+  border-radius: 50%;
+}
+
+.button[data-circle="true"][data-size="m"] {
+  width: var(--button-height-m);
+}
+
+.button[data-circle="true"][data-size="s"] {
+  width: var(--button-height-s);
+}
+
+.button[data-circle="true"][data-size="xs"] {
+  width: var(--button-height-xs);
+}
+
+/* Sizes */
+.button[data-size="m"] {
+  height: var(--button-height-m);
+  padding: 0 var(--button-padding-h);
+  font-size: 14px;
+}
+
+.button[data-size="s"] {
+  height: var(--button-height-s);
+  padding: 0 var(--button-padding-h);
+  font-size: 14px;
+}
+
+.button[data-size="xs"] {
+  height: var(--button-height-xs);
+  padding: 0 var(--button-padding-h);
+  font-size: 12px;
+  font-family: var(--font-dm-mono);
+}
+
+/* Variants */
+.button[data-variant="primary"] {
+  background-color: var(--color-botones-primario-background);
+  color: var(--color-texto-primario);
+}
+
+.button[data-variant="primary"]:hover:not(:disabled) {
+  background-color: var(--color-botones-primario-hover);
+}
+
+.button[data-variant="secondary"] {
+  background-color: transparent;
+  border-color: var(--color-botones-secundario-border);
+  color: var(--color-texto-primario);
+}
+
+.button[data-variant="secondary"]:hover:not(:disabled) {
+  background-color: var(--color-opacidad-primario-background);
+  border-color: var(--color-botones-secundario-hover);
+}
+
+.button[data-variant="tertiary"] {
+  background-color: var(--color-botones-terciario-background);
+  color: var(--color-texto-contraste);
+}
+
+.button[data-variant="tertiary"]:hover:not(:disabled) {
+  background-color: var(--color-botones-terciario-hover);
+}
+
+.button[data-variant="danger"] {
+  background-color: var(--color-botones-danger-background);
+  color: var(--color-texto-contraste);
+}
+
+.button[data-variant="danger"]:hover:not(:disabled) {
+  background-color: var(--color-botones-danger-hover);
+}
+
+.button[data-variant="ghost"] {
+  background-color: transparent;
+  color: var(--color-texto-primario);
+}
+
+.button[data-variant="ghost"]:hover:not(:disabled) {
+  background-color: var(--color-background-surface);
+}
+
+/* States */
+.button:disabled {
+  background-color: #EBEBEB;
+  color: #CCCCCC;
+  cursor: not-allowed;
+  border-color: transparent;
+}
+
+.button:disabled .icon {
+  opacity: 0.5;
+}
+
+.button:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-background-primario), 0 0 0 4px var(--color-principal);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.content {
+  display: inline-block;
+}

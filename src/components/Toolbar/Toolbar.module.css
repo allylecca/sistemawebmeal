@@ -1,0 +1,54 @@
+.toolbar {
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #ffffff;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.newButton {
+  height: 40px;
+  padding: 0 24px;
+  background-color: #ffc25b;
+  border: none;
+  border-radius: 20px;
+  color: #382e2c;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.newButton:hover {
+  opacity: 0.9;
+}
+
+.exportButton {
+  height: 40px;
+  padding: 0 20px;
+  border: 1px solid #ffc25b;
+  background: none;
+  border-radius: 20px;
+  color: #382e2c;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.exportButton:hover {
+  background-color: #f9f9f9;
+}

@@ -1,0 +1,143 @@
+:root {
+  /* Tokens (light) — exportados desde Figma (design system-ui) */
+
+  /* Tipografía (familias) */
+  --font-bogart: "Bogart";
+  --font-dm-mono: "DM Mono";
+
+  /* Tipografía (shorthands) */
+  --typography-bogart-h4: 500 16px/24px var(--font-bogart), ui-sans-serif, system-ui;
+  --typography-bogart-body-m: 400 14px/20px var(--font-bogart), ui-sans-serif, system-ui;
+  --typography-bogart-body-sm: 500 13px/20px var(--font-bogart), ui-sans-serif, system-ui;
+  --typography-bogart-body-xs: 500 12px/18px var(--font-bogart), ui-sans-serif, system-ui;
+  --typography-bogart-caption-s: 400 11px/16px var(--font-bogart), ui-sans-serif, system-ui;
+  --typography-bogart-micro: 400 10px/16px var(--font-bogart), ui-sans-serif, system-ui;
+
+  --typography-dm-mono-h4: 400 16px/24px var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --typography-dm-mono-body-m: 400 14px/20px var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --typography-dm-mono-caption-m: 400 12px/18px var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --typography-dm-mono-micro: 400 10px/16px var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Layout */
+  --layout-espaciado-xs: 2px;
+  --layout-espaciado-s: 4px;
+  --layout-espaciado-m: 8px;
+  --layout-espaciado-ml: 10px;
+  --layout-espaciado-l: 12px;
+  --layout-espaciado-xl: 16px;
+  --layout-espaciado-3xl: 24px;
+
+  --radius-2xs: 0px;
+  --radius-full: 99999px;
+  --border-size: 1px;
+
+  /* Sizes */
+  --altura-componentes-xs: 32px;
+  --altura-componentes-s: 40px;
+  --altura-componentes-m: 48px;
+  --altura-componentes-l: 56px;
+  --height-header-options: 32px;
+  --height-components-micro: 1px;
+
+  --button-height-xs: var(--altura-componentes-xs);
+  --button-height-s: var(--altura-componentes-s);
+  --button-height-m: var(--altura-componentes-m);
+  --button-padding-h: 24px;
+  --button-radius: var(--radius-full);
+
+  --size-icon-s: 14px;
+  --size-icon-l: 20px;
+  --size-icon-xl: 28px;
+  --size-icon-2xl: 56px;
+
+  /* Colores */
+  --color-principal: #f87c56;
+  --color-primary-accent: #f87c56;
+
+  --color-texto-primario: #382e2c;
+  --color-texto-secundario: #939393;
+  --color-texto-contraste: #ffffff;
+  --color-texto-permanente-claro: #ffffff;
+  --color-texto-permanente-oscuro: #382e2c;
+  --color-texto-deshabilitado: #382e2c1f;
+
+  --color-background-primario: #ffffff;
+  --color-background-secundario: #fafafa;
+  --color-background-surface: #382e2c14;
+
+  --color-borde-default: #382e2c14;
+  --color-borde-hover: #382e2c66;
+
+  --color-sombra-default: #382e2c3d;
+
+  --color-estados-success: #00c950;
+  --color-estados-error: #fb2c36;
+  --color-estados-warning: #ffd07b;
+
+  --color-status-error: #fb2c36;
+  --color-status-warning: #ffd07b;
+
+  /* Opacidades */
+  --color-opacidad-primario-background: #f87c560d;
+  --color-opacidad-primario-icon: #f87c563d;
+  --color-opacidad-success-background: #00c9500d;
+  --color-opacidad-success-icon: #00c9501a;
+  --color-opacidad-error-background: #fb2c360d;
+  --color-opacidad-error-icon: #fb2c361a;
+  --color-opacidad-warning-background: #ffd07b0d;
+  --color-opacidad-warning-icon: #ffd07b1a;
+
+  /* Botones */
+  --color-botones-primario-background: #ffc658;
+  --color-botones-primario-hover: #e7b453;
+  --color-botones-secundario-border: #ffc658;
+  --color-botones-secundario-hover: #e7b453;
+  --color-botones-danger-background: #fb2c36;
+  --color-botones-danger-hover: #cf2c34;
+  --color-botones-terciario-background: #382e2c;
+  --color-botones-terciario-hover: #655d5b;
+
+  /* Aliases usados por componentes actuales */
+  --ds-surface: var(--color-background-primario);
+  --ds-text-primary: var(--color-texto-primario);
+  --ds-text-secondary: var(--color-texto-secundario);
+  --ds-shadow: 0px 0px 24px var(--color-sombra-default);
+  --ds-primary: var(--color-botones-primario-background);
+  --ds-success: var(--color-estados-success);
+  --ds-danger: var(--color-estados-error);
+  --ds-warning: var(--color-estados-warning);
+
+  --ds-font: var(--font-bogart), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+
+  /* App (demo) */
+  --app-bg: #f5f5f5;
+  --app-text: var(--color-texto-primario);
+  --app-muted: #6f6a69;
+  --app-border: rgba(56, 46, 44, 0.08);
+  --app-font: var(--ds-font);
+}
+
+html[data-theme='dark'] {
+  /* Tokens (dark) — exportados desde Figma (node 64:133) */
+
+  --color-background-primario: #382e2c;
+  --color-background-secundario: #382e2c;
+  --color-background-surface: #ffffff14;
+
+  --color-texto-primario: #f4f3f3;
+  --color-texto-secundario: #cccccc;
+  --color-texto-deshabilitado: #ffffff1f;
+  --color-texto-permanente-claro: #ffffff;
+
+  --color-borde-default: #ffffff14;
+  --color-borde-hover: #ffffff14;
+
+  --color-botones-primario-background: #ffc658;
+
+  --app-bg: #201b1a;
+  --app-text: var(--color-texto-primario);
+  --app-muted: #b3b3b3;
+  --app-border: rgba(255, 255, 255, 0.12);
+}
+

@@ -1,0 +1,103 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.root[data-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.checkboxWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Base size for standard checkbox */
+.root:not([data-circle="true"]) .checkboxWrapper {
+  width: 16px;
+  height: 16px;
+}
+
+/* Base size for circle checkbox */
+.root[data-circle="true"] .checkboxWrapper {
+  width: 16px;
+  height: 16px;
+}
+
+.input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: inherit;
+  z-index: 1;
+}
+
+.checkbox {
+  width: 100%;
+  height: 100%;
+  border: 2px solid #EBEBEB;
+  border-radius: 0;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+/* Circle style - maintaining for backward compatibility if used */
+.root[data-circle="true"] .checkbox {
+  border-radius: 50%;
+}
+
+/* Hover style */
+.root:hover:not([data-disabled="true"]) .checkbox {
+  border-color: #A0A0A0;
+}
+
+/* Active / Checked state */
+.input:checked + .checkbox,
+.input:indeterminate + .checkbox {
+  background-color: #F87C56;
+  border-color: #F87C56;
+}
+
+/* Status: Error */
+.root[data-status="error"] .checkbox {
+  border-color: var(--color-estados-error);
+}
+
+.root[data-status="error"] .input:checked + .checkbox {
+  background-color: var(--color-estados-error);
+  border-color: var(--color-estados-error);
+}
+
+/* Status: Success */
+.root[data-status="success"] .checkbox {
+  border-color: var(--color-estados-success);
+}
+
+.root[data-status="success"] .input:checked + .checkbox {
+  background-color: var(--color-estados-success);
+  border-color: var(--color-estados-success);
+}
+
+.icon {
+  color: var(--color-texto-contraste);
+}
+
+.label {
+  font-family: var(--font-dm-mono);
+  font-size: 14px;
+  color: var(--color-texto-primario);
+  cursor: inherit;
+}

@@ -1,0 +1,99 @@
+.root {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.root tbody tr {
+  background-color: #ffffff;
+}
+
+.th {
+  text-align: left;
+  padding: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #a0a0a0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fafafa;
+  white-space: nowrap;
+}
+
+.td {
+  padding: 16px;
+  font-size: 14px;
+  color: #382e2c;
+  border-bottom: 1px solid #f0f0f0;
+  white-space: nowrap;
+}
+
+.stickyLeftTh {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background-color: #fafafa;
+}
+
+.stickyRightTh {
+  position: sticky;
+  right: 0;
+  z-index: 3;
+  background-color: #fafafa;
+}
+
+.stickyLeftTd {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background-color: inherit;
+  background-clip: padding-box;
+}
+
+.stickyRightTd {
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  background-color: inherit;
+  background-clip: padding-box;
+}
+
+.stickyLeftTh,
+.stickyLeftTd {
+  box-shadow: 1px 0 0 #f0f0f0;
+}
+
+.stickyRightTh,
+.stickyRightTd {
+  box-shadow: -1px 0 0 #f0f0f0;
+}
+
+.rowSelected {
+  background-color: #F87C560D;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.actionButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a0a0a0;
+  transition: all 0.2s;
+}
+
+.actionButton:hover {
+  color: #382e2c;
+}
+
+.deleteAction:hover {
+  color: #ff7c56;
+}

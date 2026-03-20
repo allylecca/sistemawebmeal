@@ -1,0 +1,126 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: auto;
+}
+
+.root[data-full-width='true'] {
+  width: 100%;
+}
+
+.label {
+  padding-inline: 4px;
+  align-self: flex-start;
+  background: var(--color-background-primario);
+  transform: translateY(6px);
+}
+
+.labelText {
+  font: var(--typography-dm-mono-micro);
+  color: var(--color-texto-secundario);
+}
+
+.field {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding-inline: 16px;
+  border-radius: 0;
+  border: 1px solid var(--color-borde-default);
+  background: var(--color-background-primario);
+  gap: 8px;
+}
+
+.input {
+  flex: 1 1 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font: var(--typography-dm-mono-body-m);
+  color: var(--color-texto-primario);
+}
+
+.input::placeholder {
+  color: var(--color-texto-secundario);
+}
+
+.iconLeft,
+.iconRight {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-texto-secundario);
+}
+
+.iconRight:empty {
+  display: none;
+}
+
+.root[data-status='default'] .field {
+  border-color: var(--color-borde-default);
+}
+
+.root[data-status='default'] .field:hover {
+  border-color: var(--color-borde-hover);
+}
+
+.root[data-status='default'] .field:focus-within {
+  border-color: var(--color-principal);
+}
+
+.root[data-status='default'] .field:focus-within + .helper {
+  color: var(--color-principal);
+}
+
+.root[data-status='success'] .field {
+  border-color: var(--color-estados-success);
+}
+
+.root[data-status='success'] .labelText {
+  color: var(--color-estados-success);
+}
+
+.root[data-status='success'] .iconRight {
+  color: var(--color-estados-success);
+}
+
+.root[data-status='error'] .field {
+  border-color: var(--color-estados-error);
+}
+
+.root[data-status='error'] .labelText {
+  color: var(--color-estados-error);
+}
+
+.root[data-status='error'] .iconRight {
+  color: var(--color-estados-error);
+}
+
+.helper {
+  margin: 0;
+  font: var(--typography-dm-mono-micro);
+  color: var(--color-texto-secundario);
+}
+
+.helper[data-status='error'] {
+  color: var(--color-estados-error);
+}
+
+.helper[data-status='success'] {
+  color: var(--color-estados-success);
+}
+
+.root[data-disabled='true'] .field {
+  border-color: var(--color-borde-default);
+  background: var(--color-background-surface);
+}
+
+.root[data-disabled='true'] .input {
+  color: var(--color-borde-default);
+}
+
+.root[data-disabled='true'] .input::placeholder {
+  color: var(--color-borde-default);
+}
+

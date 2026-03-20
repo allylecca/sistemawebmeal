@@ -1,0 +1,142 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: #ffffff;
+  width: 500px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 32px 40px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  cursor: move;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #382e2c;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #a0a0a0;
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #a0a0a0;
+  padding: 4px;
+  transition: color 0.2s;
+  margin-top: -4px;
+  margin-right: -12px;
+}
+
+.closeButton:hover {
+  color: #382e2c;
+}
+
+.content {
+  padding: 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  width: 100%;
+  height: 48px;
+  border: 1px solid #f0f0f0;
+  padding: 0 16px;
+  font-size: 14px;
+  color: #382e2c;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input::placeholder {
+  color: #a0a0a0;
+}
+
+.input:focus {
+  border-color: #ff7c5666;
+}
+
+.footer {
+  padding: 0 40px 40px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.cancelButton {
+  height: 48px;
+  padding: 0 32px;
+  border-radius: 24px;
+  border: 1px solid #ffd07b;
+  background: white;
+  color: #382e2c;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cancelButton:hover {
+  background-color: #fffcf0;
+}
+
+.saveButton {
+  height: 48px;
+  padding: 0 32px;
+  border-radius: 24px;
+  border: none;
+  background-color: #ffd07b;
+  color: #382e2c;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.saveButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.saveButton:disabled {
+  background-color: #EBEBEB;
+  color: #CCCCCC;
+  cursor: not-allowed;
+}

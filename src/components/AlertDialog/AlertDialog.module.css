@@ -1,0 +1,108 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+
+.card {
+  width: 420px;
+  background: var(--ds-surface);
+  box-shadow: var(--ds-shadow);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.iconWrap {
+  width: var(--size-icon-2xl);
+  height: var(--size-icon-2xl);
+  border-radius: var(--radius-full);
+  display: grid;
+  place-items: center;
+}
+
+.iconWrap_success {
+  background: var(--color-opacidad-success-icon);
+}
+.iconWrap_danger {
+  background: var(--color-opacidad-error-icon);
+}
+.iconWrap_warning {
+  background: var(--color-opacidad-warning-icon);
+}
+
+.content {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-espaciado-m);
+  font-family: var(--ds-font);
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: var(--ds-text-primary);
+  font-family: var(--font-bogart);
+}
+
+.description {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--color-texto-secundario);
+}
+
+.actions {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+}
+
+.actions_success {
+  justify-content: stretch;
+}
+.actions_success .button {
+  width: 100%;
+}
+
+.actions_danger .button {
+  flex: 1 1 0;
+}
+
+.actions_warning {
+  flex-direction: column;
+}
+.actions_warning .button {
+  width: 100%;
+}
+
+.dangerCancelButton {
+  border: 2px solid var(--ds-danger) !important;
+  color: #382e2c !important;
+  background-color: transparent !important;
+}
+
+.button:hover {
+  filter: brightness(0.98);
+}
+
+@media (max-width: 520px) {
+  .card {
+    width: 100%;
+  }
+}
+

@@ -1,0 +1,136 @@
+.badge {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.badge[data-variant='og-group'] {
+  background-color: #fff1ed;
+  color: #382e2c;
+  border: 1px solid #ff7c5666;
+  border-radius: 20px;
+}
+.badge[data-variant='og-group'] .dot { background-color: #ff7c56; }
+
+.badge[data-variant='og'] {
+  background-color: #fff1ed;
+  color: #ff7c56;
+  border-radius: 12px;
+  padding: 2px 8px;
+}
+
+.badge[data-variant='oe-group'] {
+  background-color: #fffcf0;
+  color: #382e2c;
+  border: 1px solid #ffd07b66;
+  border-radius: 20px;
+}
+.badge[data-variant='oe-group'] .dot { background-color: #ffd07b; }
+
+.badge[data-variant='oe'] {
+  background-color: #fffcf0;
+  color: #ffd07b;
+  border-radius: 12px;
+  padding: 2px 8px;
+}
+
+.badge[data-variant='result-group'] {
+  background-color: #f0fff4;
+  color: #382e2c;
+  border: 1px solid #00c95066;
+  border-radius: 20px;
+}
+.badge[data-variant='result-group'] .dot { background-color: #00c950; }
+
+.badge[data-variant='act-group'] {
+  background-color: #f0fdfa;
+  color: #382e2c;
+  border: 1px solid #00968866;
+  border-radius: 20px;
+}
+.badge[data-variant='act-group'] .dot { background-color: #009688; }
+
+.badge[data-variant='act'] {
+  background-color: #f0fdfa;
+  color: #009688;
+  border-radius: 12px;
+  padding: 2px 8px;
+}
+
+.badge[data-variant='subact-group'] {
+  background-color: #fff7ed;
+  color: #382e2c;
+  border: 1px solid #f87c5666;
+  border-radius: 20px;
+}
+.badge[data-variant='subact-group'] .dot { background-color: #f87c56; }
+
+.badge[data-variant='subact'] {
+  background-color: #fff7ed;
+  color: #f87c56;
+  border-radius: 12px;
+  padding: 2px 8px;
+}
+
+.badge[data-variant='indicador'] {
+  background-color: #fff1ed;
+  color: #ff7c56;
+  border-radius: 20px;
+}
+
+.badge[data-variant='resultado-indicador'] {
+  background-color: #e8f5e9;
+  color: #4caf50;
+  border-radius: 20px;
+}
+
+.badge[data-variant='objetivo-indicador'] {
+  background-color: #e0f2f1;
+  color: #009688;
+  border-radius: 20px;
+}
+
+.badge[data-variant='region'] {
+  background-color: #ffe8e0;
+  color: #ff7c56;
+}
+
+.badge[data-variant='country'] {
+  background-color: #e8f5e9;
+  color: #4caf50;
+}
+
+.badge[data-variant='dept'] {
+  background-color: #e3f2fd;
+  color: #2196f3;
+}
+
+.badge[data-variant='line'] {
+  background-color: #ffe8e0;
+  color: #ff7c56;
+  border-radius: 12px;
+}
+
+.badge[data-variant='result'] {
+  background-color: #e8f5e9;
+  color: #4caf50;
+  border-radius: 12px;
+}
+
+.badge[data-variant='product'] {
+  background-color: #e0f2f1;
+  color: #009688;
+  border-radius: 12px;
+}

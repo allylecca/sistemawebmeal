@@ -1,0 +1,187 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #ffffff;
+}
+
+.header {
+  padding: 24px 32px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.titleGroup {
+  border-left: 2px solid #ff7c56;
+  padding-left: 16px;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: #382e2c;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: #a0a0a0;
+  margin: 4px 0 0 0;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.filterSelect {
+  flex: 1;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #a0a0a0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.iconButton {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a0a0a0;
+  cursor: pointer;
+  background: none;
+}
+
+.exportButton {
+  height: 40px;
+  padding: 0 20px;
+  border: 1px solid #ffc25b;
+  background: none;
+  border-radius: 20px;
+  color: #382e2c;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.tableContainer {
+  flex: 1;
+  padding: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px;
+}
+
+.th {
+  text-align: left;
+  padding: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #a0a0a0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fafafa;
+  white-space: nowrap;
+}
+
+.td {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #382e2c;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.statusGroup {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.statusIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e0e0e0;
+  color: #d0d0d0;
+}
+
+.statusIconActive {
+  border: none;
+}
+
+.statusCheck {
+  background-color: #e8f5e9;
+  color: #4caf50;
+  border: none;
+}
+
+.statusX {
+  background-color: #ffebee;
+  color: #f44336;
+  border: none;
+}
+
+.metaInput {
+  width: 80px;
+  height: 32px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 13px;
+  color: #382e2c;
+  outline: none;
+}
+
+.footer {
+  padding: 24px 32px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.cancelButton {
+  height: 40px;
+  padding: 0 32px;
+  border: 1px solid #ffc25b;
+  background: none;
+  border-radius: 20px;
+  color: #382e2c;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.saveButton {
+  height: 40px;
+  padding: 0 40px;
+  background-color: #ffc25b;
+  border: none;
+  border-radius: 20px;
+  color: #382e2c;
+  font-weight: 600;
+  cursor: pointer;
+}

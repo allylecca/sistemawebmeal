@@ -1,0 +1,179 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #ffffff;
+}
+
+.header {
+  padding: 24px 32px 0;
+}
+
+.titleGroup {
+  border-left: 2px solid #ff7c56;
+  padding-left: 16px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: #382e2c;
+  font-family: 'DM Serif Display', serif;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: #a0a0a0;
+  margin: 4px 0 0 0;
+}
+
+.content {
+  flex: 1;
+  padding: 0 32px;
+  overflow-y: auto;
+}
+
+.treeHeader {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #a0a0a0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.headerCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 8px;
+}
+
+.sortIcon {
+  font-size: 14px;
+  color: #d0d0d0;
+}
+
+.treeBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.nodeGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.node {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f9f9f9;
+}
+
+.node:hover {
+  background-color: #fafafa;
+}
+
+.nodeLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.chevronContainer {
+  width: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chevron {
+  color: #a0a0a0;
+  transition: transform 0.2s;
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.nodeBadge {
+  min-width: 90px;
+  justify-content: center;
+  border-radius: 20px;
+  padding: 4px 12px;
+}
+
+.label {
+  font-size: 14px;
+  color: #382e2c;
+  font-weight: 500;
+}
+
+.children {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer {
+  padding: 16px 32px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rowsSelect {
+  padding: 4px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  background-color: white;
+}
+
+.pageInfo {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.navArrows {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navArrow {
+  cursor: pointer;
+  color: #d0d0d0;
+  font-size: 18px;
+  transition: color 0.2s;
+}
+
+.navArrow:hover {
+  color: #382e2c;
+}
+
+.pageNumber {
+  color: #382e2c;
+  font-weight: 500;
+}
