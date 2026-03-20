@@ -68,8 +68,16 @@ export interface SubprojectPop {
   codigo: string
   financiador: string
   nombre: string
-  responsable: string
-  implementado: string
+  gerenteSubproyecto: string
+  responsableMeal: string
+  programa: string
+  fechaInicio: string
+  fechaFin: string
+  implementadores: string[]
+  financiadoresSecundarios: string[]
+  ubicaciones: { pais: string; departamento: string }[]
+  proyectoId?: number
+  subprojectCodeId?: number
 }
 
 export interface AnnualPlanningItem {

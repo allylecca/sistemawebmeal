@@ -103,17 +103,19 @@ export function AnnualPlanningView() {
   }, [items, gapFilter, lineFilter, countryFilter])
 
   const columns: Column<AnnualPlanningRow>[] = [
-    { key: 'ubicacion', header: 'País / Región' },
-    { key: 'subproyecto', header: 'Subproyecto' },
-    { key: 'gerenteSubproyecto', header: 'Gerente subproyecto' },
-    { key: 'responsableMeal', header: 'Responsable MEAL' },
-    { key: 'linea', header: 'Línea estratégica' },
-    { key: 'tipologia', header: 'Tipología de proyecto' },
-    { key: 'financiadorPrincipal', header: 'Financiador principal' },
-    { key: 'financiadoresSecundarios', header: 'Financiadores secundarios' },
+    { key: 'ubicacion', header: 'País / Región', width: '220px' },
+    { key: 'subproyecto', header: 'Subproyecto', width: '350px' },
+    { key: 'gerenteSubproyecto', header: 'Gerente subproyecto', width: '220px' },
+    { key: 'responsableMeal', header: 'Responsable MEAL', width: '220px' },
+    { key: 'linea', header: 'Línea estratégica', width: '450px' },
+    { key: 'tipologia', header: 'Tipología de proyecto', width: '220px' },
+    { key: 'financiadorPrincipal', header: 'Financiador principal', width: '220px' },
+    { key: 'financiadoresSecundarios', header: 'Financiadores secundarios', width: '250px' },
     { 
       key: 'implementacion', 
       header: 'Implementación',
+      width: '160px',
+      sticky: 'right',
       render: (val, row) => (
         <StatusIndicator
           status={val}
@@ -126,6 +128,8 @@ export function AnnualPlanningView() {
     { 
       key: 'meta', 
       header: 'Meta anual',
+      width: '140px',
+      sticky: 'right',
       render: (val, row) => (
         <input
           type="text"

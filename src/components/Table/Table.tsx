@@ -10,6 +10,7 @@ export type Column<T> = {
   render?: (value: any, item: T) => ReactNode
   width?: string
   align?: 'left' | 'center' | 'right'
+  sticky?: 'left' | 'right'
 }
 
 interface TableProps<T> {
@@ -115,15 +116,29 @@ export function Table<T extends { id: string | number }>({
       <thead>
         <tr>
           {orderedColumns.map((col, i) => {
-            const isFixed = fixedKeysSet.has(String(col.key))
-            const isMovable = reorderableColumns && !isFixed
+            const isStickyLeft = col.sticky === 'left' || col.key === 'checkbox'
+            const isStickyRight = col.sticky === 'right' || col.key === 'actions'
+            const isMovable = reorderableColumns && !isStickyLeft && !isStickyRight
             const isSelect = col.key === 'checkbox'
             const isActions = col.key === 'actions'
+
+            // Calculate sticky right offset
+            let rightOffset = 0
+            if (isStickyRight) {
+              const colIndex = orderedColumns.findIndex(c => c.key === col.key)
+              for (let j = colIndex + 1; j < orderedColumns.length; j++) {
+                const nextCol = orderedColumns[j]
+                if (nextCol.sticky === 'right' || nextCol.key === 'actions') {
+                  const w = nextCol.width ? parseInt(nextCol.width) : 120 // Fallback for actions if no width
+                  rightOffset += w
+                }
+              }
+            }
 
             return (
             <th
               key={i}
-              className={`${styles.th} ${isSelect ? styles.stickyLeftTh : ''} ${isActions ? styles.stickyRightTh : ''}`}
+              className={`${styles.th} ${isStickyLeft ? styles.stickyLeftTh : ''} ${isStickyRight ? styles.stickyRightTh : ''}`}
               draggable={Boolean(isMovable)}
               onDragStart={() => {
                 if (!isMovable) return
@@ -149,8 +164,12 @@ export function Table<T extends { id: string | number }>({
               }}
               style={{
                 width: col.width,
+                minWidth: col.width,
+                maxWidth: col.width,
                 textAlign: col.align || (col.key === 'actions' ? 'right' : 'left'),
-                paddingRight: col.key === 'actions' ? '32px' : '16px'
+                paddingRight: col.key === 'actions' ? '32px' : '16px',
+                right: isStickyRight ? `${rightOffset}px` : undefined,
+                left: isStickyLeft ? 0 : undefined
               }}
             >
               {col.key === 'checkbox' ? (
@@ -168,11 +187,34 @@ export function Table<T extends { id: string | number }>({
       <tbody>
         {data.map((item) => (
           <tr key={item.id} className={selectedIds.has(item.id) ? styles.rowSelected : ''}>
-            {orderedColumns.map((col, j) => (
+            {orderedColumns.map((col, j) => {
+              const isStickyLeft = col.sticky === 'left' || col.key === 'checkbox'
+              const isStickyRight = col.sticky === 'right' || col.key === 'actions'
+
+              let rightOffset = 0
+              if (isStickyRight) {
+                const colIndex = orderedColumns.findIndex(c => c.key === col.key)
+                for (let k = colIndex + 1; k < orderedColumns.length; k++) {
+                  const nextCol = orderedColumns[k]
+                  if (nextCol.sticky === 'right' || nextCol.key === 'actions') {
+                    const w = nextCol.width ? parseInt(nextCol.width) : 120
+                    rightOffset += w
+                  }
+                }
+              }
+
+              return (
               <td
                 key={j}
-                className={`${styles.td} ${col.key === 'checkbox' ? styles.stickyLeftTd : ''} ${col.key === 'actions' ? styles.stickyRightTd : ''}`}
-                style={{ textAlign: col.align || (col.key === 'actions' ? 'right' : 'left') }}
+                className={`${styles.td} ${isStickyLeft ? styles.stickyLeftTd : ''} ${isStickyRight ? styles.stickyRightTd : ''}`}
+                style={{ 
+                  textAlign: col.align || (col.key === 'actions' ? 'right' : 'left'),
+                  width: col.width,
+                  minWidth: col.width,
+                  maxWidth: col.width,
+                  right: isStickyRight ? `${rightOffset}px` : undefined,
+                  left: isStickyLeft ? 0 : undefined
+                }}
               >
                 {col.key === 'checkbox' && (
                   <div style={{ paddingLeft: '8px' }}>
@@ -197,10 +239,16 @@ export function Table<T extends { id: string | number }>({
                   </div>
                 )}
                 {col.key !== 'checkbox' && col.key !== 'actions' && (
-                  col.render ? col.render(item[col.key as keyof T], item) : (item[col.key as keyof T] as any)
+                  col.render ? (
+                    col.render(item[col.key as keyof T], item)
+                  ) : (
+                    <div title={String(item[col.key as keyof T])}>
+                      {item[col.key as keyof T] as any}
+                    </div>
+                  )
                 )}
               </td>
-            ))}
+            )})}
           </tr>
         ))}
       </tbody>

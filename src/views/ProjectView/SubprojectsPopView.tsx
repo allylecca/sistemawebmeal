@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Eye, Pencil, Trash2, LayoutDashboard, FileText } from 'lucide-react'
+import { LayoutDashboard, FileText } from 'lucide-react'
 import { Toolbar } from '../../components/Toolbar/Toolbar'
 import { Table } from '../../components/Table/Table'
 import type { Column } from '../../components/Table/Table'
@@ -9,9 +9,8 @@ import { Input } from '../../components/Input/Input'
 import { Modal } from '../../components/Modal/Modal'
 import { AlertModal } from '../../components/AlertDialog/AlertModal'
 import { Button } from '../../components/Button/Button'
-import { IconButton } from '../../components/IconButton/IconButton'
-import { subprojectsPopData, subprojectCodesData, projectCodesData, strategicLinesData, gapsData } from '../../data/mockData'
-import type { SubprojectPop } from '../../data/types'
+import { subprojectsPopData, subprojectCodesData, projectCodesData, strategicLinesData, gapsData, locationsData } from '../../data/mockData'
+import type { SubprojectPop, LocationNode } from '../../data/types'
 import styles from './GapsView.module.css'
 
 export function SubprojectsPopView() {
@@ -20,55 +19,90 @@ export function SubprojectsPopView() {
   const [subprojects, setSubprojects] = useState<SubprojectPop[]>(subprojectsPopData)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingSubproject, setEditingSubproject] = useState<SubprojectPop | null>(null)
-  const [formData, setFormData] = useState({ codigo: '', financiador: '', nombre: '', responsable: '', implementado: '' })
   
   const [showConfirmSave, setShowConfirmSave] = useState(false)
   const [showDeleteAlert, setShowDeleteAlert] = useState(false)
   const [subprojectToDelete, setSubprojectToDelete] = useState<SubprojectPop | null>(null)
 
-  const isSaveDisabled = useMemo(() => {
-    const isFilled = formData.codigo.trim() !== '' && formData.financiador.trim() !== '' && formData.nombre.trim() !== '' && formData.responsable.trim() !== '' && formData.implementado.trim() !== ''
-    if (!isFilled) return true
+  // State for form
+  const [formData, setFormData] = useState<Partial<SubprojectPop>>({
+    proyectoId: undefined,
+    subprojectCodeId: undefined,
+    nombre: '',
+    codigo: '',
+    financiador: '',
+    gerenteSubproyecto: '',
+    responsableMeal: '',
+    programa: '',
+    fechaInicio: '',
+    fechaFin: '',
+    implementadores: [],
+    financiadoresSecundarios: [],
+    ubicaciones: []
+  })
 
-    if (editingSubproject) {
-      return (
-        formData.codigo === editingSubproject.codigo &&
-        formData.financiador === editingSubproject.financiador &&
-        formData.nombre === editingSubproject.nombre &&
-        formData.responsable === editingSubproject.responsable &&
-        formData.implementado === editingSubproject.implementado
-      )
-    }
-    return false
-  }, [formData, editingSubproject])
+  // Options for form
+  const gerenteOptions = ['Marco Aurelio', 'Percy Quispe', 'Micaela Castillo', 'Martina Gonzales']
+  const responsableMealOptions = ['Claudia Teresa Sánchez', 'Alejandra Rio', 'Felipe Castillo']
+  const implementadorOptions = ['AEA Ecuador', 'AEA Colombia', 'Municipalidad Local']
+  const financiadorSecOptions = ['Unión Europea', 'BID', 'GIZ']
+
+  // Location logic
+  const [selectedPais, setSelectedPais] = useState('')
+  const paisOptions = locationsData.find((l: LocationNode) => l.label === 'Sudamérica')?.children?.map((c: LocationNode) => c.label) || []
+  const departamentoOptions = locationsData
+    .find((l: LocationNode) => l.label === 'Sudamérica')?.children
+    ?.find((c: LocationNode) => c.label === selectedPais)?.children?.map((d: LocationNode) => d.label) || []
+
+  const isSaveDisabled = useMemo(() => {
+    return !formData.proyectoId || !formData.subprojectCodeId || !formData.gerenteSubproyecto || !formData.responsableMeal
+  }, [formData])
 
   const handleNew = () => {
     setEditingSubproject(null)
-    setFormData({ codigo: '', financiador: '', nombre: '', responsable: '', implementado: '' })
+    setFormData({
+      proyectoId: undefined,
+      subprojectCodeId: undefined,
+      nombre: '',
+      codigo: '',
+      financiador: '',
+      gerenteSubproyecto: '',
+      responsableMeal: '',
+      programa: '',
+      fechaInicio: '',
+      fechaFin: '',
+      implementadores: [],
+      financiadoresSecundarios: [],
+      ubicaciones: []
+    })
     setIsModalOpen(true)
   }
 
-  const handleEdit = (item: SubprojectPop) => {
+  const handleEdit = (row: SubprojectsPopRow) => {
+    const item = subprojects.find(s => s.id === row.id)
+    if (!item) return
     setEditingSubproject(item)
-    setFormData({ codigo: item.codigo, financiador: item.financiador, nombre: item.nombre, responsable: item.responsable, implementado: item.implementado })
+    setFormData({ ...item })
     setIsModalOpen(true)
   }
 
   const handleSave = () => {
     if (editingSubproject) {
-      setSubprojects(subprojects.map(p => p.id === editingSubproject.id ? { ...p, ...formData } : p))
+      setSubprojects(subprojects.map(p => p.id === editingSubproject.id ? { ...p, ...formData } as SubprojectPop : p))
     } else {
       const newSubproject: SubprojectPop = {
         id: Math.max(0, ...subprojects.map(p => p.id)) + 1,
         ...formData
-      }
+      } as SubprojectPop
       setSubprojects([...subprojects, newSubproject])
     }
     setIsModalOpen(false)
     setShowConfirmSave(true)
   }
 
-  const handleDelete = (item: SubprojectPop) => {
+  const handleDelete = (row: SubprojectsPopRow) => {
+    const item = subprojects.find(s => s.id === row.id)
+    if (!item) return
     setSubprojectToDelete(item)
     setShowDeleteAlert(true)
   }
@@ -88,86 +122,64 @@ export function SubprojectsPopView() {
     nombre: string
     gerenteSubproyecto: string
     responsableMeal: string
+    programa: string
+    fechaInicio: string
+    fechaFin: string
     implementadores: string
     financiadoresSecundarios: string
-    recursos: string
+    ubicaciones: string
     proyecto: string
-    pais: string
-    region: string
-    lineaEstrategica: string
-    gap: string
-    acciones: string
+    recursos?: string // Add resources to avoid type error in columns
   }
 
   const rows = useMemo<SubprojectsPopRow[]>(() => {
-    const matchByName = (candidate: string, selected: string) => {
-      const base = candidate.replace(/\.\.\.$/, '').trim()
-      const pick = selected.replace(/\.\.\.$/, '').trim()
-      return base !== '' && pick !== '' && (pick.startsWith(base) || base.startsWith(pick))
-    }
-
     return subprojects.map(sp => {
-      const subCode = subprojectCodesData.find(s => {
-        const financerOk = !sp.financiador || s.financiador.includes(sp.financiador) || sp.financiador.includes(s.financiador)
-        return financerOk && matchByName(s.nombre, sp.nombre)
-      }) || subprojectCodesData.find(s => matchByName(s.nombre, sp.nombre))
-
-      const projectValue = subCode?.proyecto || '-'
-      const projectCode = projectValue === '-' ? '' : projectValue.split('-')[0]?.trim()
-      const project = projectCode ? projectCodesData.find(p => p.codigo === projectCode) : undefined
-
-      const ubicacion = project?.ubicacion || ''
-      const pais = ubicacion ? (ubicacion.split(',')[0]?.trim() || '-') : '-'
-      const region = ubicacion ? (ubicacion.split(',')[1]?.trim() || '-') : '-'
-
-      const lineValue = project?.linea || ''
-      const lineCode = lineValue ? (lineValue.split(' ')[0] || '') : ''
-      const line = lineCode ? strategicLinesData.find(l => l.codigo === lineCode) : undefined
-      const lineaEstrategica = line ? `${line.codigo} ${line.nombre}` : (lineValue || '-')
-
-      const gapCode = lineCode ? (lineCode.split('.')[0] || '') : ''
-      const gap = gapCode ? (gapsData.find(g => g.codigo === gapCode)?.codigo || gapCode) : '-'
-
+      const project = projectCodesData.find(p => p.id === sp.proyectoId)
+      
       return {
         id: sp.id,
         codigo: sp.codigo,
         financiadorPrincipal: sp.financiador,
         nombre: sp.nombre,
-        gerenteSubproyecto: '-',
-        responsableMeal: sp.responsable,
-        implementadores: sp.implementado,
-        financiadoresSecundarios: '-',
-        recursos: '',
-        proyecto: projectValue,
-        pais,
-        region,
-        lineaEstrategica,
-        gap,
-        acciones: ''
+        gerenteSubproyecto: sp.gerenteSubproyecto,
+        responsableMeal: sp.responsableMeal,
+        programa: sp.programa,
+        fechaInicio: sp.fechaInicio,
+        fechaFin: sp.fechaFin,
+        implementadores: sp.implementadores.join(', '),
+        financiadoresSecundarios: sp.financiadoresSecundarios.join(', ') || '-',
+        ubicaciones: sp.ubicaciones.map(u => `${u.pais} (${u.departamento})`).join(', '),
+        proyecto: project ? `${project.codigo} - ${project.nombre}` : '-'
       }
     })
   }, [subprojects])
 
   const filteredRows = useMemo(() => {
     return rows.filter(r => {
-      const matchProgram = !programFilter || r.pais.includes(programFilter)
+      const matchProgram = !programFilter || r.programa.includes(programFilter)
       const matchProject = !projectFilter || r.proyecto.includes(projectFilter)
       return matchProgram && matchProject
     })
   }, [rows, programFilter, projectFilter])
 
   const columns: Column<SubprojectsPopRow>[] = [
-    { key: 'codigo', header: 'Código', width: '120px' },
-    { key: 'financiadorPrincipal', header: 'Financiador Principal', width: '220px' },
-    { key: 'nombre', header: 'Nombre', width: '220px' },
+    { key: 'checkbox', header: '', width: '40px' },
+    { key: 'codigo', header: 'Código', width: '100px' },
+    { key: 'financiadorPrincipal', header: 'Financiador Principal', width: '250px' },
+    { key: 'nombre', header: 'Nombre', width: '350px' },
     { key: 'gerenteSubproyecto', header: 'Gerente de Subproyecto', width: '220px' },
     { key: 'responsableMeal', header: 'Responsable MEAL', width: '220px' },
-    { key: 'implementadores', header: 'Implementadores', width: '160px' },
-    { key: 'financiadoresSecundarios', header: 'Financiadores Secundarios', width: '220px' },
+    { key: 'programa', header: 'Programa', width: '180px' },
+    { key: 'fechaInicio', header: 'Fecha Inicio', width: '130px' },
+    { key: 'fechaFin', header: 'Fecha Fin', width: '130px' },
+    { key: 'implementadores', header: 'Implementadores', width: '200px' },
+    { key: 'financiadoresSecundarios', header: 'Financiadores Secundarios', width: '250px' },
+    { key: 'ubicaciones', header: 'Ubicaciones', width: '300px' },
     { 
       key: 'recursos', 
       header: 'Recursos',
       width: '360px',
+      sticky: 'right',
       render: () => (
         <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-start' }}>
           <Button variant="secondary" size="s" leftIcon={<LayoutDashboard size={16} />}>
@@ -179,34 +191,7 @@ export function SubprojectsPopView() {
         </div>
       )
     },
-    { key: 'proyecto', header: 'Proyecto', width: '260px' },
-    { key: 'pais', header: 'País', width: '140px' },
-    { key: 'region', header: 'Región', width: '140px' },
-    { key: 'lineaEstrategica', header: 'Línea Estratégica', width: '280px' },
-    { key: 'gap', header: 'GAP', width: '90px' },
-    { 
-      key: 'acciones', 
-      header: 'Acciones',
-      width: '140px',
-      align: 'right',
-      render: (_val, row) => (
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-          <IconButton icon={<Eye size={18} />} onClick={() => {}} />
-          <IconButton icon={<Pencil size={18} />} onClick={() => {
-            const original = subprojects.find(s => s.id === row.id)
-            if (original) handleEdit(original)
-          }} />
-          <IconButton
-            icon={<Trash2 size={18} />}
-            style={{ color: '#f44336', borderColor: '#f44336' }}
-            onClick={() => {
-            const original = subprojects.find(s => s.id === row.id)
-            if (original) handleDelete(original)
-          }}
-          />
-        </div>
-      )
-    },
+    { key: 'actions', header: 'Acciones', width: '120px', sticky: 'right' },
   ]
 
   return (
@@ -252,6 +237,8 @@ export function SubprojectsPopView() {
         <Table 
           columns={columns} 
           data={filteredRows} 
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </div>
 
@@ -264,33 +251,190 @@ export function SubprojectsPopView() {
         subtitle="Ingresa todos los detalles"
         onSave={handleSave}
         isSaveDisabled={isSaveDisabled}
+        width="1000px"
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <Input 
-            label="Código"
-            value={formData.codigo}
-            onChange={(val) => setFormData({ ...formData, codigo: val })}
-          />
-          <Input 
-            label="Financiador Principal"
-            value={formData.financiador}
-            onChange={(val) => setFormData({ ...formData, financiador: val })}
-          />
-          <Input 
-            label="Nombre"
-            value={formData.nombre}
-            onChange={(val) => setFormData({ ...formData, nombre: val })}
-          />
-          <Input 
-            label="Responsable"
-            value={formData.responsable}
-            onChange={(val) => setFormData({ ...formData, responsable: val })}
-          />
-          <Input 
-            label="Implementado por"
-            value={formData.implementado}
-            onChange={(val) => setFormData({ ...formData, implementado: val })}
-          />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+          {/* Primera Columna */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <FilterSelect 
+              label="Seleccionar Proyecto" 
+              options={projectCodesData.map(p => `${p.codigo} - ${p.nombre}`)}
+              value={formData.proyectoId ? `${projectCodesData.find(p => p.id === formData.proyectoId)?.codigo} - ${projectCodesData.find(p => p.id === formData.proyectoId)?.nombre}` : ''}
+              onChange={(val) => {
+                const project = projectCodesData.find(p => `${p.codigo} - ${p.nombre}` === val)
+                setFormData({ ...formData, proyectoId: project?.id })
+              }}
+            />
+            
+            <FilterSelect 
+              label="Seleccionar Subproyecto" 
+              options={subprojectCodesData
+                .filter(s => {
+                  if (!formData.proyectoId) return true
+                  const project = projectCodesData.find(p => p.id === formData.proyectoId)
+                  return project ? s.proyecto.startsWith(project.codigo) : true
+                })
+                .map(s => `${s.codigo} - ${s.nombre}`)}
+              value={formData.subprojectCodeId ? `${subprojectCodesData.find(s => s.id === formData.subprojectCodeId)?.codigo} - ${subprojectCodesData.find(s => s.id === formData.subprojectCodeId)?.nombre}` : ''}
+              onChange={(val) => {
+                const subCode = subprojectCodesData.find(s => `${s.codigo} - ${s.nombre}` === val)
+                if (subCode) {
+                  setFormData({ 
+                    ...formData, 
+                    subprojectCodeId: subCode.id,
+                    nombre: subCode.nombre,
+                    codigo: subCode.codigo,
+                    financiador: subCode.financiador
+                  })
+                }
+              }}
+            />
+
+            <Input 
+              label="Nombre de Subproyecto"
+              value={formData.nombre || ''}
+              onChange={() => {}}
+              disabled
+            />
+
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <Input 
+                label="Código"
+                value={formData.codigo || ''}
+                onChange={() => {}}
+                disabled
+                grow
+              />
+              <Input 
+                label="Financiador Principal"
+                value={formData.financiador || ''}
+                onChange={() => {}}
+                disabled
+                grow
+              />
+            </div>
+
+            <FilterSelect 
+              label="Gerente de Subproyecto" 
+              options={gerenteOptions}
+              value={formData.gerenteSubproyecto || ''}
+              onChange={(val) => setFormData({ ...formData, gerenteSubproyecto: val })}
+            />
+
+            <FilterSelect 
+              label="Responsable MEAL" 
+              options={responsableMealOptions}
+              value={formData.responsableMeal || ''}
+              onChange={(val) => setFormData({ ...formData, responsableMeal: val })}
+            />
+
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: '12px', color: '#a0a0a0', marginBottom: '8px' }}>Fecha Inicio</p>
+                <input 
+                  type="month" 
+                  value={formData.fechaInicio || ''} 
+                  onChange={(e) => setFormData({ ...formData, fechaInicio: e.target.value })}
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #f0f0f0' }}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: '12px', color: '#a0a0a0', marginBottom: '8px' }}>Fecha Fin</p>
+                <input 
+                  type="month" 
+                  value={formData.fechaFin || ''} 
+                  onChange={(e) => setFormData({ ...formData, fechaFin: e.target.value })}
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #f0f0f0' }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Segunda Columna */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div>
+              <p style={{ fontSize: '12px', color: '#a0a0a0', marginBottom: '8px' }}>Implementadores (Múltiple)</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {implementadorOptions.map(opt => (
+                  <Button 
+                    key={opt}
+                    variant={formData.implementadores?.includes(opt) ? 'primary' : 'secondary'}
+                    size="s"
+                    onClick={() => {
+                      const current = formData.implementadores || []
+                      const next = current.includes(opt) ? current.filter(i => i !== opt) : [...current, opt]
+                      setFormData({ ...formData, implementadores: next })
+                    }}
+                  >
+                    {opt}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p style={{ fontSize: '12px', color: '#a0a0a0', marginBottom: '8px' }}>Financiadores Secundarios (Múltiple)</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {financiadorSecOptions.map(opt => (
+                  <Button 
+                    key={opt}
+                    variant={formData.financiadoresSecundarios?.includes(opt) ? 'primary' : 'secondary'}
+                    size="s"
+                    onClick={() => {
+                      const current = formData.financiadoresSecundarios || []
+                      const next = current.includes(opt) ? current.filter(i => i !== opt) : [...current, opt]
+                      setFormData({ ...formData, financiadoresSecundarios: next })
+                    }}
+                  >
+                    {opt}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ border: '1px solid #f0f0f0', borderRadius: '12px', padding: '16px' }}>
+              <p style={{ fontSize: '14px', fontWeight: 600, marginBottom: '16px' }}>Ubicaciones</p>
+              <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+                <FilterSelect 
+                  label="País" 
+                  options={paisOptions}
+                  value={selectedPais}
+                  onChange={setSelectedPais}
+                  className="grow"
+                />
+                <FilterSelect 
+                  label="Departamento" 
+                  options={departamentoOptions}
+                  onChange={(val) => {
+                    if (selectedPais && val) {
+                      const exists = formData.ubicaciones?.some(u => u.pais === selectedPais && u.departamento === val)
+                      if (!exists) {
+                        setFormData({
+                          ...formData,
+                          ubicaciones: [...(formData.ubicaciones || []), { pais: selectedPais, departamento: val }]
+                        })
+                      }
+                      setSelectedPais('')
+                    }
+                  }}
+                  className="grow"
+                />
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {formData.ubicaciones?.map((u, i) => (
+                  <div key={i} style={{ background: '#f5f5f5', padding: '4px 12px', borderRadius: '16px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {u.pais} - {u.departamento}
+                    <button 
+                      onClick={() => setFormData({ ...formData, ubicaciones: formData.ubicaciones?.filter((_, idx) => idx !== i) })}
+                      style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '14px' }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </Modal>
 

@@ -324,8 +324,38 @@ export const subprojectCodesData: SubprojectCode[] = [
 ]
 
 export const subprojectsPopData: SubprojectPop[] = [
-  { id: 1, codigo: '269041', financiador: 'AECID', nombre: 'MUJERES LIDERANDO...', responsable: 'Claudia Teresa Sán...', implementado: 'AEA Perú' },
-  { id: 2, codigo: '269022', financiador: 'PMA - PROGRAMA MUN...', nombre: 'DESARROLLO DE CADE...', responsable: 'Claudia Teresa Sán...', implementado: 'AEA Perú' },
+  { 
+    id: 1, 
+    codigo: '269041', 
+    financiador: 'AECID', 
+    nombre: 'MUJERES LIDERANDO LA PRODUCCIÓN', 
+    gerenteSubproyecto: 'Martina Gonzales', 
+    responsableMeal: 'Claudia Teresa Sánchez', 
+    programa: 'Programa Perú',
+    fechaInicio: '2026-01',
+    fechaFin: '2026-12',
+    implementadores: ['AEA Perú'],
+    financiadoresSecundarios: [],
+    ubicaciones: [{ pais: 'Perú', departamento: 'Lima' }],
+    proyectoId: 1,
+    subprojectCodeId: 1
+  },
+  { 
+    id: 2, 
+    codigo: '269022', 
+    financiador: 'PMA - PROGRAMA MUNDIAL DE ALIMENTOS', 
+    nombre: 'DESARROLLO DE CADENAS DE VALOR', 
+    gerenteSubproyecto: 'Martina Gonzales', 
+    responsableMeal: 'Alejandra Rio', 
+    programa: 'Programa Perú',
+    fechaInicio: '2026-03',
+    fechaFin: '2027-03',
+    implementadores: ['AEA Perú'],
+    financiadoresSecundarios: ['BID'],
+    ubicaciones: [{ pais: 'Perú', departamento: 'La Libertad' }],
+    proyectoId: 4,
+    subprojectCodeId: 4
+  },
 ]
 
 export const annualPlanningData: AnnualPlanningItem[] = [
