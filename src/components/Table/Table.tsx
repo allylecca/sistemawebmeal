@@ -163,7 +163,6 @@ export function Table<T extends { id: string | number }>({
               style={{
                 width: col.width,
                 minWidth: col.width,
-                maxWidth: col.width,
                 textAlign: col.align || (col.key === 'actions' ? 'right' : 'left'),
                 paddingRight: col.key === 'actions' ? '32px' : '16px',
                 right: isStickyRight ? `${rightOffset}px` : undefined,
@@ -209,7 +208,6 @@ export function Table<T extends { id: string | number }>({
                   textAlign: col.align || (col.key === 'actions' ? 'right' : 'left'),
                   width: col.width,
                   minWidth: col.width,
-                  maxWidth: col.width,
                   right: isStickyRight ? `${rightOffset}px` : undefined,
                   left: isStickyLeft ? 0 : undefined
                 }}
@@ -240,7 +238,7 @@ export function Table<T extends { id: string | number }>({
                   col.render ? (
                     col.render(item[col.key as keyof T], item)
                   ) : (
-                    <div title={String(item[col.key as keyof T])}>
+                    <div>
                       {item[col.key as keyof T] as any}
                     </div>
                   )
