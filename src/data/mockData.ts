@@ -298,16 +298,16 @@ export const projectNamesData: ProjectName[] = [
 ]
 
 export const projectCodesData: ProjectCode[] = [
-  { id: 1, codigo: '032601', nombre: 'DERECHOS ECONÓMICOS DE LAS MUJERES', tipologia: 'HABILITANTE', ubicacion: 'Perú, Sudamérica', linea: 'PRO.2.0 Igualdad de oportunidades entre H y M y eliminando cualquier tipo de discriminación' },
-  { id: 2, codigo: '042601', nombre: 'GESTION SOCIAL DEL AGUA', tipologia: 'HABILITANTE', ubicacion: 'Bolivia, Sudamér...', linea: 'CLI.2.0 Acceso sostenible a agua en contextos áridos y semiáridos' },
-  { id: 3, codigo: '082601', nombre: 'VINCULOS SOLIDARIOS', tipologia: 'HABILITANTE', ubicacion: 'México, Centroam...', linea: 'PRO 3.0. Cultura de paz, la solidaridad y la participación ciudadana frente a la prevención de violencia y los conflictos' },
-  { id: 4, codigo: '032602', nombre: 'DESARROLLO DE CADENAS DE VALOR SOSTENIBLE', tipologia: 'HABILITANTE', ubicacion: 'Perú, Sudamérica', linea: 'OPO.2.0 Desarrollar de cadenas de valor sostenibles-sistemas de mercado inclusivo' },
-  { id: 5, codigo: '502601', nombre: 'AYUDA HUMANITARIA', tipologia: 'HABILITANTE', ubicacion: 'Portugal, Europa', linea: 'SAL.1.0 Respuesta y post respuesta frente a crisis humanitarias' },
-  { id: 6, codigo: '022601', nombre: 'INNOVA Y CREA', tipologia: 'HABILITANTE', ubicacion: 'Ecuador, Sudamér...', linea: 'PRO.2.0 Igualdad de oportunidades entre H y M y eliminando cualquier tipo de discriminación' },
-  { id: 7, codigo: '362601', nombre: 'EDUCACIÓN DE CALIDAD', tipologia: 'CORE', ubicacion: 'Malí, África', linea: 'OPO.1.0 Protección y atención frente a violencia, abuso y distintas formas de explotación' },
-  { id: 8, codigo: '322601', nombre: 'CADENAS DE VALOR SOSTENIBLES', tipologia: 'CORE', ubicacion: 'Etiopía, África', linea: 'OPO.2.0 Desarrollar de cadenas de valor sostenibles-sistemas de mercado inclusivo' },
-  { id: 9, codigo: '072601', nombre: 'PROTECCIÓN', tipologia: 'HABILITANTE', ubicacion: 'Honduras, Centro...', linea: 'PRO.1.0 Protección y atención frente a violencia, abuso y distintas formas de explotación' },
-  { id: 10, codigo: '322602', nombre: 'PROMOCION Y DEFENSA DE LOS DERECHOS DE LAS NIÑAS, NIÑOS Y ADOLESCENTES', tipologia: 'HABILITANTE', ubicacion: 'Etiopía, África', linea: 'PRO.1.0 Protección y atención frente a violencia, abuso y distintas formas de explotación' },
+  { id: 1, codigo: '032601', nombre: 'DERECHOS ECONÓMICOS DE LAS MUJERES', tipologia: 'HABILITANTE', programa: 'Programa Perú', linea: 'PRO.2.0 Igualdad de oportunidades entre H y M y eliminando cualquier tipo de discriminación' },
+  { id: 2, codigo: '042601', nombre: 'GESTION SOCIAL DEL AGUA', tipologia: 'HABILITANTE', programa: 'Programa Bolivia', linea: 'CLI.2.0 Acceso sostenible a agua en contextos áridos y semiáridos' },
+  { id: 3, codigo: '082601', nombre: 'VINCULOS SOLIDARIOS', tipologia: 'HABILITANTE', programa: 'Programa Guatemala', linea: 'PRO 3.0. Cultura de paz, la solidaridad y la participación ciudadana frente a la prevención de violencia y los conflictos' },
+  { id: 4, codigo: '032602', nombre: 'DESARROLLO DE CADENAS DE VALOR SOSTENIBLE', tipologia: 'HABILITANTE', programa: 'Programa Perú', linea: 'OPO.2.0 Desarrollar de cadenas de valor sostenibles-sistemas de mercado inclusivo' },
+  { id: 5, codigo: '502601', nombre: 'AYUDA HUMANITARIA', tipologia: 'HABILITANTE', programa: 'Programa Portugal', linea: 'SAL.1.0 Respuesta y post respuesta frente a crisis humanitarias' },
+  { id: 6, codigo: '022601', nombre: 'INNOVA Y CREA', tipologia: 'HABILITANTE', programa: 'Programa Ecuador', linea: 'PRO.2.0 Igualdad de oportunidades entre H y M y eliminando cualquier tipo de discriminación' },
+  { id: 7, codigo: '362601', nombre: 'EDUCACIÓN DE CALIDAD', tipologia: 'CORE', programa: 'Programa Etiopía', linea: 'OPO.1.0 Protección y atención frente a violencia, abuso y distintas formas de explotación' },
+  { id: 8, codigo: '322601', nombre: 'CADENAS DE VALOR SOSTENIBLES', tipologia: 'CORE', programa: 'Programa Etiopía', linea: 'OPO.2.0 Desarrollar de cadenas de valor sostenibles-sistemas de mercado inclusivo' },
+  { id: 9, codigo: '072601', nombre: 'PROTECCIÓN', tipologia: 'HABILITANTE', programa: 'Programa Costa Rica', linea: 'PRO.1.0 Protección y atención frente a violencia, abuso y distintas formas de explotación' },
+  { id: 10, codigo: '322602', nombre: 'PROMOCION Y DEFENSA DE LOS DERECHOS DE LAS NIÑAS, NIÑOS Y ADOLESCENTES', tipologia: 'HABILITANTE', programa: 'Programa Etiopía', linea: 'PRO.1.0 Protección y atención frente a violencia, abuso y distintas formas de explotación' },
 ]
 
 export const subprojectCodesData: SubprojectCode[] = [

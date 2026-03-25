@@ -51,7 +51,7 @@ export interface ProjectCode {
   codigo: string
   nombre: string
   tipologia: string
-  ubicacion: string
+  programa: string
   linea: string
 }
 

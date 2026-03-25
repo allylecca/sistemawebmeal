@@ -17,7 +17,7 @@ export function StrategicLinesView() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingLine, setEditingLine] = useState<StrategicLine | null>(null)
   const [formData, setFormData] = useState({ gapName: '', nombre: '', codigo: '' })
-  
+
   const [showConfirmSave, setShowConfirmSave] = useState(false)
   const [showDeleteAlert, setShowDeleteAlert] = useState(false)
   const [lineToDelete, setLineToDelete] = useState<StrategicLine | null>(null)
@@ -118,16 +118,16 @@ export function StrategicLinesView() {
         </div>
       </header>
 
-      <Toolbar 
-        onNew={handleNew} 
-        onExport={() => {}} 
-        onRefresh={() => setFilter('')} 
-        onFilterToggle={() => {}}
-        onColumnToggle={() => {}}
+      <Toolbar
+        onNew={handleNew}
+        onExport={() => { }}
+        onRefresh={() => setFilter('')}
+        onFilterToggle={() => { }}
+        onColumnToggle={() => { }}
       >
         <div style={{ flex: 1 }}>
-          <FilterSelect 
-            label="GAP" 
+          <FilterSelect
+            label="GAP"
             options={gapsData.map(g => g.nombre)}
             value={filter}
             onChange={setFilter}
@@ -136,11 +136,11 @@ export function StrategicLinesView() {
       </Toolbar>
 
       <div className={styles.tableContainer}>
-        <Table 
-          columns={columns} 
-          data={filteredData} 
-          onEdit={handleEdit} 
-          onDelete={handleDelete} 
+        <Table
+          columns={columns}
+          data={filteredData}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </div>
 
@@ -155,21 +155,21 @@ export function StrategicLinesView() {
         isSaveDisabled={isSaveDisabled}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <FilterSelect 
+          <FilterSelect
             label="GAP"
             options={gapsData.map(g => g.nombre)}
             value={formData.gapName}
             onChange={(val) => setFormData({ ...formData, gapName: val })}
           />
-          <Input 
-            label="Nombre"
-            value={formData.nombre}
-            onChange={(val) => setFormData({ ...formData, nombre: val })}
-          />
-          <Input 
+          <Input
             label="Código de Línea Estratégica"
             value={formData.codigo}
             onChange={(val) => setFormData({ ...formData, codigo: val })}
+          />
+          <Input
+            label="Nombre"
+            value={formData.nombre}
+            onChange={(val) => setFormData({ ...formData, nombre: val })}
           />
         </div>
       </Modal>
