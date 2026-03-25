@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Toolbar } from '../../components/Toolbar/Toolbar'
 import { Table } from '../../components/Table/Table'
 import type { Column } from '../../components/Table/Table'
@@ -11,34 +11,72 @@ import { programsData } from '../../data/mockData'
 import type { Program } from '../../data/types'
 import styles from './GapsView.module.css'
 
+const REGIONS_MAP: Record<string, string> = {
+  'Etiopía': 'Africa',
+  'Malí': 'Africa',
+  'Mozambique': 'Africa',
+  'Níger': 'Africa',
+  'Costa Rica': 'Centroamerica',
+  'El Salvador': 'Centroamerica',
+  'Guatemala': 'Centroamerica',
+  'Honduras': 'Centroamerica',
+  'México': 'Centroamerica',
+  'Nicaragua': 'Centroamerica',
+  'España': 'Europa',
+  'Portugal': 'Europa',
+  'Bolivia': 'Sudamerica',
+  'Colombia': 'Sudamerica',
+  'Ecuador': 'Sudamerica',
+  'Perú': 'Sudamerica'
+}
+
+const allCountries = Object.keys(REGIONS_MAP)
+const uniqueRegions = Array.from(new Set(Object.values(REGIONS_MAP)))
+
 export function ProgramsView() {
   const [countryFilter, setCountryFilter] = useState('')
   const [regionFilter, setRegionFilter] = useState('')
   const [programs, setPrograms] = useState<Program[]>(programsData)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingProgram, setEditingProgram] = useState<Program | null>(null)
-  const [formData, setFormData] = useState({ nombre: '', pais: '', region: '' })
+  
+  // pais ahora es un array de strings para soportar selección múltiple
+  const [formData, setFormData] = useState<{ nombre: string; pais: string[]; region: string }>({ nombre: '', pais: [], region: '' })
   
   const [showConfirmSave, setShowConfirmSave] = useState(false)
   const [showDeleteAlert, setShowDeleteAlert] = useState(false)
   const [programToDelete, setProgramToDelete] = useState<Program | null>(null)
 
+  useEffect(() => {
+    if (formData.pais.length === 0) {
+      setFormData(prev => ({ ...prev, region: '' }))
+      return
+    }
+
+    const regions = formData.pais.map(country => REGIONS_MAP[country] || '')
+    const uniqueSelectedRegions = Array.from(new Set(regions.filter(Boolean)))
+    
+    setFormData(prev => ({ ...prev, region: uniqueSelectedRegions.join(', ') }))
+  }, [formData.pais])
+
   const filteredData = useMemo(() => {
     return programs.filter(item => {
-      const matchCountry = !countryFilter || item.pais === countryFilter
-      const matchRegion = !regionFilter || item.region === regionFilter
+      const matchCountry = !countryFilter || (item.pais && item.pais.split(', ').includes(countryFilter))
+      const matchRegion = !regionFilter || (item.region && item.region.split(', ').some(r => r.trim() === regionFilter))
       return matchCountry && matchRegion
     })
   }, [countryFilter, regionFilter, programs])
 
   const isSaveDisabled = useMemo(() => {
-    const isFilled = formData.nombre.trim() !== '' && formData.pais.trim() !== '' && formData.region.trim() !== ''
+    const isFilled = formData.nombre.trim() !== '' && formData.pais.length > 0 && formData.region.trim() !== ''
     if (!isFilled) return true
 
     if (editingProgram) {
+      const editingPaisArray = editingProgram.pais ? editingProgram.pais.split(', ').map(p => p.trim()) : []
+      const samePais = formData.pais.length === editingPaisArray.length && formData.pais.every(p => editingPaisArray.includes(p))
       return (
         formData.nombre === editingProgram.nombre &&
-        formData.pais === editingProgram.pais &&
+        samePais &&
         formData.region === editingProgram.region
       )
     }
@@ -47,23 +85,32 @@ export function ProgramsView() {
 
   const handleNew = () => {
     setEditingProgram(null)
-    setFormData({ nombre: '', pais: '', region: '' })
+    setFormData({ nombre: '', pais: [], region: '' })
     setIsModalOpen(true)
   }
 
   const handleEdit = (item: Program) => {
     setEditingProgram(item)
-    setFormData({ nombre: item.nombre, pais: item.pais, region: item.region })
+    setFormData({ 
+      nombre: item.nombre, 
+      pais: item.pais ? item.pais.split(', ').map(p => p.trim()) : [], 
+      region: item.region 
+    })
     setIsModalOpen(true)
   }
 
   const handleSave = () => {
+    const programDataToSave = {
+      ...formData,
+      pais: formData.pais.join(', ')
+    }
+
     if (editingProgram) {
-      setPrograms(programs.map(p => p.id === editingProgram.id ? { ...p, ...formData } : p))
+      setPrograms(programs.map(p => p.id === editingProgram.id ? { ...p, ...programDataToSave } : p))
     } else {
       const newProgram: Program = {
         id: Math.max(0, ...programs.map(p => p.id)) + 1,
-        ...formData
+        ...programDataToSave
       }
       setPrograms([...programs, newProgram])
     }
@@ -92,33 +139,10 @@ export function ProgramsView() {
     { key: 'actions', header: 'Acciones' },
   ]
 
-  const REGIONS_MAP: Record<string, string> = {
-    'Etiopía': 'Africa',
-    'Malí': 'Africa',
-    'Mozambique': 'Africa',
-    'Níger': 'Africa',
-    'Costa Rica': 'Centroamerica',
-    'El Salvador': 'Centroamerica',
-    'Guatemala': 'Centroamerica',
-    'Honduras': 'Centroamerica',
-    'México': 'Centroamerica',
-    'Nicaragua': 'Centroamerica',
-    'España': 'Europa',
-    'Portugal': 'Europa',
-    'Bolivia': 'Sudamerica',
-    'Colombia': 'Sudamerica',
-    'Ecuador': 'Sudamerica',
-    'Perú': 'Sudamerica'
-  }
-
-  const allCountries = Object.keys(REGIONS_MAP)
-  const uniqueCountries = useMemo(() => Array.from(new Set([...allCountries, ...programsData.map(p => p.pais)])), [allCountries])
-  const uniqueRegions = useMemo(() => Array.from(new Set(Object.values(REGIONS_MAP))), [])
-
-  const handleCountryChange = (country: string) => {
-    const region = REGIONS_MAP[country] || ''
-    setFormData(prev => ({ ...prev, pais: country, region }))
-  }
+  const uniqueCountries = useMemo(() => {
+    const fromPrograms = programsData.flatMap(p => p.pais ? p.pais.split(', ').map(s => s.trim()) : [])
+    return Array.from(new Set([...allCountries, ...fromPrograms]))
+  }, [])
 
   return (
     <div className={styles.root}>
@@ -188,7 +212,8 @@ export function ProgramsView() {
             label="País"
             options={uniqueCountries}
             value={formData.pais}
-            onChange={handleCountryChange}
+            onChange={(val) => setFormData({ ...formData, pais: val })}
+            isMulti
           />
           <Input 
             label="Región"
