@@ -169,8 +169,7 @@ export function StrategicLinesView() {
           <Input 
             label="Código de Línea Estratégica"
             value={formData.codigo}
-            onChange={() => {}}
-            disabled
+            onChange={(val) => setFormData({ ...formData, codigo: val })}
           />
         </div>
       </Modal>

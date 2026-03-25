@@ -282,8 +282,7 @@ export function InstitutionalIndicatorsView() {
             <Input 
               label="Código de Indicador Institucional"
               value={formData.codigo}
-              onChange={() => {}}
-              disabled
+              onChange={(val) => setFormData({ ...formData, codigo: val })}
             />
           </div>
 

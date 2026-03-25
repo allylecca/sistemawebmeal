@@ -205,8 +205,7 @@ export function SubprojectCodesView() {
             <Input 
               label="Código"
               value={formData.codigo}
-              onChange={() => {}}
-              disabled
+              onChange={(val) => setFormData({ ...formData, codigo: val })}
             />
           </div>
 
