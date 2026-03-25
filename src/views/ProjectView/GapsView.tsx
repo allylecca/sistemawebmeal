@@ -9,6 +9,7 @@ import { Modal } from '../../components/Modal/Modal'
 import { AlertModal } from '../../components/AlertDialog/AlertModal'
 import { gapsData } from '../../data/mockData'
 import type { Gap } from '../../data/types'
+import { PageHeader } from '../../components/PageTitle/PageTitle'
 import styles from './GapsView.module.css'
 
 export function GapsView() {
@@ -85,13 +86,11 @@ export function GapsView() {
 
   return (
     <div className={styles.root}>
-      <header style={{ padding: '24px 32px 0' }}>
-        <div style={{ borderLeft: '2px solid #ff7c56', paddingLeft: '16px' }}>
-          <h1 style={{ fontSize: '20px', fontWeight: 600, margin: 0 }}>GAPS</h1>
-          <p style={{ fontSize: '12px', color: '#a0a0a0', margin: '4px 0 0 0' }}>
-            Gestión de GAPS del Marco Programático
-          </p>
-        </div>
+      <header style={{ padding: '16px 16px 0' }}>
+        <PageHeader
+          title="GAPS"
+          subtitle="Gestión de GAPS del Marco Programático"
+        />
       </header>
 
       <Toolbar 

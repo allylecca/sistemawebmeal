@@ -3,22 +3,24 @@ import type { ReactNode } from 'react'
 import {
   Menu,
   Maximize,
-  Home,
-  FileText,
-  Calendar,
-  Workflow,
-  Activity,
+  Minimize,
+  Building2,
+  NotebookTabs,
+  BookOpenCheck,
+  Goal,
+  ListTodo,
   Users,
-  Wallet,
+  DollarSign,
   Shield,
-  Settings,
+  FileSliders,
   Database,
-  HelpCircle,
-  Cpu,
-  Headphones,
+  FileSpreadsheet,
+  BrickWallShield,
+  MessageCircleQuestion,
+  Info,
   ChevronRight,
   ChevronDown,
-  LayoutDashboard
+  ChartBarBig
 } from 'lucide-react'
 import styles from './Sidebar.module.css'
 import loginLogo from '../../assets/login-logo.svg'
@@ -31,50 +33,42 @@ export interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  { id: 'dashboards', label: 'Dashboards', icon: <LayoutDashboard size={20} /> },
+  { id: 'dashboards', label: 'Dashboard', icon: <ChartBarBig size={20} /> },
   {
     id: 'marco',
     label: 'Marco Programático',
-    icon: <Home size={20} />,
+    icon: <Building2 size={20} />,
     subItems: [
       { id: 'gaps', label: 'GAPS' },
       { id: 'lineas', label: 'Líneas Estratégicas' },
       { id: 'indicadores-inst', label: 'Indicadores Institucionales' },
       { id: 'ubicaciones', label: 'Ubicaciones' },
       { id: 'programas', label: 'Programas' },
-      { id: 'nombres-proy', label: 'Nombres de Proyectos' },
       { id: 'codigos-proy', label: 'Códigos de Proyectos' },
       { id: 'codigos-subproy', label: 'Códigos de Subproyectos' },
     ]
   },
-  {
-    id: 'pop',
-    label: 'POP Institucional',
-    icon: <FileText size={20} />,
-    subItems: [
-      { id: 'subproyectos', label: 'Subproyectos' },
-      { id: 'planificacion', label: 'Planificación Anual' },
-    ]
-  },
+  { id: 'planificacion', label: 'Planificación Anual', icon: <NotebookTabs size={20} /> },
   {
     id: 'ejecucion',
     label: 'Ejecución Anual',
-    icon: <Calendar size={20} />,
+    icon: <BookOpenCheck size={20} />,
     subItems: [
       { id: 'marco-logico', label: 'Marco Lógico' },
       { id: 'indicadores', label: 'Indicadores' },
     ]
   },
-  { id: 'cadena', label: 'Cadena de Resultados', icon: <Workflow size={20} /> },
-  { id: 'monitoreo', label: 'Monitoreo', icon: <Activity size={20} /> },
+  { id: 'cadena', label: 'Cadena de Resultados', icon: <Goal size={20} /> },
+  { id: 'monitoreo', label: 'Monitoreo', icon: <ListTodo size={20} /> },
   { id: 'beneficiarios', label: 'Beneficiarios', icon: <Users size={20} /> },
-  { id: 'presupuesto', label: 'Presupuesto', icon: <Wallet size={20} /> },
+  { id: 'presupuesto', label: 'Presupuesto', icon: <DollarSign size={20} /> },
   { id: 'seguridad', label: 'Seguridad', icon: <Shield size={20} /> },
-  { id: 'administracion', label: 'Administración', icon: <Settings size={20} /> },
+  { id: 'administracion', label: 'Administración', icon: <FileSliders size={20} /> },
   { id: 'mantenimiento', label: 'Mantenimiento', icon: <Database size={20} /> },
-  { id: 'tutoriales', label: 'Tutoriales', icon: <HelpCircle size={20} /> },
-  { id: 'gestion', label: 'Gestión del Sistema', icon: <Cpu size={20} /> },
-  { id: 'soporte', label: 'Soporte', icon: <Headphones size={20} /> },
+  { id: 'tutoriales', label: 'Tutoriales', icon: <FileSpreadsheet size={20} /> },
+  { id: 'gestion', label: 'Gestión del Sistema', icon: <BrickWallShield size={20} /> },
+  { id: 'soporte', label: 'Soporte', icon: <MessageCircleQuestion size={20} /> },
+  { id: 'acerca', label: 'Acerca de', icon: <Info size={20} /> },
 ]
 
 interface SidebarProps {
@@ -83,7 +77,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ onNavigate, activeSubItem }: SidebarProps) {
-  const [openMenus, setOpenMenus] = useState<string[]>(['marco', 'pop'])
+  const [openMenus, setOpenMenus] = useState<string[]>(['marco', 'planificacion'])
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   const toggleMenu = (menuId: string) => {
@@ -99,17 +93,17 @@ export function Sidebar({ onNavigate, activeSubItem }: SidebarProps) {
     )
   }
 
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((err) => {
-        console.error(`Error al intentar activar pantalla completa: ${err.message}`)
-      })
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen()
-      }
-    }
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+    setIsFullscreen(true);
+  } else {
+    document.exitFullscreen();
+    setIsFullscreen(false);
   }
+};
 
   return (
     <aside className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ''}`}>
@@ -126,8 +120,8 @@ export function Sidebar({ onNavigate, activeSubItem }: SidebarProps) {
           onClick={toggleFullscreen}
           title={isCollapsed ? "Pantalla completa" : undefined}
         >
-          <span className={styles.navIcon}><Maximize size={20} /></span>
-          {!isCollapsed && "Pantalla completa"}
+          <span className={styles.navIcon}>{isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}</span>
+          {!isCollapsed && (isFullscreen ? "Modo ventana" : "Pantalla completa")}
         </button>
       </div>
 

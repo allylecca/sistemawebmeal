@@ -67,8 +67,8 @@
 /* Active / Checked state */
 .input:checked + .checkbox,
 .input:indeterminate + .checkbox {
-  background-color: #F87C56;
-  border-color: #F87C56;
+  background-color: #006975;
+  border-color: #006975;
 }
 
 /* Status: Error */

@@ -1,23 +1,66 @@
 import { useState, useMemo } from 'react'
-import {
-  ChevronRight,
-} from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { Badge } from '../../components/Badge/Badge'
 import { Toolbar } from '../../components/Toolbar/Toolbar'
 import { FilterSelect } from '../../components/FilterSelect/FilterSelect'
+import { Checkbox } from '../../components/Checkbox/Checkbox' 
 import { locationsData } from '../../data/mockData'
 import type { LocationNode } from '../../data/types'
+import { PageHeader } from '../../components/PageTitle/PageTitle'
+import { Button } from '../../components/Button/Button'
+import { AlertModal } from '../../components/AlertDialog/AlertModal'
 import styles from './LocationsView.module.css'
 
 export function LocationsView() {
   const [expandedNodes, setExpandedNodes] = useState<string[]>(['4', '4-4'])
   const [regionFilter, setRegionFilter] = useState('')
   const [countryFilter, setCountryFilter] = useState('')
+  const [selectedNodes, setSelectedNodes] = useState<string[]>([])
+  
+  // Estado para controlar el modal de éxito
+  const [showConfirmSave, setShowConfirmSave] = useState(false)
 
   const toggleNode = (id: string) => {
     setExpandedNodes(prev => 
       prev.includes(id) ? prev.filter(nodeId => nodeId !== id) : [...prev, id]
     )
+  }
+
+  const getAllIds = (node: LocationNode): string[] => {
+    let ids = [node.id]
+    if (node.children) {
+      node.children.forEach(child => {
+        ids = [...ids, ...getAllIds(child)]
+      })
+    }
+    return ids
+  }
+
+  const handleCheckboxChange = (node: LocationNode, isChecked: boolean, e?: React.MouseEvent | React.ChangeEvent) => {
+    if (e && e.stopPropagation) {
+      e.stopPropagation() 
+    }
+    
+    const nodeAndChildrenIds = getAllIds(node)
+
+    setSelectedNodes(prev => {
+      if (isChecked) {
+        return Array.from(new Set([...prev, ...nodeAndChildrenIds]))
+      } else {
+        return prev.filter(id => !nodeAndChildrenIds.includes(id))
+      }
+    })
+  }
+
+  const handleSave = () => {
+    // Aquí iría tu lógica de guardado
+    setShowConfirmSave(true)
+  }
+
+  const handleCancel = () => {
+    setSelectedNodes([])
+    setRegionFilter('')
+    setCountryFilter('')
   }
 
   const uniqueRegions = useMemo(() => 
@@ -39,13 +82,13 @@ export function LocationsView() {
   const filteredData = useMemo(() => {
     return locationsData.filter(node => {
       if (regionFilter && node.type === 'Region' && node.label !== regionFilter) return false
-      // For country filter, we might need more complex logic if we want to filter the tree
       return true
     })
   }, [regionFilter, countryFilter])
 
   const renderNode = (node: LocationNode, level: number = 0) => {
     const isExpanded = expandedNodes.includes(node.id)
+    const isSelected = selectedNodes.includes(node.id)
     const hasChildren = node.children && node.children.length > 0
     
     const badgeVariant = 
@@ -75,6 +118,13 @@ export function LocationsView() {
               )}
             </div>
             
+            <div onClick={(e) => e.stopPropagation()} style={{ marginRight: '8px', display: 'flex' }}>
+              <Checkbox 
+                checked={isSelected}
+                onChange={(e: any) => handleCheckboxChange(node, !isSelected, e)}
+              />
+            </div>
+            
             <Badge variant={badgeVariant} className={styles.nodeBadge}>
               {badgeLabel}
             </Badge>
@@ -93,15 +143,14 @@ export function LocationsView() {
 
   return (
     <div className={styles.root}>
-      <header className={styles.header}>
-        <div className={styles.titleGroup}>
-          <h1 className={styles.title}>Ubicaciones</h1>
-          <p className={styles.subtitle}>
-            Visualización de ubicaciones disponibles
-          </p>
-        </div>
+      <header style={{ padding: '16px 16px 0' }}>
+        <PageHeader
+          title="Ubicaciones"
+          subtitle="Gestión de Ubicaciones del Marco Programático"
+        />
       </header>
 
+      {/* Toolbar Superior: Filtros */}
       <Toolbar 
         onExport={() => {}} 
         onRefresh={() => {
@@ -139,24 +188,31 @@ export function LocationsView() {
         </div>
       </div>
 
-      <footer className={styles.footer}>
-        <div className={styles.pagination}>
-          <span>Filas por página</span>
-          <div className={styles.rowsSelect}>
-            50 <span>⌄</span>
-          </div>
+      {/* Toolbar Inferior: Acciones Finales */}
+      <Toolbar>
+        <div style={{ flex: 1 }} />
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <Button variant="secondary" onClick={handleCancel}>
+            Cancelar
+          </Button>
+          <Button variant="primary" onClick={handleSave}>
+            Guardar
+          </Button>
         </div>
-        <div className={styles.pageInfo}>
-          Mostrando del 1-4 | Total: 4 Registros
-          <div className={styles.navArrows}>
-            <span className={styles.navArrow}>«</span>
-            <span className={styles.navArrow}>‹</span>
-            <span className={styles.pageNumber}>1/1</span>
-            <span className={styles.navArrow}>›</span>
-            <span className={styles.navArrow}>»</span>
-          </div>
-        </div>
-      </footer>
+      </Toolbar>
+
+      {/* Modal de éxito al Guardar */}
+      <AlertModal
+        isOpen={showConfirmSave}
+        onClose={() => setShowConfirmSave(false)}
+        variant="success"
+        title="Cambios guardados con éxito"
+        description="Las ubicaciones seleccionadas han sido actualizadas"
+        primaryAction={{
+          label: 'Continuar',
+          onClick: () => setShowConfirmSave(false)
+        }}
+      />
     </div>
   )
 }

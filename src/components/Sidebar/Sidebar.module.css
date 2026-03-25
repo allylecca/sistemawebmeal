@@ -1,7 +1,7 @@
 .sidebar {
-  width: 280px;
+  width: 300px;
   background-color: #ffffff;
-  border-right: 1px solid #f0f0f0;
+  border-right: 1px solid #382E2C1F;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -9,20 +9,20 @@
 }
 
 .collapsed {
-  width: 80px;
+  width: 53px;
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 24px;
+  padding: 16px;
   border-bottom: 1px solid #f0f0f0;
 }
 
 .collapsed .header {
   justify-content: center;
-  padding: 12px 0;
+  padding: 16px;
 }
 
 .actionSection {
@@ -38,7 +38,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #a0a0a0;
+  color: #382E2C;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,6 +47,7 @@
 
 .menuButton:hover {
   color: #382e2c;
+  text-decoration: underline;
 }
 
 .scrollArea {
@@ -73,7 +74,7 @@
   display: flex;
   align-items: center;
   padding: 12px;
-  color: #a0a0a0;
+  color: #382E2C;
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -91,12 +92,12 @@
 }
 
 .navItem:hover {
-  background-color: #fcfcfc;
   color: #382e2c;
+  text-decoration: underline;
 }
 
 .navItemActive {
-  background-color: rgba(248, 124, 86, 0.24);
+  background-color: #FFC65833;
   color: #382e2c;
   font-weight: 600;
 }
@@ -130,7 +131,7 @@
 
 .subMenuLine {
   width: 2px;
-  background-color: #ff7c5633;
+  background-color: #FFC658;
   flex-shrink: 0;
 }
 
@@ -145,7 +146,7 @@
   display: flex;
   align-items: center;
   padding: 12px 24px;
-  color: #a0a0a0;
+  color: #382E2C;
   text-decoration: none;
   font-size: 13px;
   font-weight: 500;
@@ -158,10 +159,11 @@
 
 .subNavItem:hover {
   color: #382e2c;
+  text-decoration: underline;
 }
 
 .subNavItemActive {
-  background-color: rgba(248, 124, 86, 0.24);
+  background-color: #FFC65833;
   color: #382e2c;
   font-weight: 600;
 }
