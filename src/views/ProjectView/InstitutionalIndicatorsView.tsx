@@ -18,18 +18,18 @@ export function InstitutionalIndicatorsView() {
   const [indicators, setIndicators] = useState<InstitutionalIndicator[]>(institutionalIndicatorsData)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingIndicator, setEditingIndicator] = useState<InstitutionalIndicator | null>(null)
-  const [formData, setFormData] = useState({ 
-    codigo: '', 
-    tipo: '', 
-    nombre: '', 
-    var1: '', 
-    var2: '', 
-    var3: '', 
+  const [formData, setFormData] = useState({
+    codigo: '',
+    tipo: '',
+    nombre: '',
+    var1: '',
+    var2: '',
+    var3: '',
     gap: '',
     lineaEstrategica: '',
-    categoria: '' 
+    categoria: ''
   })
-  
+
   const [showConfirmSave, setShowConfirmSave] = useState(false)
   const [showDeleteAlert, setShowDeleteAlert] = useState(false)
   const [indicatorToDelete, setIndicatorToDelete] = useState<InstitutionalIndicator | null>(null)
@@ -74,7 +74,7 @@ export function InstitutionalIndicatorsView() {
     if (formData.categoria && formData.tipo) {
       const catCode = CATEGORIES[formData.categoria as keyof typeof CATEGORIES]
       const typeCode = TYPES_MAP[formData.tipo as keyof typeof TYPES_MAP]
-      
+
       if (catCode && typeCode) {
         const baseCode = `${catCode}-${typeCode}`
         setFormData(prev => {
@@ -124,16 +124,16 @@ export function InstitutionalIndicatorsView() {
   const handleEdit = (item: InstitutionalIndicator) => {
     setEditingIndicator(item)
     // For mock data, we might not have all fields, so default them
-    setFormData({ 
-      codigo: item.codigo, 
-      tipo: item.tipo, 
-      nombre: item.nombre, 
-      var1: item.var1, 
-      var2: item.var2, 
-      var3: item.var3, 
+    setFormData({
+      codigo: item.codigo,
+      tipo: item.tipo,
+      nombre: item.nombre,
+      var1: item.var1,
+      var2: item.var2,
+      var3: item.var3,
       gap: item.gap,
       lineaEstrategica: item.lineaEstrategica || '',
-      categoria: '' 
+      categoria: ''
     })
     setIsModalOpen(true)
   }
@@ -168,8 +168,8 @@ export function InstitutionalIndicatorsView() {
   const columns: Column<InstitutionalIndicator>[] = [
     { key: 'checkbox', header: '' },
     { key: 'codigo', header: 'Código' },
-    { 
-      key: 'tipo', 
+    {
+      key: 'tipo',
       header: 'Tipo',
       render: (val) => (
         <Badge variant={val === 'Indicador de Línea Estratégica' ? 'line' : val === 'Indicador de Resultado' ? 'result' : 'product'}>
@@ -199,27 +199,27 @@ export function InstitutionalIndicatorsView() {
         </div>
       </header>
 
-      <Toolbar 
-        onNew={handleNew} 
-        onExport={() => {}} 
+      <Toolbar
+        onNew={handleNew}
+        onExport={() => { }}
         onRefresh={() => {
           setGapFilter('')
           setTypeFilter('')
-        }} 
-        onFilterToggle={() => {}}
-        onColumnToggle={() => {}}
+        }}
+        onFilterToggle={() => { }}
+        onColumnToggle={() => { }}
       >
         <div style={{ flex: 1 }}>
-          <FilterSelect 
-            label="GAP" 
+          <FilterSelect
+            label="GAP"
             options={gapsData.map(g => g.nombre)}
             value={gapFilter}
             onChange={setGapFilter}
           />
         </div>
         <div style={{ flex: 1 }}>
-          <FilterSelect 
-            label="Tipo" 
+          <FilterSelect
+            label="Tipo"
             options={indicatorTypes}
             value={typeFilter}
             onChange={setTypeFilter}
@@ -228,11 +228,11 @@ export function InstitutionalIndicatorsView() {
       </Toolbar>
 
       <div className={styles.tableContainer}>
-        <Table 
-          columns={columns} 
-          data={filteredData} 
-          onEdit={handleEdit} 
-          onDelete={handleDelete} 
+        <Table
+          columns={columns}
+          data={filteredData}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </div>
 
@@ -250,46 +250,46 @@ export function InstitutionalIndicatorsView() {
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '32px', alignItems: 'stretch' }}>
           {/* Columna Izquierda */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: 0 }}>
-            <FilterSelect 
+            <FilterSelect
               label="GAP"
               options={gapsData.map(g => g.nombre)}
               value={formData.gap}
               onChange={(val) => setFormData({ ...formData, gap: val })}
             />
-            <FilterSelect 
+            <FilterSelect
               label="Línea Estratégica"
               options={availableLines}
               value={formData.lineaEstrategica}
               onChange={handleLineChange}
             />
-            <FilterSelect 
+            <FilterSelect
               label="Tipo de Indicador"
               options={Object.keys(TYPES_MAP)}
               value={formData.tipo}
               onChange={(val) => setFormData({ ...formData, tipo: val })}
             />
-            <FilterSelect 
+            <FilterSelect
               label="Categoría"
               options={Object.keys(CATEGORIES)}
               value={formData.categoria}
               onChange={(val) => setFormData({ ...formData, categoria: val })}
             />
-            <Input 
-              label="Nombre"
-              value={formData.nombre}
-              onChange={(val) => setFormData({ ...formData, nombre: val })}
-            />
-            <Input 
+            <Input
               label="Código de Indicador Institucional"
               value={formData.codigo}
               onChange={(val) => setFormData({ ...formData, codigo: val })}
+            />
+            <Input
+              label="Nombre"
+              value={formData.nombre}
+              onChange={(val) => setFormData({ ...formData, nombre: val })}
             />
           </div>
 
           {/* Columna Derecha (Variantes) */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: 0, height: '100%' }}>
             <div style={{ flex: 1, minHeight: 0 }}>
-              <Input 
+              <Input
                 label="Variante Español"
                 value={formData.var1}
                 onChange={(val) => {
@@ -300,7 +300,7 @@ export function InstitutionalIndicatorsView() {
               />
             </div>
             <div style={{ flex: 1, minHeight: 0 }}>
-              <Input 
+              <Input
                 label="Variante Inglés"
                 value={formData.var2}
                 onChange={(val) => setFormData({ ...formData, var2: val })}
@@ -309,7 +309,7 @@ export function InstitutionalIndicatorsView() {
               />
             </div>
             <div style={{ flex: 1, minHeight: 0 }}>
-              <Input 
+              <Input
                 label="Variante Francés"
                 value={formData.var3}
                 onChange={(val) => setFormData({ ...formData, var3: val })}
