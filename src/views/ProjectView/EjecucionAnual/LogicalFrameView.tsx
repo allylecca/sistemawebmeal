@@ -1,18 +1,18 @@
 import { useState, useMemo } from 'react'
-import { 
-  ChevronRight, 
-  Eye, 
-  Pencil, 
-  Trash2, 
-  Plus 
+import {
+  ChevronRight,
+  Eye,
+  Pencil,
+  Trash2,
+  Plus
 } from 'lucide-react'
-import { Toolbar } from '../../components/Toolbar/Toolbar'
-import { FilterSelect } from '../../components/FilterSelect/FilterSelect'
-import { Pagination } from '../../components/Pagination/Pagination'
-import { Badge } from '../../components/Badge/Badge'
-import { Checkbox } from '../../components/Checkbox/Checkbox'
-import { logicalFrameData } from '../../data/mockData'
-import type { LogicalFrameTreeItem } from '../../data/types'
+import { Toolbar } from '../../../components/Toolbar/Toolbar'
+import { FilterSelect } from '../../../components/FilterSelect/FilterSelect'
+import { Pagination } from '../../../components/Pagination/Pagination'
+import { Badge } from '../../../components/Badge/Badge'
+import { Checkbox } from '../../../components/Checkbox/Checkbox'
+import { logicalFrameData } from '../../../data/mockData'
+import type { LogicalFrameTreeItem } from '../../../data/types'
 import styles from './LogicalFrameView.module.css'
 
 export function LogicalFrameView() {
@@ -83,7 +83,7 @@ export function LogicalFrameView() {
       <div key={item.id} className={styles.rowGroup}>
         <div className={`${styles.tr} ${selectedIds.has(item.id) ? styles.rowSelected : ''}`}>
           <div className={styles.td} style={{ width: '48px', padding: '16px 0 16px 24px' }}>
-            <Checkbox 
+            <Checkbox
               checked={selectedIds.has(item.id)}
               onChange={() => handleSelectItem(item.id)}
             />
@@ -95,8 +95,8 @@ export function LogicalFrameView() {
               ))}
               <span className={styles.joint} data-line={isLast ? 'false' : 'true'} data-last={isLast ? 'true' : 'false'}>
                 {hasChildren ? (
-                  <ChevronRight 
-                    size={16} 
+                  <ChevronRight
+                    size={16}
                     className={`${styles.chevron} ${isExpanded ? styles.chevronOpen : ''}`}
                     onClick={() => toggleNode(item.id)}
                   />
@@ -147,35 +147,35 @@ export function LogicalFrameView() {
         </div>
       </header>
 
-      <Toolbar 
-        onExport={() => {}} 
-        onRefresh={() => {}}
-        onFilterToggle={() => {}}
-        onColumnToggle={() => {}}
+      <Toolbar
+        onExport={() => { }}
+        onRefresh={() => { }}
+        onFilterToggle={() => { }}
+        onColumnToggle={() => { }}
       >
         <div style={{ flex: 1, display: 'flex', gap: '12px', flexWrap: 'nowrap', minWidth: 0 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <FilterSelect 
-              label="Programa" 
-              options={['Programa 1', 'Programa 2']} 
+            <FilterSelect
+              label="Programa"
+              options={['Programa 1', 'Programa 2']}
               value={programFilter}
               onChange={setProgramFilter}
               width="100%"
             />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <FilterSelect 
-              label="Proyecto" 
-              options={['Proyecto A', 'Proyecto B']} 
+            <FilterSelect
+              label="Proyecto"
+              options={['Proyecto A', 'Proyecto B']}
               value={projectFilter}
               onChange={setProjectFilter}
               width="100%"
             />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <FilterSelect 
-              label="Subproyecto" 
-              options={['Sub 1', 'Sub 2']} 
+            <FilterSelect
+              label="Subproyecto"
+              options={['Sub 1', 'Sub 2']}
               value={subprojectFilter}
               onChange={setSubprojectFilter}
               width="100%"
@@ -188,7 +188,7 @@ export function LogicalFrameView() {
         <div className={styles.treeTable}>
           <div style={{ display: 'flex', backgroundColor: '#fafafa', borderBottom: '1px solid #f0f0f0' }}>
             <div className={styles.th} style={{ width: '48px', padding: '16px 0 16px 24px' }}>
-              <Checkbox 
+              <Checkbox
                 checked={headerChecked}
                 onChange={handleSelectAll}
               />
