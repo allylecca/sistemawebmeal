@@ -11,9 +11,10 @@ interface FilterSelectProps {
   onChange?: (value: any) => void
   value?: any
   isMulti?: boolean
+  readOnly?: boolean
 }
 
-export function FilterSelect({ label, placeholder, width, className, options = [], onChange, value, isMulti = false }: FilterSelectProps) {
+export function FilterSelect({ label, placeholder, width, className, options = [], onChange, value, isMulti = false, readOnly = false }: FilterSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [internalSelected, setInternalSelected] = useState<any>(isMulti ? [] : '')
   const [searchTerm, setSearchTerm] = useState('')
@@ -86,8 +87,8 @@ export function FilterSelect({ label, placeholder, width, className, options = [
         </div>
       )}
       <div 
-        className={`${styles.container} ${isOpen ? styles.containerActive : ''}`} 
-        onClick={() => setIsOpen(true)}
+        className={`${styles.container} ${isOpen ? styles.containerActive : ''} ${readOnly ? styles.readOnly : ''}`} 
+        onClick={() => !readOnly && setIsOpen(true)}
       >
         {isOpen ? (
           <input

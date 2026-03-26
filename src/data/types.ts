@@ -155,3 +155,22 @@ export interface IndicadoresAnuales {
   tipoValor: string
   [key: string]: any
 }
+
+export interface PlanAnual {
+  id: number
+  programa: string
+  proyecto: string
+  subproyecto: string
+  gap: string
+  linea: string
+  codigosubproyecto: string
+  financiadorprincipal: string
+  gerente: string
+  responsable: string
+  fechainicio: string
+  fechafin: string
+  implementadores: string[]
+  financiadoressecundarios: string[]
+  ubicaciones: { region: string; pais: string; departamento: string; provincia: string }[]
+  estado: 'Aprobado' | 'Desaprobado' | 'Pendiente' | 'Borrador'
+}
