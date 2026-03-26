@@ -18,7 +18,8 @@
   border-bottom: 1px solid #f0f0f0;
   background-color: #fafafa;
   white-space: nowrap;
-  overflow: visible;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .td {
@@ -27,7 +28,8 @@
   color: #382e2c;
   border-bottom: 1px solid #f0f0f0;
   white-space: nowrap;
-  overflow: visible;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stickyLeftTh {

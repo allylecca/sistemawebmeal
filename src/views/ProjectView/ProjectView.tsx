@@ -10,7 +10,7 @@ import { ProjectCodesView } from './MarcoProgramatico/ProjectCodesView'
 import { SubprojectCodesView } from './MarcoProgramatico/SubprojectCodesView'
 import { DashboardView } from './DashboardView'
 import { SubprojectsPopView } from './SubprojectsPopView'
-import { AnnualPlanningView } from './AnnualPlanningView'
+import { AnnualPlanningView } from './PlanificacionAnual/AnnualPlanningView'
 import { LogicalFrameView } from './LogicalFrameView'
 import { AnnualExecutionIndicatorsView } from './AnnualExecutionIndicatorsView'
 

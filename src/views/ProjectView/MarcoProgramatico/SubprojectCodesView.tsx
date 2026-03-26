@@ -49,18 +49,16 @@ export function SubprojectCodesView() {
   }, [formData.financiador])
 
   const handleProjectChange = (projectName: string) => {
-    const mappedProject = projectCodesData.find(p =>
-      p.nombre.trim() === projectName.trim() || projectName.includes(p.codigo)
-    )
+    const mappedProject = projectCodesData.find(p => `${p.codigo} - ${p.nombre}` === projectName || p.nombre === projectName)
 
     if (mappedProject) {
-      const lineObj = strategicLinesData.find(l => l.nombre === mappedProject.linea)
+      const lineObj = strategicLinesData.find(l => l.nombre === mappedProject.linea || `${l.codigo} - ${l.nombre}` === mappedProject.linea)
       const gapMatch = lineObj ? lineObj.gap : ''
 
       setFormData(prev => ({
         ...prev,
-        proyecto: projectName,
-        lineaEstrategica: mappedProject.linea || '',
+        proyecto: `${mappedProject.codigo} - ${mappedProject.nombre}`,
+        lineaEstrategica: lineObj ? `${lineObj.codigo} - ${lineObj.nombre}` : (mappedProject.linea || ''),
         programa: mappedProject.programa || '',
         gap: gapMatch
       }))
@@ -108,11 +106,13 @@ export function SubprojectCodesView() {
       p.nombre.trim() === item.proyecto.trim() || item.proyecto.includes(p.codigo)
     )
     let extraData = { gap: '', lineaEstrategica: '', programa: '' }
+    let displayProyecto = item.proyecto
     if (mappedProject) {
-      const lineObj = strategicLinesData.find(l => l.nombre === mappedProject.linea)
+      displayProyecto = `${mappedProject.codigo} - ${mappedProject.nombre}`
+      const lineObj = strategicLinesData.find(l => l.nombre === mappedProject.linea || `${l.codigo} - ${l.nombre}` === mappedProject.linea)
       extraData = {
         gap: lineObj ? lineObj.gap : '',
-        lineaEstrategica: mappedProject.linea || '',
+        lineaEstrategica: lineObj ? `${lineObj.codigo} - ${lineObj.nombre}` : (mappedProject.linea || ''),
         programa: mappedProject.programa || ''
       }
     }
@@ -124,7 +124,7 @@ export function SubprojectCodesView() {
       codigo: item.codigo,
       financiador: displayFinanciador,
       nombre: item.nombre,
-      proyecto: item.proyecto,
+      proyecto: displayProyecto,
       ...extraData
     })
     setIsModalOpen(true)
@@ -185,7 +185,7 @@ export function SubprojectCodesView() {
     { key: 'actions', header: 'Acciones' },
   ]
 
-  const projectOptions = useMemo(() => projectCodesData.map(p => p.nombre), [])
+  const projectOptions = useMemo(() => projectCodesData.map(p => `${p.codigo} - ${p.nombre}`), [])
 
   return (
     <div className={styles.root}>

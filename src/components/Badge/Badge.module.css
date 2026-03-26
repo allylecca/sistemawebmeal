@@ -118,19 +118,19 @@
 }
 
 .badge[data-variant='line'] {
-  background-color: #ffe8e0;
-  color: #ff7c56;
+  background-color: #F87C561F;
+  color: #382e2c;
   border-radius: 12px;
 }
 
 .badge[data-variant='result'] {
-  background-color: #e8f5e9;
-  color: #4caf50;
+  background-color: #FFC6581F;
+  color: #382e2c;
   border-radius: 12px;
 }
 
 .badge[data-variant='product'] {
-  background-color: #e0f2f1;
-  color: #009688;
+  background-color: #FEAD771F;
+  color: #382e2c;
   border-radius: 12px;
 }

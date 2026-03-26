@@ -75,6 +75,31 @@ export interface SubprojectCode {
   programa: string
 }
 
+export interface Gerentes {
+  id: number
+  nombre: string
+}
+
+export interface ResponsablesMeal {
+  id: number
+  nombre: string
+}
+
+export interface Implementadores {
+  id: number
+  nombre: string
+}
+
+export interface Unidad {
+  id: number
+  nombre: string
+}
+
+export interface TipodeValor {
+  id: number
+  nombre: string
+}
+
 export interface SubprojectPop {
   id: number
   codigo: string
@@ -120,4 +145,13 @@ export interface AnnualExecutionIndicator {
   nombre: string
   unidad: string
   tipoValor: string
+}
+
+export interface IndicadoresAnuales {
+  id: number
+  tipo: string
+  indicador: string
+  unidad: string
+  tipoValor: string
+  [key: string]: any
 }

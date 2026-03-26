@@ -106,7 +106,7 @@ export function Table<T extends { id: string | number }>({
       newSelected.add(id)
     }
     setSelectedIds(newSelected)
-    
+
     // User requirement: When selecting one by one, header remains empty
     setHeaderChecked(false)
   }
@@ -134,51 +134,53 @@ export function Table<T extends { id: string | number }>({
             }
 
             return (
-            <th
-              key={i}
-              className={`${styles.th} ${isStickyLeft ? styles.stickyLeftTh : ''} ${isStickyRight ? styles.stickyRightTh : ''}`}
-              draggable={Boolean(isMovable)}
-              onDragStart={() => {
-                if (!isMovable) return
-                setDragKey(String(col.key))
-              }}
-              onDragOver={(e) => {
-                if (!isMovable) return
-                e.preventDefault()
-              }}
-              onDrop={() => {
-                if (!isMovable) return
-                if (!dragKey) return
-                const dropKey = String(col.key)
-                if (dropKey === dragKey) return
-                setMovableKeys(prev => {
-                  if (!prev.includes(dragKey) || !prev.includes(dropKey)) return prev
-                  const next = prev.filter(k => k !== dragKey)
-                  const dropIndex = next.indexOf(dropKey)
-                  next.splice(dropIndex, 0, dragKey)
-                  return next
-                })
-                setDragKey(null)
-              }}
-              style={{
-                width: col.width,
-                minWidth: col.width,
-                textAlign: col.align || (col.key === 'actions' ? 'right' : 'left'),
-                paddingRight: col.key === 'actions' ? '32px' : '16px',
-                right: isStickyRight ? `${rightOffset}px` : undefined,
-                left: isStickyLeft ? 0 : undefined
-              }}
-            >
-              {col.key === 'checkbox' ? (
-                <div style={{ paddingLeft: '8px' }}>
-                  <Checkbox 
-                    checked={headerChecked}
-                    onChange={handleSelectAll}
-                  />
-                </div>
-              ) : col.header}
-            </th>
-          )})}
+              <th
+                key={i}
+                className={`${styles.th} ${isStickyLeft ? styles.stickyLeftTh : ''} ${isStickyRight ? styles.stickyRightTh : ''}`}
+                draggable={Boolean(isMovable)}
+                onDragStart={() => {
+                  if (!isMovable) return
+                  setDragKey(String(col.key))
+                }}
+                onDragOver={(e) => {
+                  if (!isMovable) return
+                  e.preventDefault()
+                }}
+                onDrop={() => {
+                  if (!isMovable) return
+                  if (!dragKey) return
+                  const dropKey = String(col.key)
+                  if (dropKey === dragKey) return
+                  setMovableKeys(prev => {
+                    if (!prev.includes(dragKey) || !prev.includes(dropKey)) return prev
+                    const next = prev.filter(k => k !== dragKey)
+                    const dropIndex = next.indexOf(dropKey)
+                    next.splice(dropIndex, 0, dragKey)
+                    return next
+                  })
+                  setDragKey(null)
+                }}
+                style={{
+                  width: col.width,
+                  minWidth: col.width,
+                  maxWidth: col.width,
+                  textAlign: col.align || (col.key === 'actions' ? 'right' : 'left'),
+                  paddingRight: col.key === 'actions' ? '32px' : '16px',
+                  right: isStickyRight ? `${rightOffset}px` : undefined,
+                  left: isStickyLeft ? 0 : undefined
+                }}
+              >
+                {col.key === 'checkbox' ? (
+                  <div style={{ paddingLeft: '8px' }}>
+                    <Checkbox
+                      checked={headerChecked}
+                      onChange={handleSelectAll}
+                    />
+                  </div>
+                ) : col.header}
+              </th>
+            )
+          })}
         </tr>
       </thead>
       <tbody>
@@ -201,50 +203,58 @@ export function Table<T extends { id: string | number }>({
               }
 
               return (
-              <td
-                key={j}
-                className={`${styles.td} ${isStickyLeft ? styles.stickyLeftTd : ''} ${isStickyRight ? styles.stickyRightTd : ''}`}
-                style={{ 
-                  textAlign: col.align || (col.key === 'actions' ? 'right' : 'left'),
-                  width: col.width,
-                  minWidth: col.width,
-                  right: isStickyRight ? `${rightOffset}px` : undefined,
-                  left: isStickyLeft ? 0 : undefined
-                }}
-              >
-                {col.key === 'checkbox' && (
-                  <div style={{ paddingLeft: '8px' }}>
-                    <Checkbox 
-                      checked={selectedIds.has(item.id)}
-                      onChange={() => handleSelectItem(item.id)}
-                    />
-                  </div>
-                )}
-                {col.key === 'actions' && (
-                  <div className={styles.actions}>
-                    {onEdit && (
-                      <button className={styles.actionButton} onClick={() => onEdit(item)}>
-                        <Pencil size={18} />
-                      </button>
-                    )}
-                    {onDelete && (
-                      <button className={`${styles.actionButton} ${styles.deleteAction}`} onClick={() => onDelete(item)}>
-                        <Trash2 size={18} />
-                      </button>
-                    )}
-                  </div>
-                )}
-                {col.key !== 'checkbox' && col.key !== 'actions' && (
-                  col.render ? (
-                    col.render(item[col.key as keyof T], item)
-                  ) : (
-                    <div>
-                      {item[col.key as keyof T] as any}
+                <td
+                  key={j}
+                  className={`${styles.td} ${isStickyLeft ? styles.stickyLeftTd : ''} ${isStickyRight ? styles.stickyRightTd : ''}`}
+                  style={{
+                    textAlign: col.align || (col.key === 'actions' ? 'right' : 'left'),
+                    width: col.width,
+                    minWidth: col.width,
+                    maxWidth: col.width,
+                    right: isStickyRight ? `${rightOffset}px` : undefined,
+                    left: isStickyLeft ? 0 : undefined
+                  }}
+                >
+                  {col.key === 'checkbox' && (
+                    <div style={{ paddingLeft: '8px' }}>
+                      <Checkbox
+                        checked={selectedIds.has(item.id)}
+                        onChange={() => handleSelectItem(item.id)}
+                      />
                     </div>
-                  )
-                )}
-              </td>
-            )})}
+                  )}
+                  {col.key === 'actions' && (
+                    <div className={styles.actions}>
+                      {col.render ? (
+                        col.render(item[col.key as keyof T], item)
+                      ) : (
+                        <>
+                          {onEdit && (
+                            <button className={styles.actionButton} onClick={() => onEdit(item)}>
+                              <Pencil size={18} />
+                            </button>
+                          )}
+                          {onDelete && (
+                            <button className={`${styles.actionButton} ${styles.deleteAction}`} onClick={() => onDelete(item)}>
+                              <Trash2 size={18} />
+                            </button>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
+                  {col.key !== 'checkbox' && col.key !== 'actions' && (
+                    col.render ? (
+                      col.render(item[col.key as keyof T], item)
+                    ) : (
+                      <div>
+                        {item[col.key as keyof T] as any}
+                      </div>
+                    )
+                  )}
+                </td>
+              )
+            })}
           </tr>
         ))}
       </tbody>

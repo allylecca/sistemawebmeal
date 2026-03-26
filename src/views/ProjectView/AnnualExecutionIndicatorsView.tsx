@@ -20,8 +20,8 @@ export function AnnualExecutionIndicatorsView() {
 
   const columns: Column<AnnualExecutionIndicator>[] = [
     { key: 'checkbox', header: '' },
-    { 
-      key: 'tipo', 
+    {
+      key: 'tipo',
       header: 'Tipo',
       render: (val) => {
         let variant: BadgeVariant = 'indicador'
@@ -34,8 +34,8 @@ export function AnnualExecutionIndicatorsView() {
     { key: 'nombre', header: 'Nombre' },
     { key: 'unidad', header: 'Unidad' },
     { key: 'tipoValor', header: 'Tipo de Valor' },
-    { 
-      key: 'id', 
+    {
+      key: 'id',
       header: 'Permisos',
       render: () => (
         <button className={styles.formulaButton}>
@@ -57,16 +57,16 @@ export function AnnualExecutionIndicatorsView() {
         </div>
       </header>
 
-      <Toolbar 
-        onNew={() => {}} 
-        onExport={() => {}} 
+      <Toolbar
+        onNew={() => { }}
+        onExport={() => { }}
         onRefresh={() => setTypeFilter('')}
-        onFilterToggle={() => {}}
-        onColumnToggle={() => {}}
+        onFilterToggle={() => { }}
+        onColumnToggle={() => { }}
       >
         <div style={{ flex: 1 }}>
-          <FilterSelect 
-            label="Tipo de Indicador" 
+          <FilterSelect
+            label="Tipo de Indicador"
             options={Array.from(new Set(annualExecutionIndicatorsData.map(i => i.tipo)))}
             value={typeFilter}
             onChange={setTypeFilter}
@@ -75,11 +75,11 @@ export function AnnualExecutionIndicatorsView() {
       </Toolbar>
 
       <div className={styles.tableContainer}>
-        <Table 
-          columns={columns} 
-          data={filteredData} 
-          onEdit={() => {}} 
-          onDelete={() => {}} 
+        <Table
+          columns={columns}
+          data={filteredData}
+          onEdit={() => { }}
+          onDelete={() => { }}
         />
       </div>
 

@@ -83,8 +83,8 @@ export function InstitutionalIndicatorsView() {
 
   // Cross-filtering logic for GAP and Strategic Line
   const availableLines = useMemo(() => {
-    if (!formData.gap) return strategicLinesData.map(l => `${l.codigo} ${l.nombre}`)
-    return strategicLinesData.filter(l => l.gap === formData.gap).map(l => `${l.codigo} ${l.nombre}`)
+    if (!formData.gap) return strategicLinesData.map(l => `${l.codigo} - ${l.nombre}`)
+    return strategicLinesData.filter(l => l.gap === formData.gap).map(l => `${l.codigo} - ${l.nombre}`)
   }, [formData.gap])
 
   const handleLineChange = (lineValue: string) => {

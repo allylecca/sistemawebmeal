@@ -9,6 +9,14 @@ import type {
   Financiador,
   SubprojectCode,
   //FIN DE MARCO PROGRAMÁTICO
+  //INICIO DE PLANIFICACIÓN ANUAL
+  Gerentes,
+  ResponsablesMeal,
+  Implementadores,
+  Unidad,
+  TipodeValor,
+  IndicadoresAnuales,
+  //FIN DE PLANIFICACIÓN ANUAL
   SubprojectPop,
   AnnualPlanningItem,
   LogicalFrameTreeItem,
@@ -495,6 +503,92 @@ export const subprojectCodesData: SubprojectCode[] = [
 
 //FIN DE MARCO PROGRAMÁTICO
 
+//INICIO DE PLANIFICACIÓN ANUAL
+
+export const gerentesData: Gerentes[] = [
+  { id: 1, nombre: 'Sebastian Sánchez' },
+  { id: 2, nombre: 'Alfonso Cabrera' },
+  { id: 3, nombre: 'Josefa Campos' },
+  { id: 4, nombre: 'Juan Antonio Navarro' },
+  { id: 5, nombre: 'Nicolás Mora' },
+  { id: 6, nombre: 'Susana Sáez' },
+  { id: 7, nombre: 'Luis Guerrero' },
+  { id: 8, nombre: 'Natalia Rojas' },
+  { id: 9, nombre: 'María Teresa Cruz' },
+  { id: 10, nombre: 'Rafael Román' },
+];
+
+export const responsablesMealData: ResponsablesMeal[] = [
+  { id: 1, nombre: 'Angelina Muñoz' },
+  { id: 2, nombre: 'Thiago Nicolas Benítez' },
+  { id: 3, nombre: 'Thiago Valentin Gutiérrez' },
+  { id: 4, nombre: 'Juan Martin Pérez' },
+  { id: 5, nombre: 'Constantino Cruz' },
+  { id: 6, nombre: 'Francisco Juárez' },
+  { id: 7, nombre: 'Bautista Benjamin Ávila' },
+  { id: 8, nombre: 'Thiago Valentin Santillán' },
+  { id: 9, nombre: 'Milagros Cortez' },
+  { id: 10, nombre: 'Bastian Gómez' },
+]
+
+export const implementadoresData: Implementadores[] = [
+  { id: 1, nombre: 'AEA COLOMBIA' },
+  { id: 2, nombre: 'AEA COSTA RICA' },
+  { id: 3, nombre: 'AEA ECUADOR' },
+  { id: 4, nombre: 'AEA ESPAÑA' },
+  { id: 5, nombre: 'AEA NICARAGUA' },
+  { id: 6, nombre: 'AEA PERÚ' },
+  { id: 7, nombre: 'AEA ÁFRICA' },
+  { id: 8, nombre: 'BANCO CO-DESARROLLO' },
+  { id: 9, nombre: 'CEFODI' },
+  { id: 10, nombre: 'ESPOCH' },
+  { id: 11, nombre: 'ESQUEL' },
+  { id: 12, nombre: 'FEPP-CH' },
+  { id: 13, nombre: 'FEPP-PU' },
+  { id: 14, nombre: 'FUNDACIÓN ENTRE MUJERES (FEM)' },
+  { id: 15, nombre: 'FUNDACIÓN WWB' },
+  { id: 16, nombre: 'FUNPADEM' },
+  { id: 17, nombre: 'GADM GUANO' },
+  { id: 18, nombre: 'GADM NABON' },
+  { id: 19, nombre: 'GADM PUCARA' },
+  { id: 20, nombre: 'GADM SANTA ISABEL' },
+  { id: 21, nombre: 'GADM SELENA' },
+  { id: 22, nombre: 'GLASSWING' },
+  { id: 23, nombre: 'MSP' },
+  { id: 24, nombre: 'PERSPEKTIVA' },
+  { id: 25, nombre: 'POBLACIÓN BENEFICIARIA' },
+  { id: 26, nombre: 'SOPPEXCCA' },
+  { id: 27, nombre: 'SUMAK' },
+  { id: 28, nombre: 'UCA MIRAFLOR' },
+  { id: 29, nombre: 'UCA SAN JUAN RÍO COCO' },
+];
+
+export const unidadesData: Unidad[] = [
+  { id: 1, nombre: 'Personas' },
+  { id: 2, nombre: 'Asociaciones' },
+  { id: 3, nombre: 'Beneficiarios' },
+  { id: 4, nombre: 'Casas' },
+  { id: 5, nombre: 'Microempresas' },
+];
+
+export const tiposDeValorData: TipodeValor[] = [
+  { id: 1, nombre: 'Numérico' },
+  { id: 2, nombre: 'Porcentaje' },
+  { id: 3, nombre: 'Monto' },
+  { id: 4, nombre: 'Decimal' },
+];
+
+
+
+export const indicadoresAnualesData: IndicadoresAnuales[] = [
+  { id: 1, tipo: institutionalIndicatorsData[0].tipo, indicador: `${institutionalIndicatorsData[0].codigo} - ${institutionalIndicatorsData[0].nombre}`, unidad: unidadesData[0].nombre, tipoValor: tiposDeValorData[0].nombre, y2026: '2 300', y2027: '0 000', y2028: '0 000', y2029: '0 000' },
+  { id: 2, tipo: institutionalIndicatorsData[1].tipo, indicador: `${institutionalIndicatorsData[1].codigo} - ${institutionalIndicatorsData[1].nombre}`, unidad: unidadesData[0].nombre, tipoValor: tiposDeValorData[0].nombre, y2026: '2 500', y2027: '0 000', y2028: '0 000', y2029: '0 000' },
+  { id: 3, tipo: institutionalIndicatorsData[2].tipo, indicador: `${institutionalIndicatorsData[2].codigo} - ${institutionalIndicatorsData[2].nombre}`, unidad: unidadesData[1].nombre, tipoValor: tiposDeValorData[0].nombre, y2026: '2 400', y2027: '0 000', y2028: '0 000', y2029: '0 000' },
+  { id: 4, tipo: institutionalIndicatorsData[17].tipo, indicador: `${institutionalIndicatorsData[17].codigo} - ${institutionalIndicatorsData[17].nombre}`, unidad: unidadesData[3].nombre, tipoValor: tiposDeValorData[0].nombre, y2026: '2 200', y2027: '0 000', y2028: '0 000', y2029: '0 000' },
+  { id: 5, tipo: institutionalIndicatorsData[11].tipo, indicador: `${institutionalIndicatorsData[11].codigo} - ${institutionalIndicatorsData[11].nombre}`, unidad: unidadesData[2].nombre, tipoValor: tiposDeValorData[0].nombre, y2026: '1 800', y2027: '0 000', y2028: '0 000', y2029: '0 000' }
+];
+
+//FIN DE PLANIFICACIÓN ANUAL
 export const subprojectsPopData: SubprojectPop[] = [
   {
     id: 1,

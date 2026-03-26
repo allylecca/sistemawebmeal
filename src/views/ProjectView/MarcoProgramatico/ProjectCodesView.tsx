@@ -65,8 +65,8 @@ export function ProjectCodesView() {
   }, [formData.linea, formData.programa, editingCode, projectCodes])
 
   const availableLines = useMemo(() => {
-    if (!formData.gap) return strategicLinesData.map(l => `${l.codigo} ${l.nombre}`)
-    return strategicLinesData.filter(l => l.gap === formData.gap).map(l => `${l.codigo} ${l.nombre}`)
+    if (!formData.gap) return strategicLinesData.map(l => `${l.codigo} - ${l.nombre}`)
+    return strategicLinesData.filter(l => l.gap === formData.gap).map(l => `${l.codigo} - ${l.nombre}`)
   }, [formData.gap])
 
   const handleProgramChange = (programName: string) => {
