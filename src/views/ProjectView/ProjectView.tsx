@@ -9,10 +9,9 @@ import { ProgramsView } from './MarcoProgramatico/ProgramsView'
 import { ProjectCodesView } from './MarcoProgramatico/ProjectCodesView'
 import { SubprojectCodesView } from './MarcoProgramatico/SubprojectCodesView'
 import { DashboardView } from './DashboardView'
-import { SubprojectsPopView } from './SubprojectsPopView'
 import { AnnualPlanningView } from './PlanificacionAnual/AnnualPlanningView'
-import { LogicalFrameView } from './LogicalFrameView'
-import { AnnualExecutionIndicatorsView } from './AnnualExecutionIndicatorsView'
+import { LogicalFrameView } from './EjecucionAnual/LogicalFrameView'
+import { AnnualExecutionIndicatorsView } from './EjecucionAnual/AnnualExecutionIndicatorsView'
 
 export function ProjectView() {
   const [activeSubItem, setActiveSubItem] = useState<string>('gaps')
@@ -33,8 +32,6 @@ export function ProjectView() {
         return <ProjectCodesView />
       case 'codigos-subproy':
         return <SubprojectCodesView />
-      case 'subproyectos':
-        return <SubprojectsPopView />
       case 'planificacion':
         return <AnnualPlanningView />
       case 'marco-logico':
