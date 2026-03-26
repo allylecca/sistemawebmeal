@@ -1,5 +1,5 @@
 import type { BadgeVariant } from '../components/Badge/Badge'
-import type { StatusIndicatorType } from '../components/StatusIndicator/StatusIndicator'
+
 
 export interface Gap {
   id: number
@@ -17,20 +17,21 @@ export interface StrategicLine {
 export interface LocationNode {
   id: string
   label: string
-  type: 'Region' | 'País' | 'Departamento'
+  type: 'Region' | 'País' | 'Departamento' | 'Provincia'
   children?: LocationNode[]
 }
 
 export interface InstitutionalIndicator {
   id: number
   codigo: string
-  tipo: string
+  tipo: 'Indicador de Línea Estratégica' | 'Indicador de Resultado' | 'Indicador de Producto'
   nombre: string
-  var1: string
-  var2: string
-  var3: string
+  vares: string
+  varen: string
+  varfra: string
   gap: string
   lineaEstrategica?: string
+  categoria: 'Protección' | 'Igualdad' | 'Comunidades' | 'Alimentación' | 'Agua' | 'Energía' | 'Educación' | 'Cadena' | 'Humanitaria' | 'Riesgo'
 }
 
 export interface Program {
@@ -53,6 +54,14 @@ export interface ProjectCode {
   tipologia: string
   programa: string
   linea: string
+  gap: string
+}
+
+export interface Financiador {
+  id: number
+  codigo: string
+  nombre: string
+  moneda: 'EUR (€)' | 'USD ($)' | 'PEN (S/)'
 }
 
 export interface SubprojectCode {
@@ -61,6 +70,9 @@ export interface SubprojectCode {
   financiador: string
   nombre: string
   proyecto: string
+  gap: string
+  linea: string
+  programa: string
 }
 
 export interface SubprojectPop {
@@ -82,11 +94,12 @@ export interface SubprojectPop {
 
 export interface AnnualPlanningItem {
   id: number
-  ubicacion: string
-  linea: string
+  codigo: string
+  financiador: string
+  nombre: string
+  responsable: string
+  estado: 'Aprobado' | 'Desaprobado' | 'Pendiente' | 'Borrador'
   proyecto: string
-  estado: StatusIndicatorType
-  meta: string
 }
 
 export interface LogicalFrameTreeItem {

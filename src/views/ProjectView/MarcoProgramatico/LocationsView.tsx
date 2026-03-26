@@ -1,14 +1,13 @@
 import { useState, useMemo } from 'react'
 import { ChevronRight } from 'lucide-react'
-import { Badge } from '../../components/Badge/Badge'
-import { Toolbar } from '../../components/Toolbar/Toolbar'
-import { FilterSelect } from '../../components/FilterSelect/FilterSelect'
-import { Checkbox } from '../../components/Checkbox/Checkbox' 
-import { locationsData } from '../../data/mockData'
-import type { LocationNode } from '../../data/types'
-import { PageHeader } from '../../components/PageTitle/PageTitle'
-import { Button } from '../../components/Button/Button'
-import { AlertModal } from '../../components/AlertDialog/AlertModal'
+import { Toolbar } from '../../../components/Toolbar/Toolbar'
+import { FilterSelect } from '../../../components/FilterSelect/FilterSelect'
+import { Checkbox } from '../../../components/Checkbox/Checkbox'
+import { locationsData } from '../../../data/mockData'
+import type { LocationNode } from '../../../data/types'
+import { PageHeader } from '../../../components/PageTitle/PageTitle'
+import { Button } from '../../../components/Button/Button'
+import { AlertModal } from '../../../components/AlertDialog/AlertModal'
 import styles from './LocationsView.module.css'
 
 export function LocationsView() {
@@ -16,12 +15,12 @@ export function LocationsView() {
   const [regionFilter, setRegionFilter] = useState('')
   const [countryFilter, setCountryFilter] = useState('')
   const [selectedNodes, setSelectedNodes] = useState<string[]>([])
-  
+
   // Estado para controlar el modal de éxito
   const [showConfirmSave, setShowConfirmSave] = useState(false)
 
   const toggleNode = (id: string) => {
-    setExpandedNodes(prev => 
+    setExpandedNodes(prev =>
       prev.includes(id) ? prev.filter(nodeId => nodeId !== id) : [...prev, id]
     )
   }
@@ -38,9 +37,9 @@ export function LocationsView() {
 
   const handleCheckboxChange = (node: LocationNode, isChecked: boolean, e?: React.MouseEvent | React.ChangeEvent) => {
     if (e && e.stopPropagation) {
-      e.stopPropagation() 
+      e.stopPropagation()
     }
-    
+
     const nodeAndChildrenIds = getAllIds(node)
 
     setSelectedNodes(prev => {
@@ -63,10 +62,10 @@ export function LocationsView() {
     setCountryFilter('')
   }
 
-  const uniqueRegions = useMemo(() => 
-    Array.from(new Set(locationsData.filter(n => n.type === 'Region').map(n => n.label))), 
-  [])
-  
+  const uniqueRegions = useMemo(() =>
+    Array.from(new Set(locationsData.filter(n => n.type === 'Region').map(n => n.label))),
+    [])
+
   const uniqueCountries = useMemo(() => {
     const countries: string[] = []
     locationsData.forEach(region => {
@@ -90,45 +89,53 @@ export function LocationsView() {
     const isExpanded = expandedNodes.includes(node.id)
     const isSelected = selectedNodes.includes(node.id)
     const hasChildren = node.children && node.children.length > 0
-    
-    const badgeVariant = 
-      node.type === 'Region' ? 'region' : 
-      node.type === 'País' ? 'country' : 
-      'dept'
 
-    const badgeLabel = 
-      node.type === 'Region' ? 'Región' : 
-      node.type === 'País' ? 'País' : 
-      'Departamento'
+    const badgeLabel = node.type === 'Region' ? 'Región' : node.type
+
+    // Estilos del badge ajustados al contenido
+    const badgeStyle = {
+      padding: '4px 12px',
+      borderRadius: '12px',
+      fontSize: '11px',
+      fontWeight: 600,
+      display: 'inline-block',
+      width: 'max-content',
+      color: '#382E2C',
+      backgroundColor:
+        node.type === 'Region' ? '#F87C561F' :
+          node.type === 'País' ? '#FFC6581F' :
+            node.type === 'Provincia' ? '#71B7901F' :
+              '#FEAD771F' // Departamento
+    }
 
     return (
       <div key={node.id} className={styles.nodeGroup}>
-        <div 
-          className={styles.node} 
+        <div
+          className={styles.node}
           style={{ paddingLeft: `${level * 32 + 24}px` }}
           onClick={() => hasChildren && toggleNode(node.id)}
         >
           <div className={styles.nodeLeft}>
             <div className={styles.chevronContainer}>
               {hasChildren && (
-                <ChevronRight 
-                  size={16} 
+                <ChevronRight
+                  size={16}
                   className={`${styles.chevron} ${isExpanded ? styles.chevronOpen : ''}`}
                 />
               )}
             </div>
-            
+
             <div onClick={(e) => e.stopPropagation()} style={{ marginRight: '8px', display: 'flex' }}>
-              <Checkbox 
+              <Checkbox
                 checked={isSelected}
                 onChange={(e: any) => handleCheckboxChange(node, !isSelected, e)}
               />
             </div>
-            
-            <Badge variant={badgeVariant} className={styles.nodeBadge}>
+
+            <span style={badgeStyle}>
               {badgeLabel}
-            </Badge>
-            
+            </span>
+
             <span className={styles.label}>{node.label}</span>
           </div>
         </div>
@@ -151,24 +158,24 @@ export function LocationsView() {
       </header>
 
       {/* Toolbar Superior: Filtros */}
-      <Toolbar 
-        onExport={() => {}} 
+      <Toolbar
+        onExport={() => { }}
         onRefresh={() => {
           setRegionFilter('')
           setCountryFilter('')
         }}
-        onColumnToggle={() => {}}
+        onColumnToggle={() => { }}
       >
         <div style={{ display: 'flex', gap: '16px', flex: 1 }}>
-          <FilterSelect 
-            label="Región" 
+          <FilterSelect
+            label="Región"
             options={uniqueRegions}
             value={regionFilter}
             onChange={setRegionFilter}
             width="100%"
           />
-          <FilterSelect 
-            label="País" 
+          <FilterSelect
+            label="País"
             options={uniqueCountries}
             value={countryFilter}
             onChange={setCountryFilter}

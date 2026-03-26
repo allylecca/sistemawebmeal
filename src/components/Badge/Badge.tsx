@@ -3,6 +3,7 @@ import styles from './Badge.module.css'
 export type BadgeVariant = 
   | 'region' 
   | 'country' 
+  | 'province'
   | 'dept' 
   | 'line' 
   | 'result' 

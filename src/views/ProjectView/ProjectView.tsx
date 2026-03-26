@@ -1,15 +1,14 @@
 import { useState } from 'react'
 import { MainLayout } from '../../components/Layout/MainLayout'
 import { Sidebar } from '../../components/Sidebar/Sidebar'
-import { GapsView } from './GapsView'
+import { GapsView } from './MarcoProgramatico/GapsView'
+import { StrategicLinesView } from './MarcoProgramatico/StrategicLinesView'
+import { LocationsView } from './MarcoProgramatico/LocationsView'
+import { InstitutionalIndicatorsView } from './MarcoProgramatico/InstitutionalIndicatorsView'
+import { ProgramsView } from './MarcoProgramatico/ProgramsView'
+import { ProjectCodesView } from './MarcoProgramatico/ProjectCodesView'
+import { SubprojectCodesView } from './MarcoProgramatico/SubprojectCodesView'
 import { DashboardView } from './DashboardView'
-import { StrategicLinesView } from './StrategicLinesView'
-import { LocationsView } from './LocationsView'
-import { InstitutionalIndicatorsView } from './InstitutionalIndicatorsView'
-import { ProgramsView } from './ProgramsView'
-import { ProjectNamesView } from './ProjectNamesView'
-import { ProjectCodesView } from './ProjectCodesView'
-import { SubprojectCodesView } from './SubprojectCodesView'
 import { SubprojectsPopView } from './SubprojectsPopView'
 import { AnnualPlanningView } from './AnnualPlanningView'
 import { LogicalFrameView } from './LogicalFrameView'
@@ -30,8 +29,6 @@ export function ProjectView() {
         return <InstitutionalIndicatorsView />
       case 'programas':
         return <ProgramsView />
-      case 'nombres-proy':
-        return <ProjectNamesView />
       case 'codigos-proy':
         return <ProjectCodesView />
       case 'codigos-subproy':
@@ -56,11 +53,11 @@ export function ProjectView() {
   }
 
   return (
-    <MainLayout 
+    <MainLayout
       sidebar={
-        <Sidebar 
-          activeSubItem={activeSubItem} 
-          onNavigate={setActiveSubItem} 
+        <Sidebar
+          activeSubItem={activeSubItem}
+          onNavigate={setActiveSubItem}
         />
       }
     >

@@ -11,7 +11,7 @@ import { AlertModal } from '../../components/AlertDialog/AlertModal'
 import { Button } from '../../components/Button/Button'
 import { subprojectsPopData, subprojectCodesData, projectCodesData, locationsData } from '../../data/mockData'
 import type { SubprojectPop, LocationNode } from '../../data/types'
-import styles from './GapsView.module.css'
+import styles from './MarcoProgramatico/GapsView.module.css'
 
 export function SubprojectsPopView() {
   const [programFilter, setProgramFilter] = useState('')

@@ -41,7 +41,7 @@ const menuItems: MenuItem[] = [
     subItems: [
       { id: 'gaps', label: 'GAPS' },
       { id: 'lineas', label: 'Líneas Estratégicas' },
-      { id: 'indicadores-inst', label: 'Indicadores Institucionales' },
+      { id: 'indicadores-inst', label: 'Nombres de Indicadores Institucionales' },
       { id: 'ubicaciones', label: 'Ubicaciones' },
       { id: 'programas', label: 'Programas' },
       { id: 'codigos-proy', label: 'Códigos de Proyectos' },
@@ -96,14 +96,14 @@ export function Sidebar({ onNavigate, activeSubItem }: SidebarProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const toggleFullscreen = () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
-    setIsFullscreen(true);
-  } else {
-    document.exitFullscreen();
-    setIsFullscreen(false);
-  }
-};
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    }
+  };
 
   return (
     <aside className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ''}`}>
@@ -129,7 +129,7 @@ export function Sidebar({ onNavigate, activeSubItem }: SidebarProps) {
         <nav className={styles.navSection}>
           {menuItems.map((item) => {
             const isItemActive = item.id === activeSubItem;
-            
+
             return (
               <div key={item.id}>
                 <button

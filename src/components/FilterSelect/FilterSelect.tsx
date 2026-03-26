@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { ChevronDown, Check } from 'lucide-react'
 import styles from './FilterSelect.module.css'
 
@@ -16,6 +16,21 @@ interface FilterSelectProps {
 export function FilterSelect({ label, placeholder, width, className, options = [], onChange, value, isMulti = false }: FilterSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [internalSelected, setInternalSelected] = useState<any>(isMulti ? [] : '')
+  const [searchTerm, setSearchTerm] = useState('')
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+        setSearchTerm('')
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
 
   const selected = value !== undefined ? value : internalSelected
 
@@ -30,6 +45,7 @@ export function FilterSelect({ label, placeholder, width, className, options = [
   }
 
   const handleSelect = (option: string) => {
+    setSearchTerm('')
     if (isMulti) {
       const current = (selected as string[]) || []
       const isSelected = current.includes(option)
@@ -56,10 +72,14 @@ export function FilterSelect({ label, placeholder, width, className, options = [
     }
   }
 
+  const filteredOptions = options.filter(option => 
+    option.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
   const hasSelection = isMulti ? ((selected as string[])?.length > 0) : Boolean(selected)
 
   return (
-    <div className={`${styles.root} ${className || ''}`} style={{ width }}>
+    <div className={`${styles.root} ${className || ''}`} style={{ width }} ref={containerRef}>
       {(hasSelection || isOpen) && (
         <div className={`${styles.label} ${isOpen ? styles.labelActive : ''}`}>
           {label}
@@ -67,17 +87,40 @@ export function FilterSelect({ label, placeholder, width, className, options = [
       )}
       <div 
         className={`${styles.container} ${isOpen ? styles.containerActive : ''}`} 
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen(true)}
       >
-        <span className={`${styles.value} ${hasSelection ? styles.valueSelected : ''}`}>
-          {displayValue()}
-        </span>
-        <ChevronDown size={18} className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`} />
+        {isOpen ? (
+          <input
+            type="text"
+            className={`${styles.value} ${hasSelection && !searchTerm ? styles.valueSelected : ''}`}
+            style={{ border: 'none', outline: 'none', background: 'transparent', padding: 0, margin: 0 }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={displayValue() as string}
+            autoFocus
+          />
+        ) : (
+          <span className={`${styles.value} ${hasSelection ? styles.valueSelected : ''}`}>
+            {displayValue()}
+          </span>
+        )}
+        <ChevronDown 
+          size={18} 
+          className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`} 
+          onClick={(e) => { 
+            e.stopPropagation()
+            if (isOpen) setSearchTerm('')
+            setIsOpen(!isOpen) 
+          }} 
+        />
       </div>
 
       {isOpen && options.length > 0 && (
-        <div className={styles.dropdown}>
-          {options.map((option) => {
+        <div className={styles.dropdown} style={{ maxHeight: '250px', overflowY: 'auto' }}>
+          {filteredOptions.length === 0 ? (
+            <div className={styles.option} style={{ color: '#999', cursor: 'default' }}>Sin resultados</div>
+          ) : (
+            filteredOptions.map((option) => {
             const isSelected = isMulti 
               ? ((selected as string[]) || []).includes(option)
               : selected === option;
@@ -105,7 +148,7 @@ export function FilterSelect({ label, placeholder, width, className, options = [
                 {!isMulti && isSelected && <Check size={16} className={styles.checkIcon} />}
               </div>
             )
-          })}
+          }))}
         </div>
       )}
     </div>

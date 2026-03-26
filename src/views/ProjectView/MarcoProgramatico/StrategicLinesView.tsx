@@ -1,14 +1,15 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Toolbar } from '../../components/Toolbar/Toolbar'
-import { Table } from '../../components/Table/Table'
-import type { Column } from '../../components/Table/Table'
-import { FilterSelect } from '../../components/FilterSelect/FilterSelect'
-import { Pagination } from '../../components/Pagination/Pagination'
-import { Input } from '../../components/Input/Input'
-import { Modal } from '../../components/Modal/Modal'
-import { AlertModal } from '../../components/AlertDialog/AlertModal'
-import { strategicLinesData, gapsData } from '../../data/mockData'
-import type { StrategicLine } from '../../data/types'
+import { Toolbar } from '../../../components/Toolbar/Toolbar'
+import { Table } from '../../../components/Table/Table'
+import type { Column } from '../../../components/Table/Table'
+import { FilterSelect } from '../../../components/FilterSelect/FilterSelect'
+import { Pagination } from '../../../components/Pagination/Pagination'
+import { Input } from '../../../components/Input/Input'
+import { Modal } from '../../../components/Modal/Modal'
+import { AlertModal } from '../../../components/AlertDialog/AlertModal'
+import { strategicLinesData, gapsData } from '../../../data/mockData'
+import type { StrategicLine } from '../../../data/types'
+import { PageHeader } from '../../../components/PageTitle/PageTitle'
 import styles from './GapsView.module.css'
 
 export function StrategicLinesView() {
@@ -101,21 +102,19 @@ export function StrategicLinesView() {
 
   const columns: Column<StrategicLine>[] = [
     { key: 'checkbox', header: '' },
+    { key: 'gap', header: 'GAP' },
     { key: 'codigo', header: 'Código', width: '120px' },
     { key: 'nombre', header: 'Nombre' },
-    { key: 'gap', header: 'GAP' },
     { key: 'actions', header: 'Acciones' },
   ]
 
   return (
     <div className={styles.root}>
-      <header style={{ padding: '24px 32px 0' }}>
-        <div style={{ borderLeft: '2px solid #ff7c56', paddingLeft: '16px' }}>
-          <h1 style={{ fontSize: '20px', fontWeight: 600, margin: 0 }}>Líneas Estratégicas</h1>
-          <p style={{ fontSize: '12px', color: '#a0a0a0', margin: '4px 0 0 0' }}>
-            Gestión de Líneas Estratégicas del Marco Programático
-          </p>
-        </div>
+      <header style={{ padding: '16px 16px 0' }}>
+        <PageHeader
+          title="Líneas Estratégicas"
+          subtitle="Gestión de Líneas Estratégicas del Marco Programático"
+        />
       </header>
 
       <Toolbar

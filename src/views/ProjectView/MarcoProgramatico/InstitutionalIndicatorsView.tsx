@@ -1,30 +1,59 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Toolbar } from '../../components/Toolbar/Toolbar'
-import { Table } from '../../components/Table/Table'
-import type { Column } from '../../components/Table/Table'
-import { FilterSelect } from '../../components/FilterSelect/FilterSelect'
-import { Pagination } from '../../components/Pagination/Pagination'
-import { Badge } from '../../components/Badge/Badge'
-import { Input } from '../../components/Input/Input'
-import { Modal } from '../../components/Modal/Modal'
-import { AlertModal } from '../../components/AlertDialog/AlertModal'
-import { institutionalIndicatorsData, gapsData, strategicLinesData } from '../../data/mockData'
-import type { InstitutionalIndicator } from '../../data/types'
-import styles from './GapsView.module.css'
+import { Toolbar } from '../../../components/Toolbar/Toolbar'
+import { Table } from '../../../components/Table/Table'
+import type { Column } from '../../../components/Table/Table'
+import { FilterSelect } from '../../../components/FilterSelect/FilterSelect'
+import { Pagination } from '../../../components/Pagination/Pagination'
+import { Badge } from '../../../components/Badge/Badge'
+import { Input } from '../../../components/Input/Input'
+import { Modal } from '../../../components/Modal/Modal'
+import { AlertModal } from '../../../components/AlertDialog/AlertModal'
+import { institutionalIndicatorsData, gapsData, strategicLinesData } from '../../../data/mockData'
+import type { InstitutionalIndicator } from '../../../data/types'
+import { PageHeader } from '../../../components/PageTitle/PageTitle'
+import styles from './InstitutionalIndicatorsView.module.css'
 
 export function InstitutionalIndicatorsView() {
   const [gapFilter, setGapFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
-  const [indicators, setIndicators] = useState<InstitutionalIndicator[]>(institutionalIndicatorsData)
+  const resolveStrategicLineGap = (gapRef: string) => {
+    if (typeof gapRef === 'string' && gapRef.startsWith('strategicLinesData[')) {
+      const match = gapRef.match(/\[(\d+)\]/);
+      if (match) {
+        const idx = parseInt(match[1]);
+        return strategicLinesData[idx]?.gap || gapRef;
+      }
+    }
+    return gapRef;
+  }
+
+  const resolveStrategicLineNombre = (lineRef: string) => {
+    if (typeof lineRef === 'string' && lineRef.startsWith('strategicLinesData[')) {
+      const match = lineRef.match(/\[(\d+)\]/);
+      if (match) {
+        const idx = parseInt(match[1]);
+        return strategicLinesData[idx]?.nombre || lineRef;
+      }
+    }
+    return lineRef;
+  }
+
+  const [indicators, setIndicators] = useState<InstitutionalIndicator[]>(() =>
+    institutionalIndicatorsData.map(ind => ({
+      ...ind,
+      gap: resolveStrategicLineGap(ind.gap),
+      lineaEstrategica: resolveStrategicLineNombre(ind.lineaEstrategica || '')
+    }))
+  )
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingIndicator, setEditingIndicator] = useState<InstitutionalIndicator | null>(null)
   const [formData, setFormData] = useState({
     codigo: '',
     tipo: '',
     nombre: '',
-    var1: '',
-    var2: '',
-    var3: '',
+    vares: '',
+    varen: '',
+    varfra: '',
     gap: '',
     lineaEstrategica: '',
     categoria: ''
@@ -71,22 +100,43 @@ export function InstitutionalIndicatorsView() {
 
   // Auto-generate code
   useEffect(() => {
-    if (formData.categoria && formData.tipo) {
-      const catCode = CATEGORIES[formData.categoria as keyof typeof CATEGORIES]
-      const typeCode = TYPES_MAP[formData.tipo as keyof typeof TYPES_MAP]
+    const { categoria, tipo, codigo: currentCodigo } = formData;
+
+    if (categoria && tipo) {
+      const catCode = CATEGORIES[categoria as keyof typeof CATEGORIES];
+      const typeCode = TYPES_MAP[tipo as keyof typeof TYPES_MAP];
 
       if (catCode && typeCode) {
-        const baseCode = `${catCode}-${typeCode}`
-        setFormData(prev => {
-          // Only update if it's not manually edited beyond the base code
-          if (!prev.codigo.startsWith(baseCode)) {
-            return { ...prev, codigo: baseCode }
+        const prefix = `${catCode}-${typeCode}`;
+
+        // 1. Si estamos editando y NO han cambiado la categoría ni el tipo, mantenemos el código original
+        if (editingIndicator &&
+          editingIndicator.categoria === categoria &&
+          editingIndicator.tipo === tipo) {
+          if (currentCodigo !== editingIndicator.codigo) {
+            setFormData(prev => ({ ...prev, codigo: editingIndicator.codigo }));
           }
-          return prev
-        })
+          return;
+        }
+
+        // 2. Lógica de correlativo:
+        // Filtramos todos los indicadores que coincidan exactamente con la categoría y el tipo seleccionados
+        const matches = indicators.filter(ind =>
+          ind.categoria === categoria && ind.tipo === tipo
+        );
+
+        // 3. Generar número (01, 02, 03...)
+        // Si es un registro nuevo, el número será matches.length + 1
+        const nextNumber = (matches.length + 1).toString().padStart(2, '0');
+        const newCode = `${prefix}-${nextNumber}`;
+
+        // 4. Solo actualizar si el código generado es distinto al actual para evitar loops
+        if (currentCodigo !== newCode) {
+          setFormData(prev => ({ ...prev, codigo: newCode }));
+        }
       }
     }
-  }, [formData.categoria, formData.tipo])
+  }, [formData.categoria, formData.tipo, indicators, editingIndicator]);
 
   const filteredData = useMemo(() => {
     return indicators.filter(item => {
@@ -107,9 +157,9 @@ export function InstitutionalIndicatorsView() {
         formData.nombre === editingIndicator.nombre &&
         formData.gap === editingIndicator.gap &&
         formData.lineaEstrategica === (editingIndicator.lineaEstrategica || '') &&
-        formData.var1 === editingIndicator.var1 &&
-        formData.var2 === editingIndicator.var2 &&
-        formData.var3 === editingIndicator.var3
+        formData.vares === editingIndicator.vares &&
+        formData.varen === editingIndicator.varen &&
+        formData.varfra === editingIndicator.varfra
       )
     }
     return false
@@ -117,7 +167,7 @@ export function InstitutionalIndicatorsView() {
 
   const handleNew = () => {
     setEditingIndicator(null)
-    setFormData({ codigo: '', tipo: '', nombre: '', var1: '', var2: '', var3: '', gap: '', lineaEstrategica: '', categoria: '' })
+    setFormData({ codigo: '', tipo: '', nombre: '', vares: '', varen: '', varfra: '', gap: '', lineaEstrategica: '', categoria: '' })
     setIsModalOpen(true)
   }
 
@@ -128,9 +178,9 @@ export function InstitutionalIndicatorsView() {
       codigo: item.codigo,
       tipo: item.tipo,
       nombre: item.nombre,
-      var1: item.var1,
-      var2: item.var2,
-      var3: item.var3,
+      vares: item.vares,
+      varen: item.varen,
+      varfra: item.varfra,
       gap: item.gap,
       lineaEstrategica: item.lineaEstrategica || '',
       categoria: ''
@@ -139,12 +189,23 @@ export function InstitutionalIndicatorsView() {
   }
 
   const handleSave = () => {
+    // Definimos el tipo para la categoría basándonos en las llaves de CATEGORIES
+    type CategoriaType = keyof typeof CATEGORIES;
+
     if (editingIndicator) {
-      setIndicators(indicators.map(i => i.id === editingIndicator.id ? { ...i, ...formData } : i))
+      setIndicators(indicators.map(i => i.id === editingIndicator.id ? {
+        ...i,
+        ...formData,
+        // Forzamos el tipo de los literales para que TS no se queje
+        tipo: formData.tipo as 'Indicador de Línea Estratégica' | 'Indicador de Resultado' | 'Indicador de Producto',
+        categoria: formData.categoria as CategoriaType
+      } : i))
     } else {
       const newIndicator: InstitutionalIndicator = {
+        ...formData,
         id: Math.max(0, ...indicators.map(i => i.id)) + 1,
-        ...formData
+        tipo: formData.tipo as 'Indicador de Línea Estratégica' | 'Indicador de Resultado' | 'Indicador de Producto',
+        categoria: formData.categoria as CategoriaType
       }
       setIndicators([...indicators, newIndicator])
     }
@@ -167,22 +228,31 @@ export function InstitutionalIndicatorsView() {
 
   const columns: Column<InstitutionalIndicator>[] = [
     { key: 'checkbox', header: '' },
+    { key: 'gap', header: 'GAP' },
+    { key: 'lineaEstrategica', header: 'Línea estratégica' },
     { key: 'codigo', header: 'Código' },
     {
       key: 'tipo',
       header: 'Tipo',
-      render: (val) => (
-        <Badge variant={val === 'Indicador de Línea Estratégica' ? 'line' : val === 'Indicador de Resultado' ? 'result' : 'product'}>
-          {val}
-        </Badge>
-      )
+      render: (val) => {
+        // Seleccionamos la clase específica
+        const specificClass =
+          val === 'Indicador de Línea Estratégica' ? styles.badgeLinea :
+            val === 'Indicador de Resultado' ? styles.badgeResul :
+              styles.badgeProdu;
+
+        // Combinamos la clase base (.badge) con la específica usando template strings
+        return (
+          <span className={`${styles.badge} ${specificClass}`}>
+            {val}
+          </span>
+        )
+      }
     },
     { key: 'nombre', header: 'Nombre' },
-    { key: 'var1', header: 'Variante Español' },
-    { key: 'var2', header: 'Variante Inglés' },
-    { key: 'var3', header: 'Variante Francés' },
-    { key: 'lineaEstrategica', header: 'Línea estratégica' },
-    { key: 'gap', header: 'GAP' },
+    { key: 'vares', header: 'Variante Español' },
+    { key: 'varen', header: 'Variante Inglés' },
+    { key: 'varfra', header: 'Variante Francés' },
     { key: 'actions', header: 'Acciones' },
   ]
 
@@ -190,13 +260,11 @@ export function InstitutionalIndicatorsView() {
 
   return (
     <div className={styles.root}>
-      <header style={{ padding: '24px 32px 0' }}>
-        <div style={{ borderLeft: '2px solid #ff7c56', paddingLeft: '16px' }}>
-          <h1 style={{ fontSize: '20px', fontWeight: 600, margin: 0 }}>Indicadores Institucionales</h1>
-          <p style={{ fontSize: '12px', color: '#a0a0a0', margin: '4px 0 0 0' }}>
-            Gestión de Indicadores del Marco Programático
-          </p>
-        </div>
+      <header style={{ padding: '16px 16px 0' }}>
+        <PageHeader
+          title="Nombres de Indicadores Institucionales"
+          subtitle="Gestión de Nombres de Indicadores Institucionales del Marco Programático"
+        />
       </header>
 
       <Toolbar
@@ -291,9 +359,9 @@ export function InstitutionalIndicatorsView() {
             <div style={{ flex: 1, minHeight: 0 }}>
               <Input
                 label="Variante Español"
-                value={formData.var1}
+                value={formData.vares}
                 onChange={(val) => {
-                  setFormData({ ...formData, var1: val })
+                  setFormData({ ...formData, vares: val })
                 }}
                 multiline
                 grow
@@ -302,8 +370,8 @@ export function InstitutionalIndicatorsView() {
             <div style={{ flex: 1, minHeight: 0 }}>
               <Input
                 label="Variante Inglés"
-                value={formData.var2}
-                onChange={(val) => setFormData({ ...formData, var2: val })}
+                value={formData.varen}
+                onChange={(val) => setFormData({ ...formData, varen: val })}
                 multiline
                 grow
               />
@@ -311,8 +379,8 @@ export function InstitutionalIndicatorsView() {
             <div style={{ flex: 1, minHeight: 0 }}>
               <Input
                 label="Variante Francés"
-                value={formData.var3}
-                onChange={(val) => setFormData({ ...formData, var3: val })}
+                value={formData.varfra}
+                onChange={(val) => setFormData({ ...formData, varfra: val })}
                 multiline
                 grow
               />

@@ -1,15 +1,15 @@
 import { useState, useMemo } from 'react'
-import { Toolbar } from '../../components/Toolbar/Toolbar'
-import { Table } from '../../components/Table/Table'
-import type { Column } from '../../components/Table/Table'
-import { FilterSelect } from '../../components/FilterSelect/FilterSelect'
-import { Pagination } from '../../components/Pagination/Pagination'
-import { Input } from '../../components/Input/Input'
-import { Modal } from '../../components/Modal/Modal'
-import { AlertModal } from '../../components/AlertDialog/AlertModal'
-import { gapsData } from '../../data/mockData'
-import type { Gap } from '../../data/types'
-import { PageHeader } from '../../components/PageTitle/PageTitle'
+import { Toolbar } from '../../../components/Toolbar/Toolbar'
+import { Table } from '../../../components/Table/Table'
+import type { Column } from '../../../components/Table/Table'
+import { FilterSelect } from '../../../components/FilterSelect/FilterSelect'
+import { Pagination } from '../../../components/Pagination/Pagination'
+import { Input } from '../../../components/Input/Input'
+import { Modal } from '../../../components/Modal/Modal'
+import { AlertModal } from '../../../components/AlertDialog/AlertModal'
+import { gapsData } from '../../../data/mockData'
+import type { Gap } from '../../../data/types'
+import { PageHeader } from '../../../components/PageTitle/PageTitle'
 import styles from './GapsView.module.css'
 
 export function GapsView() {
@@ -18,7 +18,7 @@ export function GapsView() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingGap, setEditingGap] = useState<Gap | null>(null)
   const [formData, setFormData] = useState({ codigo: '', nombre: '' })
-  
+
   const [showConfirmSave, setShowConfirmSave] = useState(false)
   const [showDeleteAlert, setShowDeleteAlert] = useState(false)
   const [gapToDelete, setGapToDelete] = useState<Gap | null>(null)
@@ -93,16 +93,16 @@ export function GapsView() {
         />
       </header>
 
-      <Toolbar 
-        onNew={handleNew} 
-        onExport={() => {}} 
-        onRefresh={() => setFilter('')} 
-        onFilterToggle={() => {}}
-        onColumnToggle={() => {}}
+      <Toolbar
+        onNew={handleNew}
+        onExport={() => { }}
+        onRefresh={() => setFilter('')}
+        onFilterToggle={() => { }}
+        onColumnToggle={() => { }}
       >
         <div style={{ flex: 1 }}>
-          <FilterSelect 
-            label="Nombre de GAP" 
+          <FilterSelect
+            label="Nombre de GAP"
             options={gapsData.map(g => g.nombre)}
             value={filter}
             onChange={setFilter}
@@ -111,11 +111,11 @@ export function GapsView() {
       </Toolbar>
 
       <div className={styles.tableContainer}>
-        <Table 
-          columns={columns} 
-          data={filteredData} 
-          onEdit={handleEdit} 
-          onDelete={handleDelete} 
+        <Table
+          columns={columns}
+          data={filteredData}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </div>
 
@@ -130,12 +130,12 @@ export function GapsView() {
         isSaveDisabled={isSaveDisabled}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <Input 
+          <Input
             label="Código"
             value={formData.codigo}
             onChange={(val) => setFormData({ ...formData, codigo: val })}
           />
-          <Input 
+          <Input
             label="Nombre"
             value={formData.nombre}
             onChange={(val) => setFormData({ ...formData, nombre: val })}

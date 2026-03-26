@@ -1,37 +1,45 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Toolbar } from '../../components/Toolbar/Toolbar'
-import { Table } from '../../components/Table/Table'
-import type { Column } from '../../components/Table/Table'
-import { FilterSelect } from '../../components/FilterSelect/FilterSelect'
-import { Pagination } from '../../components/Pagination/Pagination'
-import { Input } from '../../components/Input/Input'
-import { Modal } from '../../components/Modal/Modal'
-import { AlertModal } from '../../components/AlertDialog/AlertModal'
-import { programsData } from '../../data/mockData'
-import type { Program } from '../../data/types'
+import { Toolbar } from '../../../components/Toolbar/Toolbar'
+import { Table } from '../../../components/Table/Table'
+import type { Column } from '../../../components/Table/Table'
+import { FilterSelect } from '../../../components/FilterSelect/FilterSelect'
+import { Pagination } from '../../../components/Pagination/Pagination'
+import { Input } from '../../../components/Input/Input'
+import { Modal } from '../../../components/Modal/Modal'
+import { AlertModal } from '../../../components/AlertDialog/AlertModal'
+import { programsData, locationsData } from '../../../data/mockData'
+import type { Program } from '../../../data/types'
+import { PageHeader } from '../../../components/PageTitle/PageTitle'
+
 import styles from './GapsView.module.css'
 
-const REGIONS_MAP: Record<string, string> = {
-  'Etiopía': 'Africa',
-  'Malí': 'Africa',
-  'Mozambique': 'Africa',
-  'Níger': 'Africa',
-  'Costa Rica': 'Centroamerica',
-  'El Salvador': 'Centroamerica',
-  'Guatemala': 'Centroamerica',
-  'Honduras': 'Centroamerica',
-  'México': 'Centroamerica',
-  'Nicaragua': 'Centroamerica',
-  'España': 'Europa',
-  'Portugal': 'Europa',
-  'Bolivia': 'Sudamerica',
-  'Colombia': 'Sudamerica',
-  'Ecuador': 'Sudamerica',
-  'Perú': 'Sudamerica'
+const allRegions = locationsData.filter(node => node.type === 'Region').map(node => node.label)
+
+const getCountriesForRegions = (regions: string[]) => {
+  if (regions.length === 0) {
+    return locationsData.reduce<string[]>((acc, region) => {
+      const countries = region.children?.filter(c => c.type === 'País').map(c => c.label) || []
+      return [...acc, ...countries]
+    }, [])
+  }
+  return locationsData
+    .filter(region => regions.includes(region.label))
+    .reduce<string[]>((acc, region) => {
+      const countries = region.children?.filter(c => c.type === 'País').map(c => c.label) || []
+      return [...acc, ...countries]
+    }, [])
 }
 
-const allCountries = Object.keys(REGIONS_MAP)
-const uniqueRegions = Array.from(new Set(Object.values(REGIONS_MAP)))
+const getRegionsForCountries = (countries: string[]) => {
+  const regionsSet = new Set<string>()
+  countries.forEach(country => {
+    const region = locationsData.find(r => r.children?.some(c => c.label === country))
+    if (region) regionsSet.add(region.label)
+  })
+  return Array.from(regionsSet)
+}
+
+const allCountries = getCountriesForRegions([])
 
 export function ProgramsView() {
   const [countryFilter, setCountryFilter] = useState('')
@@ -39,25 +47,27 @@ export function ProgramsView() {
   const [programs, setPrograms] = useState<Program[]>(programsData)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingProgram, setEditingProgram] = useState<Program | null>(null)
-  
+
   // pais ahora es un array de strings para soportar selección múltiple
-  const [formData, setFormData] = useState<{ nombre: string; pais: string[]; region: string }>({ nombre: '', pais: [], region: '' })
-  
+  const [formData, setFormData] = useState<{ nombre: string; pais: string[]; region: string[] }>({ nombre: '', pais: [], region: [] })
+
   const [showConfirmSave, setShowConfirmSave] = useState(false)
   const [showDeleteAlert, setShowDeleteAlert] = useState(false)
   const [programToDelete, setProgramToDelete] = useState<Program | null>(null)
 
   useEffect(() => {
-    if (formData.pais.length === 0) {
-      setFormData(prev => ({ ...prev, region: '' }))
-      return
-    }
+    // No side effects needed
+  }, [formData.pais, formData.region])
 
-    const regions = formData.pais.map(country => REGIONS_MAP[country] || '')
-    const uniqueSelectedRegions = Array.from(new Set(regions.filter(Boolean)))
-    
-    setFormData(prev => ({ ...prev, region: uniqueSelectedRegions.join(', ') }))
-  }, [formData.pais])
+  const handlePaisChange = (selectedCountries: string[] | string) => {
+    const countriesArray = Array.isArray(selectedCountries) ? selectedCountries : [selectedCountries]
+    const impliedRegions = getRegionsForCountries(countriesArray)
+    setFormData(prev => ({
+      ...prev,
+      pais: countriesArray,
+      region: impliedRegions
+    }))
+  }
 
   const filteredData = useMemo(() => {
     return programs.filter(item => {
@@ -68,16 +78,18 @@ export function ProgramsView() {
   }, [countryFilter, regionFilter, programs])
 
   const isSaveDisabled = useMemo(() => {
-    const isFilled = formData.nombre.trim() !== '' && formData.pais.length > 0 && formData.region.trim() !== ''
+    const isFilled = formData.nombre.trim() !== '' && formData.pais.length > 0 && formData.region.length > 0
     if (!isFilled) return true
 
     if (editingProgram) {
       const editingPaisArray = editingProgram.pais ? editingProgram.pais.split(', ').map(p => p.trim()) : []
+      const editingRegionArray = editingProgram.region ? editingProgram.region.split(', ').map(r => r.trim()) : []
       const samePais = formData.pais.length === editingPaisArray.length && formData.pais.every(p => editingPaisArray.includes(p))
+      const sameRegion = formData.region.length === editingRegionArray.length && formData.region.every(r => editingRegionArray.includes(r))
       return (
         formData.nombre === editingProgram.nombre &&
         samePais &&
-        formData.region === editingProgram.region
+        sameRegion
       )
     }
     return false
@@ -85,16 +97,16 @@ export function ProgramsView() {
 
   const handleNew = () => {
     setEditingProgram(null)
-    setFormData({ nombre: '', pais: [], region: '' })
+    setFormData({ nombre: '', pais: [], region: [] })
     setIsModalOpen(true)
   }
 
   const handleEdit = (item: Program) => {
     setEditingProgram(item)
-    setFormData({ 
-      nombre: item.nombre, 
-      pais: item.pais ? item.pais.split(', ').map(p => p.trim()) : [], 
-      region: item.region 
+    setFormData({
+      nombre: item.nombre,
+      pais: item.pais ? item.pais.split(', ').map(p => p.trim()) : [],
+      region: item.region ? item.region.split(', ').map(r => r.trim()) : []
     })
     setIsModalOpen(true)
   }
@@ -102,7 +114,8 @@ export function ProgramsView() {
   const handleSave = () => {
     const programDataToSave = {
       ...formData,
-      pais: formData.pais.join(', ')
+      pais: formData.pais.join(', '),
+      region: formData.region.join(', ')
     }
 
     if (editingProgram) {
@@ -133,9 +146,9 @@ export function ProgramsView() {
 
   const columns: Column<Program>[] = [
     { key: 'checkbox', header: '' },
-    { key: 'nombre', header: 'Nombre' },
-    { key: 'pais', header: 'País' },
     { key: 'region', header: 'Región' },
+    { key: 'pais', header: 'País' },
+    { key: 'nombre', header: 'Nombre' },
     { key: 'actions', header: 'Acciones' },
   ]
 
@@ -144,38 +157,41 @@ export function ProgramsView() {
     return Array.from(new Set([...allCountries, ...fromPrograms]))
   }, [])
 
+  const uniqueRegions = useMemo(() => {
+    const fromPrograms = programsData.flatMap(p => p.region ? p.region.split(', ').map(s => s.trim()) : [])
+    return Array.from(new Set([...allRegions, ...fromPrograms]))
+  }, [])
+
   return (
     <div className={styles.root}>
-      <header style={{ padding: '24px 32px 0' }}>
-        <div style={{ borderLeft: '2px solid #ff7c56', paddingLeft: '16px' }}>
-          <h1 style={{ fontSize: '20px', fontWeight: 600, margin: 0 }}>Programas</h1>
-          <p style={{ fontSize: '12px', color: '#a0a0a0', margin: '4px 0 0 0' }}>
-            Gestión de Programas Institucionales
-          </p>
-        </div>
+      <header style={{ padding: '16px 16px 0' }}>
+        <PageHeader
+          title="Programas"
+          subtitle="Gestión de Programas del Marco Programático"
+        />
       </header>
 
-      <Toolbar 
-        onNew={handleNew} 
-        onExport={() => {}} 
+      <Toolbar
+        onNew={handleNew}
+        onExport={() => { }}
         onRefresh={() => {
           setCountryFilter('')
           setRegionFilter('')
-        }} 
-        onFilterToggle={() => {}}
-        onColumnToggle={() => {}}
+        }}
+        onFilterToggle={() => { }}
+        onColumnToggle={() => { }}
       >
         <div style={{ flex: 1 }}>
-          <FilterSelect 
-            label="País" 
+          <FilterSelect
+            label="País"
             options={uniqueCountries}
             value={countryFilter}
             onChange={setCountryFilter}
           />
         </div>
         <div style={{ flex: 1 }}>
-          <FilterSelect 
-            label="Región" 
+          <FilterSelect
+            label="Región"
             options={uniqueRegions}
             value={regionFilter}
             onChange={setRegionFilter}
@@ -184,11 +200,11 @@ export function ProgramsView() {
       </Toolbar>
 
       <div className={styles.tableContainer}>
-        <Table 
-          columns={columns} 
-          data={filteredData} 
-          onEdit={handleEdit} 
-          onDelete={handleDelete} 
+        <Table
+          columns={columns}
+          data={filteredData}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </div>
 
@@ -203,22 +219,22 @@ export function ProgramsView() {
         isSaveDisabled={isSaveDisabled}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <Input 
+          <Input
             label="Nombre"
             value={formData.nombre}
             onChange={(val) => setFormData({ ...formData, nombre: val })}
           />
-          <FilterSelect 
+          <FilterSelect
             label="País"
             options={uniqueCountries}
             value={formData.pais}
-            onChange={(val) => setFormData({ ...formData, pais: val })}
+            onChange={handlePaisChange}
             isMulti
           />
-          <Input 
+          <Input
             label="Región"
-            value={formData.region}
-            onChange={(val) => setFormData({ ...formData, region: val })}
+            value={formData.region.join(', ')}
+            onChange={() => { }}
             disabled
           />
         </div>

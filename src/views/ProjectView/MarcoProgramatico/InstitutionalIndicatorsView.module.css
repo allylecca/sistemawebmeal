@@ -139,18 +139,18 @@
 }
 
 .badgeLinea {
-  background-color: #ffe8e0;
-  color: #ff7c56;
+  background-color: #F87C561F;
+  color: #382e2c;
 }
 
 .badgeResul {
-  background-color: #e8f5e9;
-  color: #4caf50;
+  background-color: #FFC6581F;
+  color: #382e2c;
 }
 
 .badgeProdu {
-  background-color: #e0f2f1;
-  color: #009688;
+  background-color: #FEAD771F;
+  color: #382e2c;
 }
 
 .actions {
@@ -169,8 +169,13 @@
   justify-content: center;
 }
 
-.editAction { color: #a0a0a0; }
-.deleteAction { color: #ff7c56; }
+.editAction {
+  color: #a0a0a0;
+}
+
+.deleteAction {
+  color: #ff7c56;
+}
 
 .footer {
   padding: 16px 32px;
