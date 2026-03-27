@@ -1,6 +1,6 @@
 import type { BadgeVariant } from '../components/Badge/Badge'
 
-
+//INICIO DE MARCO PROGRAMATICO
 export interface Gap {
   id: number
   codigo: string
@@ -41,12 +41,6 @@ export interface Program {
   region: string
 }
 
-export interface ProjectName {
-  id: number
-  codigo: string
-  nombre: string
-}
-
 export interface ProjectCode {
   id: number
   codigo: string
@@ -75,6 +69,9 @@ export interface SubprojectCode {
   programa: string
 }
 
+//FIN DE MARCO PROGRAMATICO
+
+//INICIO DE PLANIFICACION ANUAL
 export interface Gerentes {
   id: number
   nombre: string
@@ -98,53 +95,6 @@ export interface Unidad {
 export interface TipodeValor {
   id: number
   nombre: string
-}
-
-export interface SubprojectPop {
-  id: number
-  codigo: string
-  financiador: string
-  nombre: string
-  gerenteSubproyecto: string
-  responsableMeal: string
-  programa: string
-  fechaInicio: string
-  fechaFin: string
-  implementadores: string[]
-  financiadoresSecundarios: string[]
-  ubicaciones: { pais: string; departamento: string }[]
-  proyectoId?: number
-  subprojectCodeId?: number
-}
-
-export interface AnnualPlanningItem {
-  id: number
-  codigo: string
-  financiador: string
-  nombre: string
-  responsable: string
-  estado: 'Aprobado' | 'Desaprobado' | 'Pendiente' | 'Borrador'
-  proyecto: string
-}
-
-export interface LogicalFrameTreeItem {
-  id: string
-  tipo: string
-  badgeVariant: BadgeVariant
-  codigo?: string
-  nombre: string
-  level: number
-  isGroup?: boolean
-  children?: LogicalFrameTreeItem[]
-}
-
-export interface AnnualExecutionIndicator {
-  id: number
-  tipo: string
-  codigo: string
-  nombre: string
-  unidad: string
-  tipoValor: string
 }
 
 export interface IndicadoresAnuales {
@@ -174,3 +124,96 @@ export interface PlanAnual {
   ubicaciones: { region: string; pais: string; departamento: string; provincia: string }[]
   estado: 'Aprobado' | 'Desaprobado' | 'Pendiente' | 'Borrador'
 }
+
+//FIN DE PLANIFICACION ANUAL
+
+//INICIO DE EJECUCION ANUAL
+export interface ObjetivoGeneral {
+  id: number;
+  codigo: string;
+  nombre: string;
+}
+
+export interface ObjetivoEspecifico {
+  id: number;
+  codigo: string;
+  nombre: string;
+  objetivoGeneral: string;
+}
+
+export interface Resultado {
+  id: number
+  codigo: string;
+  nombre: string;
+  objetivoEspecifico: string;
+  objetivoGeneral: string;
+}
+
+export interface Actividad {
+  id: number;
+  tipo: 'Actividad de Marco Lógico' | 'Actividad de Gasto' | 'Actividad Complementaria o de Soporte';
+  codigoActividad: string;
+  codigoPresupuesto: string;
+  nombre: string;
+  unidad?: string;
+  tipoValor?: string;
+  // Jerarquía
+  //subproyecto
+  objetivoGeneral?: string; // Solo si es ML, Complementaria o Soporte
+  objetivoEspecifico?: string;
+  resultado?: string;
+}
+
+export interface Subactividad {
+  id: number;
+  tipo: 'Subactividad de Gasto' | 'Subactividad de Gasto sin Resultado' | 'Subactividad de Marco Lógico' | 'Subactividad Complementaria o de Soporte';
+  codigoSubactividad: string;
+  codigoSubactividadPresupuesto: string;
+  nombre: string;
+  unidad: string;
+  tipoValor: string;
+  // Jerarquía
+  //subproyecto
+  actividad: string;
+  objetivoGeneral?: string; // No aplica en 'Gasto sin Resultado'
+  objetivoEspecifico?: string;
+  resultado?: string;
+}
+
+export interface LogicalFrameTreeItem {
+  id: string
+  tipo: string
+  badgeVariant: BadgeVariant
+  codigo?: string
+  nombre: string
+  level?: number
+  isGroup?: boolean
+  children?: LogicalFrameTreeItem[]
+}
+
+export interface Indicador {
+  id: number;
+  tipo: 'Indicador de Subproyecto' | 'Indicador de Objetivo General' | 'Indicador de Objetivo Específico' | 'Indicador de Resultado';
+  codigo: string;
+  nombre: string;
+  unidad: string; // Traído de unidadesData
+  tipoValor: string; // Traído de tiposDeValorData
+  // --- Jerarquía ---
+  // Se maneja como opcional dependiendo del nivel del indicador
+  programa?: string;
+  proyecto?: string;
+  subproyecto?: string; // Relaciona a todos los niveles
+  objetivoGeneral?: string; // Solo para Obj. General, Obj. Específico y Resultado
+  objetivoEspecifico?: string; // Solo para Obj. Específico y Resultado
+  resultado?: string; // Solo para Resultado
+  formula?: string; // Fórmula personalizada
+}
+
+//FIN DE EJECUCION ANUAL
+
+
+
+
+
+
+

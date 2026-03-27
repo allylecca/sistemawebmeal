@@ -5,35 +5,234 @@
   background-color: #ffffff;
 }
 
+.filtersGroup {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex: 1;
+  width: 100%;
+}
+
+.filterItem {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filterButton {
+  height: 40px;
+  padding: 0 24px;
+  background-color: #ff7c56;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px; /* Align with FilterSelect inputs */
+}
+
+.filterButton:hover:not(:disabled) {
+  background-color: #fa6a3e;
+  box-shadow: 0 4px 12px rgba(255, 124, 86, 0.2);
+}
+
+.filterButton:disabled {
+  background-color: #f0f0f0;
+  color: #a0a0a0;
+  cursor: not-allowed;
+}
+
 .tableContainer {
   flex: 1;
   padding: 0;
-  overflow-x: auto;
-  overflow-y: auto;
+  overflow: auto;
+  position: relative;
+  background-color: #ffffff;
+}
+
+.indicadoresTable {
+  min-width: 100%;
+}
+
+.formulaAction {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid #f0f0f0;
+  background: white;
+  color: #ff7c56;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin: 0 auto;
+}
+
+.formulaAction:hover {
+  background-color: #fff5f2;
+  border-color: #ff7c56;
+  transform: translateY(-1px);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.emptyStateText {
+  color: #a0a0a0;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Modal Styles */
+.modalTwoColumns {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  padding: 8px 0;
+}
+
+.modalColumn {
+  flex: 0 0 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.columnHeader {
+  font-size: 16px;
+  font-weight: 600;
+  color: #382e2c;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 8px;
+}
+
+.modalFields {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Formula Modal */
+.formulaModalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.formulaHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.orangeBar {
+  width: 3px;
+  height: 20px;
+  background-color: #ff7c56;
+  border-radius: 2px;
+}
+
+.formulaTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #382e2c;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.indicatorSelectorTop {
+  width: 100%;
+}
+
+.formulaEditorBox {
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  padding: 16px;
+  min-height: 120px;
+  background-color: #fafafa;
   position: relative;
 }
 
-.formulaButton {
+.formulaEditable {
+  width: 100%;
+  min-height: 80px;
+  outline: none;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #382e2c;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.formulaTokenBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  margin: 0 4px;
+  background-color: #fff5f2; /* Peach BG */
+  border-radius: 4px;
+  color: #ff7c56; /* Orange text */
+  font-weight: bold;
+  font-size: 14px;
+  user-select: none;
+  vertical-align: baseline;
+  cursor: grab;
+}
+
+.formulaTokenBadge:active {
+  cursor: grabbing;
+}
+
+.tokenRemove {
+  background: none;
+  border: none;
+  color: #ff7c56;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 12px;
-  border-radius: 20px;
-  border: 1px solid #f0f0f0;
-  background: white;
-  color: #382e2c;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
+  justify-content: center;
+  margin-top: -2px;
+  opacity: 0.7;
 }
 
-.formulaButton:hover {
-  background-color: #fafafa;
-  border-color: #ff7c5666;
+.tokenRemove:hover {
+  opacity: 1;
 }
 
-.formulaIcon {
-  color: #ff7c56;
-  font-size: 14px;
+.formulaTextInput {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  min-width: 1ch;
+  padding: 0;
+}
+
+.formulaHint {
+  font-size: 12px;
+  color: #a0a0a0;
+  margin: 0;
+}
+
+.textTokenWrapper {
+  display: flex;
+  align-items: center;
 }

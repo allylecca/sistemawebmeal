@@ -10,15 +10,16 @@ interface InputProps {
   disabled?: boolean
   multiline?: boolean
   grow?: boolean
+  width?: string | number
 }
 
-export function Input({ label, value, onChange, type = 'text', className, disabled, multiline, grow }: InputProps) {
+export function Input({ label, value, onChange, type = 'text', className, disabled, multiline, grow, width }: InputProps) {
   const [isFocused, setIsFocused] = useState(false)
 
   const isFloating = isFocused || value.length > 0
 
   return (
-    <div className={`${styles.root} ${grow ? styles.grow : ''} ${className || ''}`} data-disabled={disabled}>
+    <div className={`${styles.root} ${grow ? styles.grow : ''} ${className || ''}`} style={{ width }} data-disabled={disabled}>
       <label 
         className={`
           ${styles.label} 
