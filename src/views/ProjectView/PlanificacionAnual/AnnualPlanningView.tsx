@@ -16,14 +16,13 @@ import type { PlanAnual, IndicadoresAnuales } from '../../../data/types'
 import { PageHeader } from '../../../components/PageTitle/PageTitle'
 import styles from './AnnualPlanningView.module.css'
 
-const ActionMenu = ({ item, status, canSend, onEdit, onDelete, onSend, onView }: { 
+const ActionMenu = ({ item, status, canSend, onEdit, onDelete, onSend }: { 
   item: any, 
   status: string, 
   canSend?: boolean,
   onEdit: (i: any) => void, 
   onDelete: (i: any) => void,
-  onSend: (i: any) => void,
-  onView: (i: any) => void
+  onSend: (i: any) => void
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [position, setPosition] = useState({ top: 0, right: 0 })
@@ -132,7 +131,6 @@ const ActionMenu = ({ item, status, canSend, onEdit, onDelete, onSend, onView }:
               <div style={sepStyle} />
               <MenuItem icon={FileText} label="Documentos" />
               <div style={sepStyle} />
-              <MenuItem icon={Eye} label="Ver detalle" onClick={() => onView(item)} />
               <MenuItem icon={Pencil} label="Editar" onClick={() => onEdit(item)} />
               <MenuItem icon={Trash2} label="Eliminar" danger onClick={() => onDelete(item)} />
             </>
@@ -142,21 +140,17 @@ const ActionMenu = ({ item, status, canSend, onEdit, onDelete, onSend, onView }:
             <>
               <MenuItem icon={ChartBarBig} label="Ver dashboard" />
               <MenuItem icon={FileText} label="Documentos" />
-              <div style={sepStyle} />
-              <MenuItem icon={Eye} label="Ver detalle" onClick={() => onView(item)} />
             </>
           )}
 
           {status === 'Pendiente' && (
             <>
               <MenuItem icon={FileText} label="Documentos" />
-              <div style={sepStyle} />
-              <MenuItem icon={Eye} label="Ver detalle" onClick={() => onView(item)} />
             </>
           )}
 
           {status === 'Desaprobado' && (
-            <MenuItem icon={Eye} label="Ver detalle" onClick={() => onView(item)} />
+            <MenuItem icon={FileText} label="Documentos" />
           )}
         </div>,
         document.body
@@ -755,31 +749,51 @@ export function AnnualPlanningView() {
       sticky: 'right',
       width: '80px',
       render: (_: any, item: PlanAnual) => (
-        <ActionMenu 
-          item={item} 
-          status={item.estado} 
-          canSend={isFormComplete(
-            { 
-              ...formData, 
-              ...item, 
-              lineaEstrategica: item.linea, 
-              financiador: item.financiadorprincipal, 
-              gerenteSubproyecto: item.gerente, 
-              responsableMeal: item.responsable, 
-              inicioMes: parseDate(item.fechainicio).mes, 
-              inicioAno: parseDate(item.fechainicio).ano, 
-              finMes: parseDate(item.fechafin).mes, 
-              finAno: parseDate(item.fechafin).ano,
-              codigo: item.codigosubproyecto,
-              ubicaciones: item.ubicaciones.map((u, idx) => ({ ...u, id: idx, distrito: '' }))
-            } as any,
-            indicadoresAnualesData 
-          )}
-          onEdit={handleEditList} 
-          onDelete={handleDeleteList}
-          onSend={handleSendList}
-          onView={handleViewList}
-        />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end' }}>
+          <button 
+            onClick={(e) => { e.stopPropagation(); handleViewList(item) }}
+            style={{ 
+              background: 'none', 
+              border: 'none', 
+              cursor: 'pointer', 
+              color: '#a0a0a0', 
+              padding: '4px', 
+              display: 'flex', 
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '4px'
+            }}
+            title="Ver detalle"
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          >
+            <Eye size={18} />
+          </button>
+          <ActionMenu 
+            item={item} 
+            status={item.estado} 
+            canSend={isFormComplete(
+              { 
+                ...formData, 
+                ...item, 
+                lineaEstrategica: item.linea, 
+                financiador: item.financiadorprincipal, 
+                gerenteSubproyecto: item.gerente, 
+                responsableMeal: item.responsable, 
+                inicioMes: parseDate(item.fechainicio).mes, 
+                inicioAno: parseDate(item.fechainicio).ano, 
+                finMes: parseDate(item.fechafin).mes, 
+                finAno: parseDate(item.fechafin).ano,
+                codigo: item.codigosubproyecto,
+                ubicaciones: item.ubicaciones.map((u, idx) => ({ ...u, id: idx, distrito: '' }))
+              } as any,
+              indicadoresAnualesData 
+            )}
+            onEdit={handleEditList} 
+            onDelete={handleDeleteList}
+            onSend={handleSendList}
+          />
+        </div>
       )
     }
   ]
