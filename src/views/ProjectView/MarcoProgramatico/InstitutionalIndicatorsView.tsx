@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
+import { Languages } from 'lucide-react'
 import { Toolbar } from '../../../components/Toolbar/Toolbar'
 import { Table } from '../../../components/Table/Table'
 import type { Column } from '../../../components/Table/Table'
@@ -47,6 +48,7 @@ export function InstitutionalIndicatorsView() {
     }))
   )
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [showVariants, setShowVariants] = useState(false)
   const [editingIndicator, setEditingIndicator] = useState<InstitutionalIndicator | null>(null)
   const [formData, setFormData] = useState({
     codigo: '',
@@ -168,9 +170,14 @@ export function InstitutionalIndicatorsView() {
     return false
   }, [formData, editingIndicator])
 
+  const filledVariantsCount = useMemo(() => {
+    return (formData.vares ? 1 : 0) + (formData.varen ? 1 : 0) + (formData.varfra ? 1 : 0)
+  }, [formData.vares, formData.varen, formData.varfra])
+
   const handleNew = () => {
     setEditingIndicator(null)
     setFormData({ codigo: '', tipo: '', nombre: '', vares: '', varen: '', varfra: '', gap: '', lineaEstrategica: '', categoria: '', unidad: '', tipoValor: '' })
+    setShowVariants(false)
     setIsModalOpen(true)
   }
 
@@ -190,6 +197,7 @@ export function InstitutionalIndicatorsView() {
       unidad: item.unidad || '',
       tipoValor: item.tipoValor || 'Numérico'
     })
+    setShowVariants(false)
     setIsModalOpen(true)
   }
 
@@ -328,9 +336,9 @@ export function InstitutionalIndicatorsView() {
         subtitle="Ingresa todos los detalles"
         onSave={handleSave}
         isSaveDisabled={isSaveDisabled}
-        width="800px"
+        width="calc(100vw - 200px)"
       >
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '32px', alignItems: 'stretch' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: showVariants ? 'minmax(0, 1fr) minmax(0, 1fr)' : '1fr', gap: '32px', alignItems: 'stretch' }}>
           {/* Columna Izquierda */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: 0, border: '1px solid #eaeaea', borderRadius: '4px', padding: '24px' }}>
             <div style={{ fontSize: '14px', color: '#382e2c', fontWeight: 500, marginBottom: '8px' }}>Información general</div>
@@ -375,14 +383,59 @@ export function InstitutionalIndicatorsView() {
               value={formData.codigo}
               onChange={(val) => setFormData({ ...formData, codigo: val })}
             />
-            <Input
-              label="Nombre"
-              value={formData.nombre}
-              onChange={(val) => setFormData({ ...formData, nombre: val })}
-            />
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', marginTop: '10px' }}>
+              <div style={{ flex: 1 }}>
+                <Input
+                  label="Nombre"
+                  value={formData.nombre}
+                  onChange={(val) => setFormData({ ...formData, nombre: val })}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowVariants(!showVariants)}
+                style={{
+                  height: '40px',
+                  width: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '1px solid #ffc25b',
+                  backgroundColor: showVariants ? '#fff8eb' : 'white',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  color: '#382e2c',
+                  flexShrink: 0
+                }}
+                title="Variantes de idioma"
+              >
+                <Languages size={20} />
+                {filledVariantsCount > 0 && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '-8px',
+                    right: '-8px',
+                    backgroundColor: '#ffc25b',
+                    color: '#382e2c',
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    fontWeight: 600
+                  }}>
+                    {filledVariantsCount}
+                  </div>
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Columna Derecha (Variantes) */}
+          {showVariants && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', minWidth: 0, minHeight: 0, height: '100%', border: '1px solid #eaeaea', borderRadius: '4px', padding: '24px' }}>
             <div style={{ fontSize: '14px', color: '#382e2c', fontWeight: 500, marginBottom: '8px' }}>Variantes de idioma</div>
             <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
@@ -414,7 +467,8 @@ export function InstitutionalIndicatorsView() {
                 grow
               />
             </div>
-          </div>
+            </div>
+          )}
         </div>
       </Modal>
 
