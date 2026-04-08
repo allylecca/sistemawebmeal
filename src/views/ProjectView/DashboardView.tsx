@@ -1,52 +1,80 @@
 import { useState } from 'react'
-import {
-  ChevronDown,
-  Calendar,
-  SlidersHorizontal,
-  RefreshCcw,
-  Download
-} from 'lucide-react'
+import { Toolbar } from '../../components/Toolbar/Toolbar'
+import { FilterSelect } from '../../components/FilterSelect/FilterSelect'
+import { Download } from 'lucide-react'
 import styles from './ProjectView.module.css'
+
+import { GeneralSummaryView } from './GeneralSummaryView/GeneralSummaryView'
+import { ProgrammaticAdvanceView } from './ProgrammaticAdvanceView/ProgrammaticAdvanceView'
+import { BeneficiariesView } from './BeneficiariesView/BeneficiariesView'
+import { BudgetView } from './BudgetView/BudgetView'
+import { PACAdvanceView } from './PACAdvanceView/PACAdvanceView'
 
 type Tab = 'resumen' | 'avance' | 'beneficiarios' | 'presupuesto' | 'pac'
 
 export function DashboardView() {
   const [activeTab, setActiveTab] = useState<Tab>('resumen')
+  
+  // Mock states for filters
+  const [program, setProgram] = useState('')
+  const [project, setProject] = useState('')
+  const [subproject, setSubproject] = useState('')
 
   return (
     <div className={styles.contentWrapper}>
-      <div className={styles.filterBar}>
-        <div className={styles.filterSelect}>
-          Programa <ChevronDown size={14} />
+      <Toolbar
+        onRefresh={() => {
+          setProgram('')
+          setProject('')
+          setSubproject('')
+        }}
+        onExport={() => {}}
+        onFilterToggle={() => {}}
+      >
+        <div className={styles.filtersGroup}>
+          <FilterSelect
+            label="Programa"
+            options={['Programa 1', 'Programa 2']}
+            value={program}
+            onChange={setProgram}
+            width="120px"
+          />
+          <FilterSelect
+            label="Proyecto"
+            options={['Proyecto A', 'Proyecto B']}
+            value={project}
+            onChange={setProject}
+            width="140px"
+          />
+          <FilterSelect
+            label="Subproyecto"
+            options={['Sub 1', 'Sub 2']}
+            value={subproject}
+            onChange={setSubproject}
+            width="160px"
+          />
+          <div className={styles.dateFilter}>
+            <span className={styles.dateLabel}>Desde</span>
+            <input type="date" className={styles.dateInput} />
+          </div>
+          <div className={styles.dateFilter}>
+            <span className={styles.dateLabel}>Hasta</span>
+            <input type="date" className={styles.dateInput} />
+          </div>
         </div>
-        <div className={styles.filterSelect}>
-          Proyecto <ChevronDown size={14} />
-        </div>
-        <div className={styles.filterSelect}>
-          Subproyecto <ChevronDown size={14} />
-        </div>
-        <div className={styles.filterDate}>
-          Fecha Inicio <Calendar size={14} />
-        </div>
-        <div className={styles.filterDate}>
-          Fecha Fin <Calendar size={14} />
-        </div>
-        <button className={styles.primaryButton}>Filtrar</button>
-        <div className={styles.filterActions}>
-          <button className={styles.iconButton}>
-            <SlidersHorizontal size={18} />
-          </button>
-          <button className={styles.iconButton}>
-            <RefreshCcw size={18} />
-          </button>
-        </div>
-      </div>
+      </Toolbar>
 
       <div className={styles.mainScrollableContent}>
         <div className={styles.contentHeader}>
           <div className={styles.titleGroup}>
-            <h1 className={styles.title}>Resumen General</h1>
-            <p className={styles.subtitle}>Última actualización</p>
+            <h1 className={styles.title}>
+              {activeTab === 'resumen' ? 'Resumen General' : 
+               activeTab === 'avance' ? 'Avance Programático' : 
+               activeTab === 'beneficiarios' ? 'Beneficiarios y Atendidos' :
+               activeTab === 'presupuesto' ? 'Presupuesto' :
+               'Avance PAC'}
+            </h1>
+            <p className={styles.subtitle}>Última actualización: 27 de marzo de 2026</p>
           </div>
           <button className={styles.exportButton}>
             <Download size={18} />
@@ -87,7 +115,16 @@ export function DashboardView() {
           </button>
         </div>
 
-        <div className={styles.emptyContent} />
+        <div className={styles.tabContent}>
+          {activeTab === 'resumen' && <GeneralSummaryView />}
+          {activeTab === 'avance' && <ProgrammaticAdvanceView />}
+          {activeTab === 'beneficiarios' && <BeneficiariesView />}
+          {activeTab === 'presupuesto' && <BudgetView />}
+          {activeTab === 'pac' && <PACAdvanceView />}
+          {!['resumen', 'avance', 'beneficiarios', 'presupuesto', 'pac'].includes(activeTab) && (
+            <div className={styles.emptyContent} />
+          )}
+        </div>
       </div>
     </div>
   )

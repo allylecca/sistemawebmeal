@@ -1,0 +1,201 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 0;
+}
+
+.section {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #f3f4f6;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-family: 'Crimson Text', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionTitle::before {
+  content: '';
+  width: 3px;
+  height: 20px;
+  background-color: #f07f59;
+  border-radius: 2px;
+}
+
+/* Indicators Grid */
+.indicatorsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.indicatorCard {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #f3f4f6;
+  display: flex;
+  flex-direction: column;
+}
+
+.indicatorCardTitle {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Hierarchical Table */
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+}
+
+.thead {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.th {
+  text-align: left;
+  padding: 12px 16px;
+  color: #6b7280;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.tr {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.2s;
+}
+
+.tr:hover {
+  background: #fdf2ed;
+}
+
+.td {
+  padding: 12px 16px;
+  vertical-align: middle;
+}
+
+.levelCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.expandButton {
+  background: none;
+  border: none;
+  color: #f07f59;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  min-width: 40px;
+  text-align: center;
+}
+
+.badgeOG { background-color: #f07f59; }
+.badgeOE { background-color: #fec354; }
+.badgeR { background-color: #0d9488; }
+.badgeACT { background-color: #0f766e; }
+.badgeSUBACT { background-color: #f97316; }
+.badgeIND { background-color: #94a3b8; }
+
+.advanceBadge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.advance80 { background-color: #fdf2ed; color: #fec354; }
+.advance86 { background-color: #ecfdf5; color: #10b981; }
+.advance77 { background-color: #fdf2ed; color: #f07f59; }
+
+.legendBar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.maximizeButton {
+  background: #f3f4f6;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 1200px) {
+  .indicatorsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .indicatorsGrid {
+    grid-template-columns: 1fr;
+  }
+}

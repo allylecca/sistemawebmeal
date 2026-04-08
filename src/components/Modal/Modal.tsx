@@ -14,6 +14,7 @@ interface ModalProps {
   cancelLabel?: string
   isSaveDisabled?: boolean
   width?: string
+  showFooter?: boolean
 }
 
 export function Modal({
@@ -26,7 +27,8 @@ export function Modal({
   saveLabel = 'Guardar',
   cancelLabel = 'Cancelar',
   isSaveDisabled = false,
-  width
+  width,
+  showFooter = true
 }: ModalProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
@@ -99,18 +101,20 @@ export function Modal({
           {children}
         </div>
 
-        <div className={styles.footer}>
-          <button className={styles.cancelButton} onClick={onClose}>
-            {cancelLabel}
-          </button>
-          <button 
-            className={styles.saveButton} 
-            onClick={onSave}
-            disabled={isSaveDisabled}
-          >
-            {saveLabel}
-          </button>
-        </div>
+        {showFooter && (
+          <div className={styles.footer}>
+            <button className={styles.cancelButton} onClick={onClose}>
+              {cancelLabel}
+            </button>
+            <button 
+              className={styles.saveButton} 
+              onClick={onSave}
+              disabled={isSaveDisabled}
+            >
+              {saveLabel}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

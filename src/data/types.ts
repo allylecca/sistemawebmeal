@@ -32,6 +32,8 @@ export interface InstitutionalIndicator {
   gap: string
   lineaEstrategica?: string
   categoria: 'Protección' | 'Igualdad' | 'Comunidades' | 'Alimentación' | 'Agua' | 'Energía' | 'Educación' | 'Cadena' | 'Humanitaria' | 'Riesgo'
+  unidad?: string
+  tipoValor?: string
 }
 
 export interface Program {
@@ -186,6 +188,8 @@ export interface LogicalFrameTreeItem {
   badgeVariant: BadgeVariant
   codigo?: string
   nombre: string
+  unidad?: string
+  tipoValor?: string
   level?: number
   isGroup?: boolean
   children?: LogicalFrameTreeItem[]
@@ -210,7 +214,6 @@ export interface Indicador {
 }
 
 //FIN DE EJECUCION ANUAL
-
 
 
 

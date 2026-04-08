@@ -11,6 +11,7 @@ interface ToolbarProps {
   onFilterToggle?: () => void
   onColumnToggle?: () => void
   showExtraActions?: boolean
+  newLabel?: string
 }
 
 export function Toolbar({
@@ -19,7 +20,8 @@ export function Toolbar({
   onExport,
   onRefresh,
   onFilterToggle,
-  onColumnToggle
+  onColumnToggle,
+  newLabel = 'Nuevo'
 }: ToolbarProps) {
   return (
     <div className={styles.toolbar}>
@@ -32,7 +34,7 @@ export function Toolbar({
         
         {onNew && (
           <button className={styles.newButton} onClick={onNew}>
-            <Plus size={18} /> Nuevo
+            <Plus size={18} /> {newLabel}
           </button>
         )}
         

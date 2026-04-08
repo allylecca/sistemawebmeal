@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { ChevronDown, Check } from 'lucide-react'
 import styles from './FilterSelect.module.css'
 
@@ -19,10 +20,15 @@ export function FilterSelect({ label, placeholder, width, className, options = [
   const [internalSelected, setInternalSelected] = useState<any>(isMulti ? [] : '')
   const [searchTerm, setSearchTerm] = useState('')
   const containerRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number; width: number }>({ top: 0, left: 0, width: 0 })
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      const target = event.target as Node
+      if (containerRef.current && containerRef.current.contains(target)) return
+      if (dropdownRef.current && dropdownRef.current.contains(target)) return
+      if (containerRef.current && !containerRef.current.contains(target)) {
         setIsOpen(false)
         setSearchTerm('')
       }
@@ -31,6 +37,23 @@ export function FilterSelect({ label, placeholder, width, className, options = [
       document.addEventListener('mousedown', handleClickOutside)
     }
     return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  useEffect(() => {
+    if (!isOpen) return
+    const updatePos = () => {
+      if (!containerRef.current) return
+      const rect = containerRef.current.getBoundingClientRect()
+      setDropdownPos({ top: rect.bottom, left: rect.left, width: rect.width })
+    }
+    updatePos()
+    const onScroll = () => updatePos()
+    window.addEventListener('scroll', onScroll, true)
+    window.addEventListener('resize', updatePos)
+    return () => {
+      window.removeEventListener('scroll', onScroll, true)
+      window.removeEventListener('resize', updatePos)
+    }
   }, [isOpen])
 
   const selected = value !== undefined ? value : internalSelected
@@ -116,41 +139,54 @@ export function FilterSelect({ label, placeholder, width, className, options = [
         />
       </div>
 
-      {isOpen && options.length > 0 && (
-        <div className={styles.dropdown} style={{ maxHeight: '250px', overflowY: 'auto' }}>
+      {isOpen && options.length > 0 && createPortal(
+        <div
+          ref={dropdownRef}
+          className={styles.dropdown}
+          style={{
+            position: 'fixed',
+            top: dropdownPos.top,
+            left: dropdownPos.left,
+            width: dropdownPos.width,
+            maxHeight: '250px',
+            overflowY: 'auto',
+            zIndex: 9999
+          }}
+        >
           {filteredOptions.length === 0 ? (
             <div className={styles.option} style={{ color: '#999', cursor: 'default' }}>Sin resultados</div>
           ) : (
             filteredOptions.map((option) => {
-            const isSelected = isMulti 
-              ? ((selected as string[]) || []).includes(option)
-              : selected === option;
-
-            return (
-              <div 
-                key={option} 
-                className={styles.option}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleSelect(option)
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  {isMulti && (
-                    <input 
-                      type="checkbox" 
-                      checked={isSelected}
-                      readOnly
-                      style={{ marginRight: '8px', cursor: 'pointer' }}
-                    />
-                  )}
-                  <span>{option}</span>
+              const isSelected = isMulti 
+                ? ((selected as string[]) || []).includes(option)
+                : selected === option;
+              return (
+                <div 
+                  key={option} 
+                  className={styles.option}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleSelect(option)
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {isMulti && (
+                      <input 
+                        type="checkbox" 
+                        checked={isSelected}
+                        readOnly
+                        style={{ marginRight: '8px', cursor: 'pointer' }}
+                      />
+                    )}
+                    <span>{option}</span>
+                  </div>
+                  {!isMulti && isSelected && <Check size={16} className={styles.checkIcon} />}
                 </div>
-                {!isMulti && isSelected && <Check size={16} className={styles.checkIcon} />}
-              </div>
-            )
-          }))}
-        </div>
+              )
+            })
+          )}
+        </div>,
+        document.body
       )}
     </div>
   )

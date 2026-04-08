@@ -6,21 +6,21 @@ import type { Column } from '../../../components/Table/Table'
 import { FilterSelect } from '../../../components/FilterSelect/FilterSelect'
 import { Pagination } from '../../../components/Pagination/Pagination'
 import { Modal } from '../../../components/Modal/Modal'
-import { Send, ChartBarBig, FileText, Eye, Pencil, Trash2, EllipsisVertical } from 'lucide-react'
+import { Send, Eye, Pencil, CircleMinus, Trash2, EllipsisVertical } from 'lucide-react'
 import { Input } from '../../../components/Input/Input'
 import { AlertModal } from '../../../components/AlertDialog/AlertModal'
 import { Button } from '../../../components/Button/Button'
 import { Badge } from '../../../components/Badge/Badge'
-import { planesAnualesData, programsData, subprojectCodesData, projectCodesData, strategicLinesData, gerentesData, responsablesMealData, implementadoresData, financiadoresData, locationsData, institutionalIndicatorsData, unidadesData, tiposDeValorData, indicadoresAnualesData } from '../../../data/mockData'
+import { planesAnualesData, programsData, subprojectCodesData, projectCodesData, strategicLinesData, institutionalIndicatorsData, unidadesData, tiposDeValorData, indicadoresAnualesData } from '../../../data/mockData'
 import type { PlanAnual, IndicadoresAnuales } from '../../../data/types'
 import { PageHeader } from '../../../components/PageTitle/PageTitle'
 import styles from './AnnualPlanningView.module.css'
 
-const ActionMenu = ({ item, status, canSend, onEdit, onDelete, onSend }: { 
-  item: any, 
-  status: string, 
+const ActionMenu = ({ item, status, canSend, onEdit, onDelete, onSend }: {
+  item: any,
+  status: string,
   canSend?: boolean,
-  onEdit: (i: any) => void, 
+  onEdit: (i: any) => void,
   onDelete: (i: any) => void,
   onSend: (i: any) => void
 }) => {
@@ -101,8 +101,8 @@ const ActionMenu = ({ item, status, canSend, onEdit, onDelete, onSend }: {
   const MenuItem = ({ icon: Icon, label, onClick, danger = false }: any) => {
     const [hover, setHover] = useState(false)
     return (
-      <button 
-        style={{ ...itemStyle, color: danger ? '#d93025' : '#382e2c', backgroundColor: hover ? '#f9f9f9' : 'transparent' }} 
+      <button
+        style={{ ...itemStyle, color: danger ? '#d93025' : '#382e2c', backgroundColor: hover ? '#f9f9f9' : 'transparent' }}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         onClick={(e) => { e.stopPropagation(); setIsOpen(false); onClick?.() }}
@@ -115,42 +115,23 @@ const ActionMenu = ({ item, status, canSend, onEdit, onDelete, onSend }: {
 
   return (
     <>
-      <button 
+      <button
         ref={buttonRef}
         onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen) }}
         style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#a0a0a0', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 'auto' }}
       >
         <EllipsisVertical size={20} />
       </button>
-      
+
       {isOpen && createPortal(
         <div style={menuStyle} ref={menuRef} onClick={e => e.stopPropagation()}>
           {status === 'Borrador' && (
             <>
               {canSend && <MenuItem icon={Send} label="Enviar" onClick={() => onSend(item)} />}
               <div style={sepStyle} />
-              <MenuItem icon={FileText} label="Documentos" />
-              <div style={sepStyle} />
               <MenuItem icon={Pencil} label="Editar" onClick={() => onEdit(item)} />
               <MenuItem icon={Trash2} label="Eliminar" danger onClick={() => onDelete(item)} />
             </>
-          )}
-
-          {status === 'Aprobado' && (
-            <>
-              <MenuItem icon={ChartBarBig} label="Ver dashboard" />
-              <MenuItem icon={FileText} label="Documentos" />
-            </>
-          )}
-
-          {status === 'Pendiente' && (
-            <>
-              <MenuItem icon={FileText} label="Documentos" />
-            </>
-          )}
-
-          {status === 'Desaprobado' && (
-            <MenuItem icon={FileText} label="Documentos" />
           )}
         </div>,
         document.body
@@ -161,7 +142,6 @@ const ActionMenu = ({ item, status, canSend, onEdit, onDelete, onSend }: {
 
 export function AnnualPlanningView() {
   const [viewMode, setViewMode] = useState<'list' | 'create'>('list')
-  const [activeStep, setActiveStep] = useState(1)
 
   // --- List Mode States ---
   const [projectFilter, setProjectFilter] = useState('')
@@ -198,9 +178,7 @@ export function AnnualPlanningView() {
   const [isIndicatorModalOpen, setIsIndicatorModalOpen] = useState(false)
   const [indicatorFormData, setIndicatorFormData] = useState({
     tipo: '',
-    indicadorInstitucional: '',
-    unidad: '',
-    tipoValor: ''
+    indicadorInstitucional: ''
   })
   const [editingStep3Indicator, setEditingStep3Indicator] = useState<IndicadoresAnuales | null>(null)
 
@@ -210,38 +188,102 @@ export function AnnualPlanningView() {
   const [itemToSend, setItemToSend] = useState<PlanAnual | null>(null)
   const [isReadOnly, setIsReadOnly] = useState(false)
 
-  // Step 3 Year logic
-  const [selectedYears, setSelectedYears] = useState<string[]>([])
+  // Metas: año fijo 2027
+  const [selectedYears] = useState<string[]>(['2027'])
 
-  useEffect(() => {
-    if (formData.inicioAno) {
-      setSelectedYears([formData.inicioAno])
-    }
-  }, [formData.inicioAno])
-
-  const availableYears = useMemo(() => {
-    const start = parseInt(formData.inicioAno) || 2026
-    const end = parseInt(formData.finAno) || 2029
-    const range = []
-    for (let i = start; i <= end; i++) {
-      range.push(i.toString())
-    }
-    return range
-  }, [formData.inicioAno, formData.finAno])
+  const availableYears = useMemo(() => ['2027'], [])
 
   const indicatorTipos = useMemo(() => Array.from(new Set(institutionalIndicatorsData.map(i => i.tipo))), [])
-  
+  const indicatorOptionsByTipo = useMemo(() => {
+    const types = Array.from(new Set(institutionalIndicatorsData.map(i => i.tipo)))
+    const map: Record<string, string[]> = {}
+    types.forEach(t => {
+      map[t] = institutionalIndicatorsData
+        .filter(i => i.tipo === t)
+        .map(i => `${i.codigo} - ${i.nombre}`)
+    })
+    return map
+  }, [])
+
   const indicatorNameOptions = useMemo(() => {
     if (!indicatorFormData.tipo) return []
     return institutionalIndicatorsData.filter(i => i.tipo === indicatorFormData.tipo).map(i => `${i.codigo} - ${i.nombre}`)
   }, [indicatorFormData.tipo])
 
-  const unidadOptions = useMemo(() => unidadesData.map(u => u.nombre), [])
-  const tipoValorOptions = useMemo(() => tiposDeValorData.map(t => t.nombre), [])
+  // Removed unidadOptions and tipoValorOptions; unidad y tipoValor vienen de la tabla institucional
 
   // ------------------------------------------
   // LIST MODE HELPERS
   // ------------------------------------------
+  
+  const getInitialIndicators = (lineaNombre: string) => {
+    const lineObj = strategicLinesData.find(l => l.nombre === lineaNombre || `${l.codigo} - ${l.nombre}` === lineaNombre)
+    
+    // Helper to find best matching indicator from institutional base
+    const findBest = (tipo: string, excludeIds: number[] = []) => {
+      const candidates = institutionalIndicatorsData.filter(i => i.tipo === tipo && !excludeIds.includes(i.id))
+      // Try exact line match first
+      let match = candidates.find(i => i.lineaEstrategica === lineObj?.nombre)
+      // If no exact match, try partial name match
+      if (!match && lineObj) {
+        match = candidates.find(i => i.nombre.includes(lineObj.nombre))
+      }
+      // Fallback to first available candidate of that type
+      return match || candidates[0]
+    }
+
+    const base: any[] = []
+    
+    // 1 LE Indicator
+    const le = findBest('Indicador de Línea Estratégica')
+    base.push({
+      id: Date.now(),
+      tipo: 'Indicador de Línea Estratégica',
+      indicador: le ? `${le.codigo} - ${le.nombre}` : 'Indicador de Línea Estratégica',
+      unidad: le?.unidad || unidadesData[0]?.nombre || 'Personas',
+      tipoValor: le?.tipoValor || tiposDeValorData[0]?.nombre || 'Numérico',
+      y2027: '0 000',
+      isDefault: true
+    })
+
+    // 1 Result Indicator
+    const res = findBest('Indicador de Resultado')
+    base.push({
+      id: Date.now() + 1,
+      tipo: 'Indicador de Resultado',
+      indicador: res ? `${res.codigo} - ${res.nombre}` : 'Indicador de Resultado',
+      unidad: res?.unidad || unidadesData[0]?.nombre || 'Personas',
+      tipoValor: res?.tipoValor || tiposDeValorData[0]?.nombre || 'Numérico',
+      y2027: '0 000',
+      isDefault: true
+    })
+
+    // 2 Product Indicators
+    const prod1 = findBest('Indicador de Producto')
+    const prod2 = findBest('Indicador de Producto', [prod1?.id].filter(Boolean) as number[])
+
+    base.push({
+      id: Date.now() + 2,
+      tipo: 'Indicador de Producto',
+      indicador: prod1 ? `${prod1.codigo} - ${prod1.nombre}` : 'Indicador de Producto',
+      unidad: prod1?.unidad || unidadesData[0]?.nombre || 'Personas',
+      tipoValor: prod1?.tipoValor || tiposDeValorData[0]?.nombre || 'Numérico',
+      y2027: '0 000',
+      isDefault: true
+    })
+
+    base.push({
+      id: Date.now() + 3,
+      tipo: 'Indicador de Producto',
+      indicador: prod2 ? `${prod2.codigo} - ${prod2.nombre}` : 'Indicador de Producto',
+      unidad: prod2?.unidad || unidadesData[0]?.nombre || 'Personas',
+      tipoValor: prod2?.tipoValor || tiposDeValorData[0]?.nombre || 'Numérico',
+      y2027: '0 000',
+      isDefault: true
+    })
+    
+    return base
+  }
 
   const filteredData = useMemo(() => {
     if (!projectFilter) return items
@@ -258,7 +300,6 @@ export function AnnualPlanningView() {
     })
     setIndicators([])
     setViewMode('create')
-    setActiveStep(1)
   }
 
   const handleSendList = (item: PlanAnual) => {
@@ -286,7 +327,7 @@ export function AnnualPlanningView() {
     setEditingItem(item)
     const { mes: startM, ano: startY } = parseDate(item.fechainicio)
     const { mes: endM, ano: endY } = parseDate(item.fechafin)
-    
+
     setFormData({
       programa: item.programa,
       proyecto: item.proyecto,
@@ -306,9 +347,8 @@ export function AnnualPlanningView() {
       financiadoresSecundarios: item.financiadoressecundarios,
       ubicaciones: item.ubicaciones.map((u, i) => ({ ...u, id: i, distrito: '' }))
     })
-    setIndicators(indicadoresAnualesData)
+    setIndicators(getInitialIndicators(item.linea))
     setViewMode('create')
-    setActiveStep(1)
   }
 
   const handleViewList = (item: PlanAnual) => {
@@ -336,9 +376,8 @@ export function AnnualPlanningView() {
       financiadoresSecundarios: item.financiadoressecundarios,
       ubicaciones: item.ubicaciones.map((u, i) => ({ ...u, id: i, distrito: '' }))
     })
-    setIndicators(indicadoresAnualesData)
+    setIndicators(getInitialIndicators(item.linea))
     setViewMode('create')
-    setActiveStep(1)
   }
 
   const handleDeleteList = (item: PlanAnual) => {
@@ -414,9 +453,10 @@ export function AnnualPlanningView() {
         codigo: sub.codigo,
         financiador: sub.financiador
       }))
+      setIndicators(getInitialIndicators(lineObj ? `${lineObj.codigo} - ${lineObj.nombre}` : sub.linea))
     } else {
-      setFormData(prev => ({ 
-        ...prev, 
+      setFormData(prev => ({
+        ...prev,
         subproyecto: subName,
         programa: '',
         proyecto: '',
@@ -452,30 +492,7 @@ export function AnnualPlanningView() {
     return allFilled
   }
 
-  const handleUbiChange = (id: number, field: string, value: string) => {
-    setFormData(p => ({
-      ...p,
-      ubicaciones: p.ubicaciones.map(u => {
-        if (u.id === id) {
-          const newUbi = { ...u, [field]: value }
-          // reset children
-          if (field === 'region') { newUbi.pais = ''; newUbi.departamento = ''; newUbi.provincia = ''; newUbi.distrito = ''; }
-          if (field === 'pais') { newUbi.departamento = ''; newUbi.provincia = ''; newUbi.distrito = ''; }
-          if (field === 'departamento') { newUbi.provincia = ''; newUbi.distrito = ''; }
-          if (field === 'provincia') { newUbi.distrito = ''; }
-          return newUbi
-        }
-        return u
-      })
-    }))
-  }
-
-  const handleDeleteUbi = (id: number) => {
-    setFormData(p => ({
-      ...p,
-      ubicaciones: p.ubicaciones.filter(u => u.id !== id)
-    }))
-  }
+  
 
   const handleSaveWizard = () => {
     if (editingItem) {
@@ -515,21 +532,25 @@ export function AnnualPlanningView() {
   }
 
   const handleSaveStep3Indicator = () => {
+    const selectedLabel = indicatorFormData.indicadorInstitucional
+    const matched = institutionalIndicatorsData.find(x => `${x.codigo} - ${x.nombre}` === selectedLabel)
+    const resolvedUnidad = matched?.unidad || 'Personas'
+    const resolvedTipoValor = matched?.tipoValor || 'Numérico'
     if (editingStep3Indicator) {
       setIndicators(prev => prev.map(i => i.id === editingStep3Indicator.id ? {
         ...i,
-        indicador: indicatorFormData.indicadorInstitucional || i.indicador,
+        indicador: selectedLabel || i.indicador,
         tipo: indicatorFormData.tipo || i.tipo,
-        unidad: indicatorFormData.unidad || i.unidad,
-        tipoValor: indicatorFormData.tipoValor || i.tipoValor,
+        unidad: resolvedUnidad,
+        tipoValor: resolvedTipoValor
       } : i))
     } else {
       const newInd: any = {
         id: indicators.length > 0 ? Math.max(...indicators.map(i => i.id)) + 1 : 1,
-        indicador: indicatorFormData.indicadorInstitucional || 'Nuevo Indicador',
-        tipo: indicatorFormData.tipo || 'Línea Estratégica',
-        unidad: indicatorFormData.unidad || 'Personas',
-        tipoValor: indicatorFormData.tipoValor || 'Planificado',
+        indicador: selectedLabel || 'Nuevo Indicador',
+        tipo: indicatorFormData.tipo || 'Indicador de Producto',
+        unidad: resolvedUnidad,
+        tipoValor: resolvedTipoValor
       }
       selectedYears.forEach(year => newInd[`y${year}`] = '0 000')
       setIndicators([...indicators, newInd])
@@ -542,9 +563,7 @@ export function AnnualPlanningView() {
     setEditingStep3Indicator(row)
     setIndicatorFormData({
       tipo: row.tipo,
-      indicadorInstitucional: row.indicador,
-      unidad: row.unidad,
-      tipoValor: row.tipoValor
+      indicadorInstitucional: row.indicador
     })
     setIsIndicatorModalOpen(true)
   }
@@ -553,9 +572,7 @@ export function AnnualPlanningView() {
     setEditingStep3Indicator(null)
     setIndicatorFormData({
       tipo: '',
-      indicadorInstitucional: '',
-      unidad: '',
-      tipoValor: ''
+      indicadorInstitucional: ''
     })
     setIsIndicatorModalOpen(true)
   }
@@ -564,40 +581,7 @@ export function AnnualPlanningView() {
   // RENDER HELPERS
   // ------------------------------------------
 
-  const STEPS = [
-    { id: 1, label: 'Selección de Subproyecto' },
-    { id: 2, label: 'Datos del Subproyecto' },
-    { id: 3, label: 'Metas de Indicadores' }
-  ]
-
-  const renderStepper = () => (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '32px 0' }}>
-      {STEPS.map((step, index) => (
-        <div key={step.id} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => setActiveStep(step.id)}>
-          <div style={{
-            width: '28px', height: '28px', borderRadius: '50%',
-            backgroundColor: activeStep >= step.id ? '#db5e4e' : '#f0f0f0',
-            color: activeStep >= step.id ? 'white' : '#999',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '12px', fontWeight: 'bold'
-          }}>
-            {step.id}
-          </div>
-          <span style={{
-            marginLeft: '12px',
-            color: activeStep >= step.id ? '#333' : '#999',
-            fontSize: '12px',
-            fontWeight: activeStep >= step.id ? 600 : 400
-          }}>
-            {step.label}
-          </span>
-          {index < STEPS.length - 1 && (
-            <div style={{ width: '120px', height: '1px', backgroundColor: '#e0e0e0', margin: '0 24px' }} />
-          )}
-        </div>
-      ))}
-    </div>
-  )
+  
 
   const getStatusBadge = (status: string) => {
     const colors: Record<string, { bg: string, text: string }> = {
@@ -648,54 +632,14 @@ export function AnnualPlanningView() {
     return filtered.map(s => `${s.codigo} - ${s.nombre}`)
   }, [formData.programa, formData.proyecto])
   
-  const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-  const anos = ['2025', '2026', '2027', '2028', '2029', '2030']
-  
-  const gerenteOptions = useMemo(() => gerentesData.map(g => g.nombre), [])
-  const responsableMealOptions = useMemo(() => responsablesMealData.map(r => r.nombre), [])
-  const implementadorOptions = useMemo(() => implementadoresData.map(i => i.nombre), [])
-  const financiadorSecundarioOptions = useMemo(() => {
-    return financiadoresData
-      .filter(f => f.nombre !== formData.financiador)
-      .map(f => f.nombre)
-  }, [formData.financiador])
-
-  const getRegionesOptions = () => locationsData.map(l => l.label)
-  
-  const getPaisesOptions = (regionLabel: string) => {
-    const region = locationsData.find(r => r.label === regionLabel)
-    return region?.children?.map(p => p.label) || []
-  }
-
-  const getDptosOptions = (regionLabel: string, paisLabel: string) => {
-    const region = locationsData.find(r => r.label === regionLabel)
-    const pais = region?.children?.find(p => p.label === paisLabel)
-    return pais?.children?.map(d => d.label) || []
-  }
-
-  const getProvinciasOptions = (regionLabel: string, paisLabel: string, dptoLabel: string) => {
-    const region = locationsData.find(r => r.label === regionLabel)
-    const pais = region?.children?.find(p => p.label === paisLabel)
-    const dpto = pais?.children?.find(d => d.label === dptoLabel)
-    return dpto?.children?.map(pr => pr.label) || []
-  }
-
-  const getDistritosOptions = (regionLabel: string, paisLabel: string, dptoLabel: string, provLabel: string) => {
-    const region = locationsData.find(r => r.label === regionLabel)
-    const pais = region?.children?.find(p => p.label === paisLabel)
-    const dpto = pais?.children?.find(d => d.label === dptoLabel)
-    const prov = dpto?.children?.find(pr => pr.label === provLabel)
-    return prov?.children?.map(di => di.label) || []
-  }
 
 
   // List columns
   const listColumns: Column<PlanAnual>[] = [
-    { key: 'checkbox', header: '' },
     { key: 'programa', header: 'PROGRAMA' },
     { key: 'gap', header: 'GAP' },
-    { 
-      key: 'linea', 
+    {
+      key: 'linea',
       header: 'LÍNEA ESTRATÉGICA',
       render: (val: string) => {
         const line = strategicLinesData.find(l => l.nombre === val)
@@ -713,35 +657,12 @@ export function AnnualPlanningView() {
     { key: 'codigosubproyecto', header: 'CÓDIGO DE SUBPROYECTO' },
     { key: 'financiadorprincipal', header: 'FINANCIADOR PRINCIPAL' },
     { key: 'subproyecto', header: 'NOMBRE DE SUBPROYECTO' },
-    { key: 'gerente', header: 'GERENTE DE SUBPROYECTO' },
-    { key: 'responsable', header: 'RESPONSABLE MEAL' },
-    { key: 'fechainicio', header: 'FECHA INICIO' },
-    { key: 'fechafin', header: 'FECHA FIN' },
-    { 
-      key: 'implementadores', 
-      header: 'IMPLEMENTADORES',
-      render: (val: string[]) => val.join(', ')
-    },
-    { 
-      key: 'financiadoressecundarios', 
-      header: 'FINANCIADORES SECUNDARIOS',
-      render: (val: string[]) => val.join(', ')
-    },
-    { 
-      key: 'ubicaciones', 
-      header: 'UBICACIONES',
-      render: (_, item) => {
-        const groups = item.ubicaciones.map(u => [u.region, u.pais, u.departamento, u.provincia].filter(Boolean).join(', '))
-        const uniqueGroups = Array.from(new Set(groups))
-        return uniqueGroups.length > 2 ? uniqueGroups.join(' | ') : uniqueGroups.join(', ')
-      }
-    },
-    { 
-      key: 'estado', 
-      header: 'ESTADO', 
-      sticky: 'right', 
-      width: '120px',
-      render: (val: string) => getStatusBadge(val) 
+    {
+      key: 'estado',
+      header: 'ESTADO',
+      sticky: 'right',
+      width: '200px',
+      render: (val: string) => getStatusBadge(val)
     },
     {
       key: 'actions',
@@ -750,15 +671,15 @@ export function AnnualPlanningView() {
       width: '80px',
       render: (_: any, item: PlanAnual) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end' }}>
-          <button 
+          <button
             onClick={(e) => { e.stopPropagation(); handleViewList(item) }}
-            style={{ 
-              background: 'none', 
-              border: 'none', 
-              cursor: 'pointer', 
-              color: '#a0a0a0', 
-              padding: '4px', 
-              display: 'flex', 
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: '#a0a0a0',
+              padding: '4px',
+              display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: '4px'
@@ -769,27 +690,27 @@ export function AnnualPlanningView() {
           >
             <Eye size={18} />
           </button>
-          <ActionMenu 
-            item={item} 
-            status={item.estado} 
+          <ActionMenu
+            item={item}
+            status={item.estado}
             canSend={isFormComplete(
-              { 
-                ...formData, 
-                ...item, 
-                lineaEstrategica: item.linea, 
-                financiador: item.financiadorprincipal, 
-                gerenteSubproyecto: item.gerente, 
-                responsableMeal: item.responsable, 
-                inicioMes: parseDate(item.fechainicio).mes, 
-                inicioAno: parseDate(item.fechainicio).ano, 
-                finMes: parseDate(item.fechafin).mes, 
+              {
+                ...formData,
+                ...item,
+                lineaEstrategica: item.linea,
+                financiador: item.financiadorprincipal,
+                gerenteSubproyecto: item.gerente,
+                responsableMeal: item.responsable,
+                inicioMes: parseDate(item.fechainicio).mes,
+                inicioAno: parseDate(item.fechainicio).ano,
+                finMes: parseDate(item.fechafin).mes,
                 finAno: parseDate(item.fechafin).ano,
                 codigo: item.codigosubproyecto,
                 ubicaciones: item.ubicaciones.map((u, idx) => ({ ...u, id: idx, distrito: '' }))
               } as any,
-              indicadoresAnualesData 
+              indicadoresAnualesData
             )}
-            onEdit={handleEditList} 
+            onEdit={handleEditList}
             onDelete={handleDeleteList}
             onSend={handleSendList}
           />
@@ -801,7 +722,7 @@ export function AnnualPlanningView() {
   // Step 3 columns
   const step3Columns: Column<any>[] = useMemo(() => {
     const baseCols: Column<any>[] = []
-    
+
     if (!isReadOnly) {
       baseCols.push({ key: 'checkbox', header: '' })
     }
@@ -819,7 +740,29 @@ export function AnnualPlanningView() {
       },
       {
         key: 'indicador',
-        header: 'INDICADOR ↑↓'
+        header: 'INDICADOR ↑↓',
+        render: (val: string, row: any) => {
+          if (!isReadOnly && row.tipo !== 'Indicador de Línea Estratégica') {
+            const opts = indicatorOptionsByTipo[row.tipo] || institutionalIndicatorsData.filter(i => i.tipo === row.tipo).map(i => `${i.codigo} - ${i.nombre}`)
+            return (
+              <div style={{ minWidth: 360 }}>
+                <FilterSelect
+                  label=""
+                  options={opts}
+                  value={row.indicador === 'Seleccionar' ? '' : row.indicador}
+                  placeholder="Seleccionar"
+                  onChange={(v) => {
+                    const matched = institutionalIndicatorsData.find(x => `${x.codigo} - ${x.nombre}` === v)
+                    const unidad = (matched as any)?.unidad || unidadesData[0]?.nombre || 'Personas'
+                    const tipoValor = (matched as any)?.tipoValor || tiposDeValorData[0]?.nombre || 'Numérico'
+                    setIndicators(prev => prev.map(i => i.id === row.id ? { ...i, indicador: v, unidad, tipoValor } : i))
+                  }}
+                />
+              </div>
+            )
+          }
+          return val
+        }
       },
       {
         key: 'unidad',
@@ -831,7 +774,7 @@ export function AnnualPlanningView() {
       }
     )
 
-    const yearsToShow = isReadOnly ? availableYears : selectedYears
+    const yearsToShow = ['2027']
 
     const yearCols = [...yearsToShow].sort().map(year => ({
       key: `y${year}`,
@@ -853,18 +796,39 @@ export function AnnualPlanningView() {
 
     if (!isReadOnly) {
       cols.push({
-        key: 'actions', 
+        key: 'actions',
         header: 'ACCIONES ↑↓',
         width: '80px',
         render: (_: any, row: any) => (
-          <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-            <button onClick={() => handleEditStep3Indicator(row)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-              <Pencil size={16} color="#a0a0a0" />
-            </button>
-            <button onClick={() => setIndicators(prev => prev.filter(i => i.id !== row.id))} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-              <Trash2 size={16} color="#d93025" />
-            </button>
-          </div>
+          (() => {
+            const isDefault = !!row.isDefault
+            const baseBtnStyle: React.CSSProperties = {
+              background: 'none',
+              border: 'none',
+              cursor: isDefault ? 'not-allowed' : 'pointer',
+              opacity: isDefault ? 0.4 : 1
+            }
+            return (
+              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                <button
+                  disabled={isDefault}
+                  onClick={() => !isDefault && handleEditStep3Indicator(row)}
+                  style={baseBtnStyle}
+                  title={isDefault ? 'Acción no disponible' : 'Editar'}
+                >
+                  <Pencil size={16} color="#a0a0a0" />
+                </button>
+                <button
+                  disabled={isDefault}
+                  onClick={() => !isDefault && setIndicators(prev => prev.filter(i => i.id !== row.id))}
+                  style={baseBtnStyle}
+                  title={isDefault ? 'Acción no disponible' : 'Quitar de la lista'}
+                >
+                  <CircleMinus size={16} color="#d93025" />
+                </button>
+              </div>
+            )
+          })()
         )
       })
     }
@@ -885,6 +849,7 @@ export function AnnualPlanningView() {
 
         <Toolbar
           onNew={handleNew}
+          newLabel="Habilitar"
           onExport={() => { }}
           onRefresh={() => setProjectFilter('')}
           onFilterToggle={() => { }}
@@ -963,209 +928,91 @@ export function AnnualPlanningView() {
 
       {/* Wrapper box */}
       <div style={{ margin: '24px 32px', backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #eaeaea', display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
-
-        {renderStepper()}
-
-        <div style={{ flex: 1, overflowY: 'auto', padding: '0 32px 32px' }}>
-          {activeStep === 1 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
-              <FilterSelect
-                label="Programa"
-                options={programOptions}
-                value={formData.programa}
-                onChange={handleProgramaChange}
-                readOnly={isReadOnly}
-              />
-              <FilterSelect
-                label="Proyecto"
-                options={projectOptions}
-                value={formData.proyecto}
-                onChange={handleProyectoChange}
-                readOnly={isReadOnly}
-              />
-              <FilterSelect
-                label="Subproyecto"
-                options={subprojectOptions}
-                value={formData.subproyecto}
-                onChange={handleSubprojectChange}
-                readOnly={isReadOnly}
-              />
-              <Input
-                label="GAP"
-                value={formData.gap}
-                onChange={() => { }}
-                disabled
-              />
-              <Input
-                label="Línea Estratégica"
-                value={formData.lineaEstrategica}
-                onChange={() => { }}
-                disabled
-              />
-              <Input
-                label="Código"
-                value={formData.codigo}
-                onChange={(v) => setFormData(p => ({ ...p, codigo: v }))}
-                disabled
-              />
-              <Input
-                label="Financiador Principal"
-                value={formData.financiador}
-                onChange={(v) => setFormData(p => ({ ...p, financiador: v }))}
-                disabled
-              />
+        <div style={{ flex: 1, overflowY: 'auto', padding: '0 32px 32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '8px 0 16px' }}>
+              <span style={{ width: '3px', height: '20px', backgroundColor: '#382e2c', borderRadius: '2px' }} />
+              <span style={{ fontSize: '16px', fontWeight: 600, color: '#382e2c' }}>1. Selección de subproyecto</span>
             </div>
-          )}
-
-          {activeStep === 2 && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '32px', alignItems: 'start' }}>
-
-              {/* LADO IZQUIERDO */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', border: '1px solid #eaeaea', borderRadius: '8px', padding: '24px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '32px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid #eaeaea', borderRadius: '8px', padding: '24px' }}>
+                <div style={{ fontSize: '12px', color: '#666', fontWeight: 600, marginBottom: '8px' }}>Información general</div>
                 <FilterSelect
-                  label="Gerente de Subproyecto"
-                  options={gerenteOptions}
-                  value={formData.gerenteSubproyecto}
-                  onChange={(v) => setFormData(p => ({ ...p, gerenteSubproyecto: v as string }))}
+                  label="Programa"
+                  options={programOptions}
+                  value={formData.programa}
+                  onChange={handleProgramaChange}
                   readOnly={isReadOnly}
                 />
                 <FilterSelect
-                  label="Responsable MEAL"
-                  options={responsableMealOptions}
-                  value={formData.responsableMeal}
-                  onChange={(v) => setFormData(p => ({ ...p, responsableMeal: v as string }))}
+                  label="Proyecto"
+                  options={projectOptions}
+                  value={formData.proyecto}
+                  onChange={handleProyectoChange}
                   readOnly={isReadOnly}
                 />
-
-                <div>
-                  <label style={{ fontSize: '12px', color: '#666', marginBottom: '8px', display: 'block', fontWeight: 600 }}>Fecha inicio</label>
-                  <div style={{ display: 'flex', gap: '16px' }}>
-                    <div style={{ flex: 1 }}>
-                      <FilterSelect label="Mes" options={meses} value={formData.inicioMes} onChange={(v) => setFormData(p => ({ ...p, inicioMes: v as string }))} readOnly={isReadOnly} />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <FilterSelect label="Año" options={anos} value={formData.inicioAno} onChange={(v) => setFormData(p => ({ ...p, inicioAno: v as string }))} readOnly={isReadOnly} />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '12px', color: '#666', marginBottom: '8px', display: 'block', fontWeight: 600 }}>Fecha fin</label>
-                  <div style={{ display: 'flex', gap: '16px' }}>
-                    <div style={{ flex: 1 }}>
-                      <FilterSelect label="Mes" options={meses} value={formData.finMes} onChange={(v) => setFormData(p => ({ ...p, finMes: v as string }))} readOnly={isReadOnly} />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <FilterSelect label="Año" options={anos} value={formData.finAno} onChange={(v) => setFormData(p => ({ ...p, finAno: v as string }))} readOnly={isReadOnly} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Toggle Subactividades */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
-                  <span style={{ fontSize: '14px', fontWeight: 600, color: '#333' }}>Involucrar subactividades</span>
-                  <div
-                    onClick={() => !isReadOnly && setFormData(p => ({ ...p, involucrarSubactividades: !p.involucrarSubactividades }))}
-                    style={{
-                      width: '44px', height: '24px', borderRadius: '12px',
-                      backgroundColor: formData.involucrarSubactividades ? '#db5e4e' : '#dcdcdc',
-                      position: 'relative', cursor: isReadOnly ? 'default' : 'pointer', transition: 'all 0.3s'
-                    }}>
-                    <div style={{
-                      width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#fff',
-                      position: 'absolute', top: '2px', left: formData.involucrarSubactividades ? '22px' : '2px',
-                      transition: 'all 0.3s'
-                    }} />
-                  </div>
-                </div>
+                <FilterSelect
+                  label="Subproyecto"
+                  options={subprojectOptions}
+                  value={formData.subproyecto}
+                  onChange={handleSubprojectChange}
+                  readOnly={isReadOnly}
+                />
               </div>
-
-              {/* LADO DERECHO */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', border: '1px solid #eaeaea', borderRadius: '8px', padding: '24px' }}>
-                <FilterSelect
-                  label="Implementadores"
-                  options={implementadorOptions}
-                  value={formData.implementadores}
-                  onChange={(v) => setFormData(p => ({ ...p, implementadores: v as string[] }))}
-                  isMulti
-                  readOnly={isReadOnly}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid #eaeaea', borderRadius: '8px', padding: '24px' }}>
+                <div style={{ fontSize: '12px', color: '#666', fontWeight: 600, marginBottom: '8px' }}>Relación jerárquica</div>
+                <Input
+                  label="GAP"
+                  value={formData.gap}
+                  onChange={() => { }}
+                  disabled
                 />
-
-                <FilterSelect
-                  label="Financiadores Secundarios"
-                  options={financiadorSecundarioOptions}
-                  value={formData.financiadoresSecundarios}
-                  onChange={(v) => setFormData(p => ({ ...p, financiadoresSecundarios: v as string[] }))}
-                  isMulti
-                  readOnly={isReadOnly}
+                <Input
+                  label="Línea Estratégica"
+                  value={formData.lineaEstrategica}
+                  onChange={() => { }}
+                  disabled
                 />
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px', marginBottom: '0px' }}>
-                  <span style={{ fontSize: '12px', color: '#888' }}>Ubicaciones</span>
-                  <button onClick={() => setFormData(p => ({
-                    ...p,
-                    ubicaciones: [...p.ubicaciones, { id: Date.now(), region: '', pais: '', departamento: '', provincia: '', distrito: '' }]
-                  }))} style={{ padding: '0', fontSize: '20px', color: '#333', background: 'none', border: 'none', cursor: 'pointer' }}>+</button>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  {formData.ubicaciones.length === 0 && <p style={{ fontSize: '12px', color: '#999' }}>Ninguna ubicación agregada</p>}
-                  {formData.ubicaciones.map((ubi) => (
-                    <div key={ubi.id} style={{ display: 'flex', gap: '12px', border: '1px solid #eee', padding: '16px', borderRadius: '8px', backgroundColor: '#fafafa', position: 'relative' }}>
-                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                        <FilterSelect label="Región" options={getRegionesOptions()} value={ubi.region} onChange={v => handleUbiChange(ubi.id, 'region', v as string)} readOnly={isReadOnly} />
-                        {ubi.region && getPaisesOptions(ubi.region).length > 0 && <FilterSelect label="País" options={getPaisesOptions(ubi.region)} value={ubi.pais} onChange={v => handleUbiChange(ubi.id, 'pais', v as string)} readOnly={isReadOnly} />}
-                        {ubi.pais && getDptosOptions(ubi.region, ubi.pais).length > 0 && <FilterSelect label="Departamento" options={getDptosOptions(ubi.region, ubi.pais)} value={ubi.departamento} onChange={v => handleUbiChange(ubi.id, 'departamento', v as string)} readOnly={isReadOnly} />}
-                        {ubi.departamento && getProvinciasOptions(ubi.region, ubi.pais, ubi.departamento).length > 0 && <FilterSelect label="Provincia" options={getProvinciasOptions(ubi.region, ubi.pais, ubi.departamento)} value={ubi.provincia} onChange={v => handleUbiChange(ubi.id, 'provincia', v as string)} readOnly={isReadOnly} />}
-                        {ubi.provincia && getDistritosOptions(ubi.region, ubi.pais, ubi.departamento, ubi.provincia).length > 0 && <FilterSelect label="Distrito" options={getDistritosOptions(ubi.region, ubi.pais, ubi.departamento, ubi.provincia)} value={ubi.distrito} onChange={v => handleUbiChange(ubi.id, 'distrito', v as string)} readOnly={isReadOnly} />}
-                      </div>
-                      {!isReadOnly && (
-                        <button onClick={() => handleDeleteUbi(ubi.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', height: 'fit-content', marginTop: '8px' }}>
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d93025" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                          </svg>
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeStep === 3 && (
-            <div>
-              {!isReadOnly && (
-                <Toolbar
-                  onNew={handleNewStep3Indicator}
-                  onExport={() => { }}
-                  onRefresh={() => { }}
-                  onFilterToggle={() => { }}
-                  onColumnToggle={() => { }}
-                >
-                  <div style={{ flex: 1 }}>
-                    <FilterSelect
-                      label="Año"
-                      options={availableYears}
-                      value={selectedYears}
-                      onChange={(v) => setSelectedYears(v as string[])}
-                      isMulti
-                    />
-                  </div>
-                </Toolbar>
-              )}
-
-              <div style={{ border: '1px solid #eaeaea', borderRadius: '8px', overflowX: 'auto', overflowY: 'hidden' }}>
-                <Table
-                  columns={step3Columns}
-                  data={indicators}
-                  onEdit={() => { }}
-                  onDelete={(item) => setIndicators(indicators.filter(i => i.id !== item.id))}
+                <Input
+                  label="Código"
+                  value={formData.codigo}
+                  onChange={(v) => setFormData(p => ({ ...p, codigo: v }))}
+                  disabled
+                />
+                <Input
+                  label="Financiador Principal"
+                  value={formData.financiador}
+                  onChange={(v) => setFormData(p => ({ ...p, financiador: v }))}
+                  disabled
                 />
               </div>
             </div>
-          )}
+          </div>
+
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '8px 0 16px' }}>
+              <span style={{ width: '3px', height: '20px', backgroundColor: '#382e2c', borderRadius: '2px' }} />
+              <span style={{ fontSize: '16px', fontWeight: 600, color: '#382e2c' }}>2. Selección de indicadores y metas</span>
+            </div>
+            {!isReadOnly && (
+              <Toolbar
+                onNew={handleNewStep3Indicator}
+                onRefresh={() => { }}
+                onFilterToggle={() => { }}
+                onColumnToggle={() => { }}
+              >
+              </Toolbar>
+            )}
+
+            <div style={{ border: '1px solid #eaeaea', borderRadius: '8px', overflowX: 'auto', overflowY: 'hidden' }}>
+              <Table
+                columns={step3Columns}
+                data={indicators}
+                onEdit={() => { }}
+                onDelete={(item) => setIndicators(indicators.filter(i => i.id !== item.id))}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Action Footer */}
@@ -1231,18 +1078,6 @@ export function AnnualPlanningView() {
             options={indicatorNameOptions}
             value={indicatorFormData.indicadorInstitucional}
             onChange={(val) => setIndicatorFormData(p => ({ ...p, indicadorInstitucional: val }))}
-          />
-          <FilterSelect
-            label="Unidad"
-            options={unidadOptions}
-            value={indicatorFormData.unidad}
-            onChange={(val) => setIndicatorFormData(p => ({ ...p, unidad: val }))}
-          />
-          <FilterSelect
-            label="Tipo de Valor"
-            options={tipoValorOptions}
-            value={indicatorFormData.tipoValor}
-            onChange={(val) => setIndicatorFormData(p => ({ ...p, tipoValor: val }))}
           />
         </div>
       </Modal>

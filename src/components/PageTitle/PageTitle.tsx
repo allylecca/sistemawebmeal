@@ -2,7 +2,7 @@ import styles from './PageTitle.module.css';
 
 interface PageTitleProps {
   title: string;
-  subtitle: string;
+  subtitle: React.ReactNode;
 }
 
 export function PageHeader({ title, subtitle }: PageTitleProps) {

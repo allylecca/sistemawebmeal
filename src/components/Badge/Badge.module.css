@@ -17,69 +17,69 @@
 }
 
 .badge[data-variant='og-group'] {
-  background-color: #fff1ed;
+  background-color: #f87c561f;
   color: #382e2c;
-  border: 1px solid #ff7c5666;
+  border: 1px solid #f87c5666;
   border-radius: 20px;
 }
-.badge[data-variant='og-group'] .dot { background-color: #ff7c56; }
+.badge[data-variant='og-group'] .dot { background-color: #f87c56; }
 
 .badge[data-variant='og'] {
-  background-color: #fff1ed;
-  color: #ff7c56;
+  background-color: #f87c561f;
+  color: #f87c56;
   border-radius: 12px;
   padding: 2px 8px;
 }
 
 .badge[data-variant='oe-group'] {
-  background-color: #fffcf0;
+  background-color: #ffc6581f;
   color: #382e2c;
-  border: 1px solid #ffd07b66;
+  border: 1px solid #ffc65866;
   border-radius: 20px;
 }
-.badge[data-variant='oe-group'] .dot { background-color: #ffd07b; }
+.badge[data-variant='oe-group'] .dot { background-color: #ffc658; }
 
 .badge[data-variant='oe'] {
-  background-color: #fffcf0;
-  color: #ffd07b;
+  background-color: #ffc6581f;
+  color: #ffc658;
   border-radius: 12px;
   padding: 2px 8px;
 }
 
 .badge[data-variant='result-group'] {
-  background-color: #f0fff4;
+  background-color: #fead771f;
   color: #382e2c;
-  border: 1px solid #00c95066;
+  border: 1px solid #fead7766;
   border-radius: 20px;
 }
-.badge[data-variant='result-group'] .dot { background-color: #00c950; }
+.badge[data-variant='result-group'] .dot { background-color: #fead77; }
 
 .badge[data-variant='act-group'] {
-  background-color: #f0fdfa;
+  background-color: #71b7901f;
   color: #382e2c;
-  border: 1px solid #00968866;
+  border: 1px solid #71b79066;
   border-radius: 20px;
 }
-.badge[data-variant='act-group'] .dot { background-color: #009688; }
+.badge[data-variant='act-group'] .dot { background-color: #71b790; }
 
 .badge[data-variant='act'] {
-  background-color: #f0fdfa;
-  color: #009688;
+  background-color: #71b7901f;
+  color: #71b790;
   border-radius: 12px;
   padding: 2px 8px;
 }
 
 .badge[data-variant='subact-group'] {
-  background-color: #fff7ed;
+  background-color: #0069751f;
   color: #382e2c;
-  border: 1px solid #f87c5666;
+  border: 1px solid #00697566;
   border-radius: 20px;
 }
-.badge[data-variant='subact-group'] .dot { background-color: #f87c56; }
+.badge[data-variant='subact-group'] .dot { background-color: #006975; }
 
 .badge[data-variant='subact'] {
-  background-color: #fff7ed;
-  color: #f87c56;
+  background-color: #0069751f;
+  color: #006975;
   border-radius: 12px;
   padding: 2px 8px;
 }
@@ -102,6 +102,67 @@
   border-radius: 20px;
 }
 
+/* Indicadores por Nivel */
+.badge[data-variant='sp-indicador-group'] {
+  background-color: #febd921f;
+  color: #382e2c;
+  border: 1px solid #febd9266;
+  border-radius: 20px;
+}
+.badge[data-variant='sp-indicador-group'] .dot { background-color: #febd92; }
+
+.badge[data-variant='sp-indicador'] {
+  background-color: #febd921f;
+  color: #febd92;
+  border-radius: 12px;
+  padding: 2px 8px;
+}
+
+.badge[data-variant='og-indicador-group'] {
+  background-color: #f87c561f;
+  color: #382e2c;
+  border: 1px solid #f87c5666;
+  border-radius: 20px;
+}
+.badge[data-variant='og-indicador-group'] .dot { background-color: #f87c56; }
+
+.badge[data-variant='og-indicador'] {
+  background-color: #f87c561f;
+  color: #f87c56;
+  border-radius: 12px;
+  padding: 2px 8px;
+}
+
+.badge[data-variant='oe-indicador-group'] {
+  background-color: #ffc6581f;
+  color: #382e2c;
+  border: 1px solid #ffc65866;
+  border-radius: 20px;
+}
+.badge[data-variant='oe-indicador-group'] .dot { background-color: #ffc658; }
+
+.badge[data-variant='oe-indicador'] {
+  background-color: #ffc6581f;
+  color: #ffc658;
+  border-radius: 12px;
+  padding: 2px 8px;
+}
+
+.badge[data-variant='r-indicador-group'] {
+  background-color: #fead771f;
+  color: #382e2c;
+  border: 1px solid #fead7766;
+  border-radius: 20px;
+}
+.badge[data-variant='r-indicador-group'] .dot { background-color: #fead77; }
+
+.badge[data-variant='r-indicador'] {
+  background-color: #fead771f;
+  color: #fead77;
+  border-radius: 12px;
+  padding: 2px 8px;
+}
+
 .badge[data-variant='region'] {
   background-color: #ffe8e0;
   color: #ff7c56;
@@ -118,19 +179,19 @@
 }
 
 .badge[data-variant='line'] {
-  background-color: #F87C561F;
-  color: #382e2c;
+  background-color: #fff0ee;
+  color: #db5e4e;
   border-radius: 12px;
 }
 
 .badge[data-variant='result'] {
-  background-color: #FFC6581F;
-  color: #382e2c;
+  background-color: #fead771f;
+  color: #fead77;
   border-radius: 12px;
 }
 
 .badge[data-variant='product'] {
-  background-color: #FEAD771F;
-  color: #382e2c;
+  background-color: #f0f4ff;
+  color: #3b82f6;
   border-radius: 12px;
 }

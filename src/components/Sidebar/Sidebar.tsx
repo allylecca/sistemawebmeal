@@ -54,8 +54,7 @@ const menuItems: MenuItem[] = [
     label: 'Ejecución Anual',
     icon: <BookOpenCheck size={20} />,
     subItems: [
-      { id: 'marco-logico', label: 'Marco Lógico' },
-      { id: 'indicadores', label: 'Indicadores' },
+      { id: 'subproyectos', label: 'Subproyectos' },
     ]
   },
   { id: 'cadena', label: 'Cadena de Resultados', icon: <Goal size={20} /> },

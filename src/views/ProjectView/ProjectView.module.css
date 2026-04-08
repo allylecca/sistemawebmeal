@@ -193,52 +193,44 @@
   overflow: hidden;
 }
 
-.filterBar {
-  padding: 20px 32px;
+.filtersGroup {
   display: flex;
   align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid #f0f0f0;
-  background-color: #ffffff;
-  flex-shrink: 0;
-  flex-wrap: wrap;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
 }
 
-.filterSelect {
-  height: 40px;
-  padding: 0 16px;
+.dateFilter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
   border: 1px solid #e0e0e0;
-  background-color: #ffffff;
-  border-radius: 4px;
-  font-size: 13px;
-  color: #a0a0a0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-width: 140px;
-  flex: 1 1 auto;
-  cursor: pointer;
-}
-
-.filterDate {
   height: 40px;
-  padding: 0 16px;
-  border: 1px solid #e0e0e0;
-  background-color: #ffffff;
+  padding: 0 12px;
   border-radius: 4px;
-  font-size: 13px;
-  color: #a0a0a0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 160px;
-  flex: 1 1 auto;
-  cursor: pointer;
 }
 
+.dateLabel {
+  font-size: 11px;
+  color: #a0a0a0;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.dateInput {
+  border: none;
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: #382e2c;
+  outline: none;
+  background: transparent;
+}
 @media (max-width: 1024px) {
-  .filterBar {
-    padding: 16px;
+  .filtersGroup {
+    overflow-x: auto;
+    padding-bottom: 4px;
   }
 }
 
@@ -271,16 +263,17 @@
 }
 
 .primaryButton {
-  height: 40px;
-  padding: 0 24px;
-  background-color: #ffc25b;
-  border: none;
-  border-radius: 20px;
-  color: #382e2c;
-  font-weight: 600;
-  font-size: 14px;
+  height: 36px;
+  padding: 0 20px;
+  background-color: #fec354;
+  border: 1px solid #1a1a1a;
+  border-radius: 4px;
+  color: #1a1a1a;
+  font-weight: 700;
+  font-size: 12px;
   cursor: pointer;
   transition: opacity 0.2s;
+  flex-shrink: 0;
 }
 
 .primaryButton:hover {
@@ -288,16 +281,17 @@
 }
 
 .iconButton {
-  width: 40px;
-  height: 40px;
-  border: 1px solid #e0e0e0;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #1a1a1a;
   background-color: #ffffff;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #a0a0a0;
+  color: #1a1a1a;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .contentWrapper {

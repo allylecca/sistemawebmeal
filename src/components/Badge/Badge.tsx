@@ -20,6 +20,14 @@ export type BadgeVariant =
   | 'indicador'
   | 'resultado-indicador'
   | 'objetivo-indicador'
+  | 'sp-indicador'
+  | 'sp-indicador-group'
+  | 'og-indicador'
+  | 'og-indicador-group'
+  | 'oe-indicador'
+  | 'oe-indicador-group'
+  | 'r-indicador'
+  | 'r-indicador-group'
 
 interface BadgeProps {
   children: React.ReactNode

@@ -7,7 +7,7 @@ import { Pagination } from '../../../components/Pagination/Pagination'
 import { Input } from '../../../components/Input/Input'
 import { Modal } from '../../../components/Modal/Modal'
 import { AlertModal } from '../../../components/AlertDialog/AlertModal'
-import { institutionalIndicatorsData, gapsData, strategicLinesData } from '../../../data/mockData'
+import { institutionalIndicatorsData, gapsData, strategicLinesData, unidadesData, tiposDeValorData } from '../../../data/mockData'
 import type { InstitutionalIndicator } from '../../../data/types'
 import { PageHeader } from '../../../components/PageTitle/PageTitle'
 import styles from './InstitutionalIndicatorsView.module.css'
@@ -38,10 +38,12 @@ export function InstitutionalIndicatorsView() {
   }
 
   const [indicators, setIndicators] = useState<InstitutionalIndicator[]>(() =>
-    institutionalIndicatorsData.map(ind => ({
+    institutionalIndicatorsData.map((ind, idx) => ({
       ...ind,
       gap: resolveStrategicLineGap(ind.gap),
-      lineaEstrategica: resolveStrategicLineNombre(ind.lineaEstrategica || '')
+      lineaEstrategica: resolveStrategicLineNombre(ind.lineaEstrategica || ''),
+      tipoValor: ind.tipoValor || 'Numérico',
+      unidad: ind.unidad || unidadesData[(idx % unidadesData.length)]?.nombre
     }))
   )
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -55,7 +57,9 @@ export function InstitutionalIndicatorsView() {
     varfra: '',
     gap: '',
     lineaEstrategica: '',
-    categoria: ''
+    categoria: '',
+    unidad: '',
+    tipoValor: ''
   })
 
   const [showConfirmSave, setShowConfirmSave] = useState(false)
@@ -166,7 +170,7 @@ export function InstitutionalIndicatorsView() {
 
   const handleNew = () => {
     setEditingIndicator(null)
-    setFormData({ codigo: '', tipo: '', nombre: '', vares: '', varen: '', varfra: '', gap: '', lineaEstrategica: '', categoria: '' })
+    setFormData({ codigo: '', tipo: '', nombre: '', vares: '', varen: '', varfra: '', gap: '', lineaEstrategica: '', categoria: '', unidad: '', tipoValor: '' })
     setIsModalOpen(true)
   }
 
@@ -182,7 +186,9 @@ export function InstitutionalIndicatorsView() {
       varfra: item.varfra,
       gap: item.gap,
       lineaEstrategica: item.lineaEstrategica || '',
-      categoria: ''
+      categoria: item.categoria || '',
+      unidad: item.unidad || '',
+      tipoValor: item.tipoValor || 'Numérico'
     })
     setIsModalOpen(true)
   }
@@ -247,6 +253,16 @@ export function InstitutionalIndicatorsView() {
           </span>
         )
       }
+    },
+    {
+      key: 'unidad',
+      header: 'Unidad',
+      render: (val) => val || '-'
+    },
+    {
+      key: 'tipoValor',
+      header: 'Tipo de valor',
+      render: (val) => val || 'Numérico'
     },
     { key: 'nombre', header: 'Nombre' },
     { key: 'vares', header: 'Variante Español' },
@@ -330,16 +346,28 @@ export function InstitutionalIndicatorsView() {
               onChange={handleLineChange}
             />
             <FilterSelect
+              label="Categoría"
+              options={Object.keys(CATEGORIES)}
+              value={formData.categoria}
+              onChange={(val) => setFormData({ ...formData, categoria: val })}
+            />
+            <FilterSelect
               label="Tipo de Indicador"
               options={Object.keys(TYPES_MAP)}
               value={formData.tipo}
               onChange={(val) => setFormData({ ...formData, tipo: val })}
             />
             <FilterSelect
-              label="Categoría"
-              options={Object.keys(CATEGORIES)}
-              value={formData.categoria}
-              onChange={(val) => setFormData({ ...formData, categoria: val })}
+              label="Unidad"
+              options={unidadesData.map(u => u.nombre)}
+              value={formData.unidad}
+              onChange={(val) => setFormData({ ...formData, unidad: val })}
+            />
+            <FilterSelect
+              label="Tipo de Valor"
+              options={tiposDeValorData.map(t => t.nombre)}
+              value={formData.tipoValor}
+              onChange={(val) => setFormData({ ...formData, tipoValor: val })}
             />
             <Input
               label="Código de Indicador Institucional"

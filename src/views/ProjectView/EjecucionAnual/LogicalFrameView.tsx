@@ -1,10 +1,14 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import {
   ChevronRight,
   Eye,
   Pencil,
   Trash2,
-  Plus
+  Plus,
+  ArrowUpDown,
+  Pin,
+  MoreHorizontal,
+  Calculator
 } from 'lucide-react'
 import { Toolbar } from '../../../components/Toolbar/Toolbar'
 import { FilterSelect } from '../../../components/FilterSelect/FilterSelect'
@@ -23,13 +27,15 @@ import {
   actividadData,
   subactividadData,
   unidadesData,
-  tiposDeValorData
+  tiposDeValorData,
+  indicadoresData,
+  institutionalIndicatorsData
 } from '../../../data/mockData'
-import type { LogicalFrameTreeItem } from '../../../data/types'
+import type { Indicador, LogicalFrameTreeItem } from '../../../data/types'
 import { PageHeader } from '../../../components/PageTitle/PageTitle'
 import styles from './LogicalFrameView.module.css'
 
-export function LogicalFrameView() {
+export function LogicalFrameView({ isEmbedded = false, initialSubproject }: { isEmbedded?: boolean, initialSubproject?: string }) {
   const [expandedNodes, setExpandedNodes] = useState<string[]>([])
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [headerChecked, setHeaderChecked] = useState(false)
@@ -38,12 +44,71 @@ export function LogicalFrameView() {
   const [subprojectFilter, setSubprojectFilter] = useState('')
   const [isFiltered, setIsFiltered] = useState(false)
 
+  useEffect(() => {
+    if (initialSubproject) {
+      setSubprojectFilter(initialSubproject)
+      const plan = planesAnualesData.find(p => `${p.codigosubproyecto} - ${p.subproyecto}` === initialSubproject)
+      if (plan) {
+        setProgramFilter(plan.programa)
+        setProjectFilter(plan.proyecto)
+      }
+      setIsFiltered(true)
+      setExpandedNodes(['group-og', 'group-oe', 'group-r', 'group-act', 'group-subact'])
+    }
+  }, [initialSubproject])
+
   // Local state for hierarchy data to allow persistence
   const [localObjGeneral, setLocalObjGeneral] = useState(objGeneralData)
   const [localObjEspecifico, setLocalObjEspecifico] = useState(objEspecificoData)
   const [localResultados, setLocalResultados] = useState(resultadosData)
   const [localActividades, setLocalActividades] = useState(actividadData)
   const [localSubactividades, setLocalSubactividades] = useState(subactividadData)
+  const [localIndicadores, setLocalIndicadores] = useState<Indicador[]>(indicadoresData)
+  
+  // Indicator Modal state
+  const [isIndicatorModalOpen, setIsIndicatorModalOpen] = useState(false)
+  const [editingIndicator, setEditingIndicator] = useState<Indicador | null>(null)
+  const [indicatorForm, setIndicatorForm] = useState<Partial<Indicador>>({
+    tipo: 'Indicador de Subproyecto',
+    codigo: '',
+    nombre: '',
+    unidad: '',
+    tipoValor: '',
+    subproyecto: '',
+    objetivoGeneral: '',
+    objetivoEspecifico: '',
+    resultado: ''
+  })
+  
+  // Formula Modal state
+  const [isFormulaModalOpen, setIsFormulaModalOpen] = useState(false)
+  const [formulaIndicator, setFormulaIndicator] = useState<Indicador | null>(null)
+  const formulaRef = useRef<HTMLDivElement>(null)
+  const [savedRange, setSavedRange] = useState<Range | null>(null)
+
+  // Combined indicators for formula selection
+  const allIndicatorsForFormula = useMemo(() => {
+    const inst = institutionalIndicatorsData.map(i => ({
+      id: `inst-${i.id}`,
+      label: `${i.codigo} - ${i.nombre}`,
+      original: i
+    }))
+    const local = localIndicadores.map(i => ({
+      id: `local-${i.id}`,
+      label: `${i.codigo} - ${i.nombre}`,
+      original: i
+    }))
+    return [...inst, ...local]
+  }, [localIndicadores])
+  
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  
+  // Close menu on click outside
+  useEffect(() => {
+    const handleClickOutside = () => setOpenMenuId(null)
+    window.addEventListener('click', handleClickOutside)
+    return () => window.removeEventListener('click', handleClickOutside)
+  }, [])
 
   // Modal state for Obj. General
   const [isOGModalOpen, setIsOGModalOpen] = useState(false)
@@ -115,6 +180,232 @@ export function LogicalFrameView() {
     [...new Set(planesAnualesData.map(p => `${p.codigosubproyecto} - ${p.subproyecto}`))].sort(),
     []
   )
+
+  // Modal options for indicators
+  const subprojectModalOptions = useMemo(() =>
+    planesAnualesData.map(p => `${p.codigosubproyecto} - ${p.subproyecto}`).sort(),
+    []
+  )
+
+  const ogOptionsForModal = useMemo(() =>
+    objGeneralData.map(og => `${og.codigo} - ${og.nombre}`).sort(),
+    []
+  )
+
+  const oeOptionsForModal = useMemo(() => {
+    if (!indicatorForm.objetivoGeneral) return []
+    return objEspecificoData
+      .filter(oe => oe.objetivoGeneral === indicatorForm.objetivoGeneral)
+      .map(oe => `${oe.codigo} - ${oe.nombre}`)
+      .sort()
+  }, [indicatorForm.objetivoGeneral])
+
+  const resultadoOptionsForModal = useMemo(() => {
+    if (!indicatorForm.objetivoEspecifico) return []
+    return resultadosData
+      .filter(r => r.objetivoEspecifico === indicatorForm.objetivoEspecifico)
+      .map(r => `${r.codigo} - ${r.nombre}`)
+      .sort()
+  }, [indicatorForm.objetivoEspecifico])
+
+  const handleEditIndicator = (item: LogicalFrameTreeItem) => {
+    const numericId = Number(item.id.split('-').pop())
+    const original = localIndicadores.find(i => i.id === numericId)
+    if (original) {
+      setEditingIndicator(original)
+      setIndicatorForm({ ...original })
+      setIsIndicatorModalOpen(true)
+    }
+  }
+
+  const handleNewIndicator = (tipo: string, parent?: LogicalFrameTreeItem) => {
+    setEditingIndicator(null)
+    
+    // Auto-fill logic
+    const subCode = subprojectFilter ? subprojectFilter.split(' - ')[0] : ''
+    let og = ''
+    let oe = ''
+    let r = ''
+    
+    // Map shortened type back to full type
+    let fullTipo = 'Indicador de Subproyecto'
+    if (tipo === 'IND OG') fullTipo = 'Indicador de Objetivo General'
+    if (tipo === 'IND OE') fullTipo = 'Indicador de Objetivo Específico'
+    if (tipo === 'IND R') fullTipo = 'Indicador de Resultado'
+
+    if (parent) {
+       if (tipo === 'IND OG') {
+         const ogId = Number(parent.id.replace('group-ind-og-', ''))
+         const ogItem = localObjGeneral.find(x => x.id === ogId)
+         if (ogItem) og = `${ogItem.codigo} - ${ogItem.nombre}`
+       } else if (tipo === 'IND OE') {
+         const oeId = Number(parent.id.replace('group-ind-oe-', ''))
+         const oeItem = localObjEspecifico.find(x => x.id === oeId)
+         if (oeItem) {
+           oe = `${oeItem.codigo} - ${oeItem.nombre}`
+           og = oeItem.objetivoGeneral || ''
+         }
+       } else if (tipo === 'IND R') {
+         const rId = Number(parent.id.replace('group-ind-r-', ''))
+         const rItem = localResultados.find(x => x.id === rId)
+         if (rItem) {
+           r = `${rItem.codigo} - ${rItem.nombre}`
+           oe = rItem.objetivoEspecifico || ''
+           // Find OE to get OG
+           const parentOe = localObjEspecifico.find(x => `${x.codigo} - ${x.nombre}` === oe)
+           if (parentOe) og = parentOe.objetivoGeneral || ''
+         }
+       }
+    }
+
+    setIndicatorForm({
+      tipo: fullTipo as any,
+      codigo: '',
+      nombre: '',
+      unidad: '',
+      tipoValor: '',
+      subproyecto: subCode,
+      objetivoGeneral: og,
+      objetivoEspecifico: oe,
+      resultado: r
+    })
+    setIsIndicatorModalOpen(true)
+  }
+
+  const handleSaveIndicator = () => {
+    const subprojectCode = indicatorForm.subproyecto
+    const plan = planesAnualesData.find(p => p.codigosubproyecto === subprojectCode)
+
+    if (editingIndicator) {
+      const indicatorToSave: Indicador = {
+        ...editingIndicator,
+        ...indicatorForm,
+        programa: plan?.programa || '',
+        proyecto: plan?.proyecto || ''
+      } as Indicador
+      setLocalIndicadores(prev => prev.map(i => i.id === editingIndicator.id ? indicatorToSave : i))
+    } else {
+      const newId = Math.max(0, ...localIndicadores.map(i => i.id)) + 1
+      const indicatorToSave: Indicador = {
+        ...indicatorForm,
+        id: newId,
+        programa: plan?.programa || '',
+        proyecto: plan?.proyecto || ''
+      } as any
+      setLocalIndicadores(prev => [...prev, indicatorToSave as Indicador])
+    }
+    setIsIndicatorModalOpen(false)
+    setShowConfirmSave(true)
+  }
+
+  const handleSaveFormula = () => {
+    if (formulaIndicator && formulaRef.current) {
+      // Parse HTML back to simple string format
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = formulaRef.current.innerHTML;
+
+      const badges = tempDiv.querySelectorAll(`.${styles.formulaTokenBadge}`);
+      badges.forEach(badge => {
+        const code = (badge as HTMLElement).dataset.code;
+        badge.replaceWith(`[${code}]`);
+      });
+
+      let formulaString = tempDiv.innerText.replace(/\n/g, '').trim();
+      // Ensure formula starts with =
+      if (formulaString && !formulaString.startsWith('=')) {
+        formulaString = '=' + formulaString;
+      }
+
+      setLocalIndicadores(prev =>
+        prev.map(i => i.id === formulaIndicator.id ? { ...i, formula: formulaString } : i)
+      )
+    }
+    setIsFormulaModalOpen(false)
+    setShowConfirmSave(true)
+  }
+
+  const handleFormulaIndicatorsChange = (selectedLabels: string[]) => {
+    if (!formulaRef.current) return;
+
+    const currentBadges = Array.from(formulaRef.current.querySelectorAll(`.${styles.formulaTokenBadge}`))
+      .map(b => (b as HTMLElement).dataset.code)
+      .filter((c): c is string => Boolean(c));
+
+    selectedLabels.forEach(label => {
+      const code = label.split(' - ')[0];
+      if (!currentBadges.includes(code)) {
+        insertBadge(code);
+      }
+    });
+
+    const codesInLabels = selectedLabels.map(l => l.split(' - ')[0]);
+    currentBadges.forEach(code => {
+      if (!codesInLabels.includes(code)) {
+        const badgeEls = formulaRef.current?.querySelectorAll(`[data-code="${code}"]`);
+        badgeEls?.forEach((el: Element) => el.remove());
+      }
+    });
+  }
+
+  const saveSelection = () => {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      setSavedRange(selection.getRangeAt(0).cloneRange());
+    }
+  }
+
+  const insertBadge = (code: string) => {
+    if (!formulaRef.current) return;
+
+    formulaRef.current.focus();
+    const selection = window.getSelection();
+    if (savedRange && selection) {
+      selection.removeAllRanges();
+      selection.addRange(savedRange);
+    }
+
+    const range = selection?.rangeCount ? selection.getRangeAt(0) : null;
+    if (!range) return;
+
+    const span = document.createElement('span');
+    span.contentEditable = 'false';
+    span.className = styles.formulaTokenBadge;
+    span.dataset.code = code;
+    span.innerHTML = `${code}<span class="${styles.tokenRemove}" style="cursor: pointer; margin-left: 6px;">×</span>`;
+
+    // Manual listener for removal
+    span.querySelector(`.${styles.tokenRemove}`)?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      span.remove();
+    });
+
+    range.deleteContents();
+    range.insertNode(span);
+
+    const space = document.createTextNode('\u00A0');
+    range.setStartAfter(span);
+    range.insertNode(space);
+    range.setStartAfter(space);
+
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    setSavedRange(range.cloneRange());
+  }
+
+  const handleFormulaKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const selection = window.getSelection();
+    if (!selection || !selection.rangeCount) return;
+
+    const range = selection.getRangeAt(0);
+    const text = formulaRef.current?.innerText || '';
+
+    if (e.key === 'Backspace' && range.startOffset === 1 && text.startsWith('=') && range.startContainer === formulaRef.current?.firstChild) {
+      e.preventDefault();
+    }
+    if (e.key === 'Backspace' && text === '=' && range.startOffset === 1) {
+      e.preventDefault();
+    }
+  }
 
   // Auto-fill related fields based on selection
   const handleProgramChange = (val: string) => {
@@ -214,15 +505,15 @@ export function LogicalFrameView() {
        return
     }
 
-    if (tipo === 'Obj. General') {
+    if (tipo === 'OG') {
       setLocalObjGeneral(prev => prev.filter(i => i.id !== numericId))
-    } else if (tipo === 'Obj. Específico') {
+    } else if (tipo === 'OE') {
       setLocalObjEspecifico(prev => prev.filter(i => i.id !== numericId))
-    } else if (tipo === 'Resultado') {
+    } else if (tipo === 'R') {
       setLocalResultados(prev => prev.filter(i => i.id !== numericId))
-    } else if (tipo === 'Actividad') {
+    } else if (tipo === 'ACT') {
       setLocalActividades(prev => prev.filter(i => i.id !== numericId))
-    } else if (tipo === 'Subactividad') {
+    } else if (tipo === 'SUBACT') {
       setLocalSubactividades(prev => prev.filter(i => i.id !== numericId))
     }
 
@@ -486,11 +777,12 @@ export function LogicalFrameView() {
   }
 
   const handleClickNew = (tipo: string, parent?: LogicalFrameTreeItem) => {
-    if (tipo === 'Objetivos Generales') handleNewOG()
-    if (tipo === 'Objetivos Específicos') handleNewOE(parent)
-    if (tipo === 'Resultados') handleNewR(parent)
-    if (tipo === 'Actividad') handleNewAct(parent)
-    if (tipo === 'Subactividades') handleNewSubact(parent)
+    if (tipo === 'OG') handleNewOG()
+    if (tipo === 'OE') handleNewOE(parent)
+    if (tipo === 'R') handleNewR(parent)
+    if (tipo === 'ACT') handleNewAct(parent)
+    if (tipo === 'SUBACT') handleNewSubact(parent)
+    if (tipo.startsWith('IND')) handleNewIndicator(tipo, parent)
   }
 
   // Hierarchical Options
@@ -519,11 +811,12 @@ export function LogicalFrameView() {
     if (!selectedSheetItem) return
     const item = selectedSheetItem
     setIsSheetOpen(false)
-    if (item.tipo === 'Obj. General') handleEditOG(item)
-    if (item.tipo === 'Obj. Específico') handleEditOE(item)
-    if (item.tipo === 'Resultado') handleEditR(item)
-    if (item.tipo === 'Actividad') handleEditAct(item)
-    if (item.id.startsWith('subact-')) handleEditSubact(item)
+    if (item.tipo === 'OG') handleEditOG(item)
+    else if (item.tipo === 'OE') handleEditOE(item)
+    else if (item.tipo === 'R') handleEditR(item)
+    else if (item.tipo === 'ACT') handleEditAct(item)
+    else if (item.id.startsWith('subact-')) handleEditSubact(item)
+    else if (item.id.startsWith('ind-')) handleEditIndicator(item)
   }
 
   const renderSheetContent = () => {
@@ -534,13 +827,14 @@ export function LogicalFrameView() {
     let originalData: any = null
     const numericId = parseInt(item.id.split('-').pop() || '0')
 
-    if (item.tipo === 'Obj. General') originalData = localObjGeneral.find(i => i.id === numericId)
-    if (item.tipo === 'Obj. Específico') originalData = localObjEspecifico.find(i => i.id === numericId)
-    if (item.tipo === 'Resultado') originalData = localResultados.find(i => i.id === numericId)
-    if (item.tipo === 'Actividad') originalData = localActividades.find(i => i.id === numericId)
-    if (item.tipo === 'Subactividad' || item.tipo.startsWith('Subact')) originalData = localSubactividades.find(i => i.id === numericId)
+    if (item.tipo === 'OG') originalData = localObjGeneral.find(i => i.id === numericId)
+    if (item.tipo === 'OE') originalData = localObjEspecifico.find(i => i.id === numericId)
+    if (item.tipo === 'R') originalData = localResultados.find(i => i.id === numericId)
+    if (item.tipo === 'ACT') originalData = localActividades.find(i => i.id === numericId)
+    if (item.tipo === 'SUBACT' || item.tipo.startsWith('Subact')) originalData = localSubactividades.find(i => i.id === numericId)
+    if (item.id.startsWith('ind-')) originalData = localIndicadores.find(i => i.id === numericId)
 
-    const isComplex = item.tipo === 'Actividad' || item.tipo.startsWith('Subact')
+    const isComplex = item.tipo === 'ACT' || item.tipo.startsWith('SUBACT') || item.id.startsWith('ind-')
 
     return (
       <>
@@ -555,11 +849,11 @@ export function LogicalFrameView() {
                 </div>
                 <div className={styles.field}>
                   <span className={styles.fieldLabel}>Código de {item.tipo}</span>
-                  <span className={styles.fieldValue}>{item.tipo === 'Actividad' ? originalData?.codigoActividad : originalData?.codigoSubactividad}</span>
+                  <span className={styles.fieldValue}>{item.tipo === 'ACT' ? originalData?.codigoActividad : originalData?.codigoSubactividad}</span>
                 </div>
                 <div className={styles.field}>
                   <span className={styles.fieldLabel}>Código de {item.tipo} Presupuesto</span>
-                  <span className={styles.fieldValue}>{item.tipo === 'Actividad' ? originalData?.codigoActividadPresupuesto : originalData?.codigoSubactividadPresupuesto}</span>
+                  <span className={styles.fieldValue}>{item.tipo === 'ACT' ? originalData?.codigoPresupuesto : originalData?.codigoSubactividadPresupuesto}</span>
                 </div>
                 <div className={styles.field}>
                   <span className={styles.fieldLabel}>Nombre</span>
@@ -604,25 +898,25 @@ export function LogicalFrameView() {
               <span className={styles.fieldLabel}>Subproyecto</span>
               <span className={styles.fieldValue}>{subprojectFilter}</span>
             </div>
-            {(item.tipo !== 'Obj. General') && (
+            {(item.tipo !== 'OG' && item.tipo !== 'IND SUBP') && (
               <div className={styles.field}>
                 <span className={styles.fieldLabel}>Objetivo General</span>
                 <span className={styles.fieldValue}>{originalData?.objetivoGeneral}</span>
               </div>
             )}
-            {(item.tipo === 'Resultado' || item.tipo === 'Actividad' || item.tipo.startsWith('Subact')) && (
+            {(item.tipo === 'R' || item.tipo === 'ACT' || item.tipo.startsWith('SUBACT') || item.tipo === 'IND OE' || item.tipo === 'IND R') && (
               <div className={styles.field}>
                 <span className={styles.fieldLabel}>Objetivo Específico</span>
                 <span className={styles.fieldValue}>{originalData?.objetivoEspecifico}</span>
               </div>
             )}
-            {(item.tipo === 'Actividad' || item.tipo.startsWith('Subact')) && (
+            {(item.tipo === 'ACT' || item.tipo.startsWith('SUBACT') || item.tipo === 'IND R') && (
               <div className={styles.field}>
                 <span className={styles.fieldLabel}>Resultado</span>
                 <span className={styles.fieldValue}>{originalData?.resultado}</span>
               </div>
             )}
-            {(item.tipo.startsWith('Subact')) && (
+            {(item.tipo.startsWith('SUBACT')) && (
               <div className={styles.field}>
                 <span className={styles.fieldLabel}>Actividad</span>
                 <span className={styles.fieldValue}>{originalData?.actividad}</span>
@@ -638,117 +932,222 @@ export function LogicalFrameView() {
   const filteredData = useMemo((): LogicalFrameTreeItem[] => {
     if (!isFiltered) return []
 
+    const subprojectCode = subprojectFilter.split(' - ')[0]
+
+    // 1. Indicadores de Subproyecto (Level 1)
+    const spIndicadores: LogicalFrameTreeItem[] = localIndicadores
+      .filter(ind => ind.tipo === 'Indicador de Subproyecto' && ind.subproyecto === subprojectCode)
+      .map(ind => ({
+        id: `ind-sp-${ind.id}`,
+        tipo: 'IND SUBP',
+        badgeVariant: 'sp-indicador' as const,
+        codigo: ind.codigo,
+        nombre: ind.nombre,
+        unidad: ind.unidad,
+        tipoValor: ind.tipoValor,
+      }))
+
+    const spIndicadorGroup: LogicalFrameTreeItem = {
+      id: 'group-sp-ind',
+      tipo: 'IND SUBP',
+      badgeVariant: 'sp-indicador-group' as const,
+      isGroup: true,
+      nombre: '',
+      children: spIndicadores,
+    }
+
+    // 2. Objetivos Generales (Level 1)
     const ogItems: LogicalFrameTreeItem[] = localObjGeneral.map(og => {
       const ogLabel = `${og.codigo} - ${og.nombre}`
-      const oeChildren: LogicalFrameTreeItem[] = localObjEspecifico
+      
+      // 3. Indicadores de Objetivos Generales (Level 2, under OG)
+      const ogIndicadores: LogicalFrameTreeItem[] = localIndicadores
+        .filter(ind => ind.tipo === 'Indicador de Objetivo General' && ind.objetivoGeneral === ogLabel)
+        .map(ind => ({
+          id: `ind-og-${ind.id}`,
+          tipo: 'IND OG',
+          badgeVariant: 'og-indicador' as const,
+          codigo: ind.codigo,
+          nombre: ind.nombre,
+          unidad: ind.unidad,
+          tipoValor: ind.tipoValor,
+        }))
+
+      const ogIndicadorGroup: LogicalFrameTreeItem = {
+        id: `group-ind-og-${og.id}`,
+        tipo: 'IND OG',
+        badgeVariant: 'og-indicador-group' as const,
+        isGroup: true,
+        nombre: '',
+        children: ogIndicadores,
+      }
+
+      // 4. Objetivos Específicos (Level 2, under OG)
+      const oeItems: LogicalFrameTreeItem[] = localObjEspecifico
         .filter(oe => oe.objetivoGeneral === ogLabel)
         .map(oe => {
           const oeLabel = `${oe.codigo} - ${oe.nombre}`
-          const rChildren: LogicalFrameTreeItem[] = localResultados
-            .filter(r => r.objetivoGeneral === ogLabel && r.objetivoEspecifico === oeLabel)
+
+          // 5. Indicadores de Objetivos Específicos (Level 3, under OE)
+          const oeIndicadores: LogicalFrameTreeItem[] = localIndicadores
+            .filter(ind => ind.tipo === 'Indicador de Objetivo Específico' && ind.objetivoEspecifico === oeLabel)
+            .map(ind => ({
+              id: `ind-oe-${ind.id}`,
+              tipo: 'IND OE',
+              badgeVariant: 'oe-indicador' as const,
+              codigo: ind.codigo,
+              nombre: ind.nombre,
+              unidad: ind.unidad,
+              tipoValor: ind.tipoValor,
+            }))
+
+          const oeIndicadorGroup: LogicalFrameTreeItem = {
+            id: `group-ind-oe-${oe.id}`,
+            tipo: 'IND OE',
+            badgeVariant: 'oe-indicador-group' as const,
+            isGroup: true,
+            nombre: '',
+            children: oeIndicadores,
+          }
+
+          // 6. Resultados (Level 3, under OE)
+          const rItems: LogicalFrameTreeItem[] = localResultados
+            .filter(r => r.objetivoEspecifico === oeLabel)
             .map(r => {
               const rLabel = `${r.codigo} - ${r.nombre}`
-              const actChildren: LogicalFrameTreeItem[] = localActividades
+
+              // 7. Indicadores de Resultados (Level 4, under R)
+              const rIndicadores: LogicalFrameTreeItem[] = localIndicadores
+                .filter(ind => ind.tipo === 'Indicador de Resultado' && ind.resultado === rLabel)
+                .map(ind => ({
+                  id: `ind-r-${ind.id}`,
+                  tipo: 'IND R',
+                  badgeVariant: 'r-indicador' as const,
+                  codigo: ind.codigo,
+                  nombre: ind.nombre,
+                  unidad: ind.unidad,
+                  tipoValor: ind.tipoValor,
+                }))
+
+              const rIndicadorGroup: LogicalFrameTreeItem = {
+                id: `group-ind-r-${r.id}`,
+                tipo: 'IND R',
+                badgeVariant: 'r-indicador-group' as const,
+                isGroup: true,
+                nombre: '',
+                children: rIndicadores,
+              }
+
+              // 8. Actividades (Level 4, under R)
+              const actItems: LogicalFrameTreeItem[] = localActividades
                 .filter(a => a.resultado === rLabel)
                 .map(a => {
+                  // 9. Subactividades (Level 5, under Act)
                   const subActChildren: LogicalFrameTreeItem[] = localSubactividades
                     .filter(sa => sa.actividad === a.nombre)
                     .map(sa => ({
                       id: `subact-${sa.id}`,
-                      tipo: sa.tipo,
+                      tipo: 'SUBACT',
                       badgeVariant: 'subact' as const,
                       codigo: sa.codigoSubactividad,
                       nombre: sa.nombre,
+                      unidad: sa.unidad,
+                      tipoValor: sa.tipoValor,
                     }))
 
                   return {
                     id: `act-${a.id}`,
-                    tipo: 'Actividad',
+                    tipo: 'ACT',
                     badgeVariant: 'act' as const,
                     codigo: a.codigoActividad,
                     nombre: a.nombre,
+                    unidad: a.unidad,
+                    tipoValor: a.tipoValor,
                     children: [
-                        {
-                            id: `group-subact-act-${a.id}`,
-                            tipo: 'Subactividades',
-                            badgeVariant: 'subact-group' as const,
-                            isGroup: true,
-                            nombre: '',
-                            children: subActChildren,
-                        }
+                      {
+                        id: `group-subact-act-${a.id}`,
+                        tipo: 'SUBACT',
+                        badgeVariant: 'subact-group' as const,
+                        isGroup: true,
+                        nombre: '',
+                        children: subActChildren,
+                      }
                     ],
                   } as LogicalFrameTreeItem
                 })
 
               return {
                 id: `r-${r.id}`,
-                tipo: 'Resultado',
+                tipo: 'R',
                 badgeVariant: 'result' as const,
                 codigo: r.codigo,
                 nombre: r.nombre,
                 children: [
-                    {
-                        id: `group-act-r-${r.id}`,
-                        tipo: 'Actividad',
-                        badgeVariant: 'act-group' as const,
-                        isGroup: true,
-                        nombre: '',
-                        children: actChildren,
-                    }
+                  rIndicadorGroup,
+                  {
+                    id: `group-act-r-${r.id}`,
+                    tipo: 'ACT',
+                    badgeVariant: 'act-group' as const,
+                    isGroup: true,
+                    nombre: '',
+                    children: actItems,
+                  }
                 ],
               } as LogicalFrameTreeItem
             })
 
           return {
             id: `oe-${oe.id}`,
-            tipo: 'Obj. Específico',
+            tipo: 'OE',
             badgeVariant: 'oe' as const,
             codigo: oe.codigo,
             nombre: oe.nombre,
             children: [
-                {
-                    id: `group-r-oe-${oe.id}`,
-                    tipo: 'Resultados',
-                    badgeVariant: 'result-group' as const,
-                    isGroup: true,
-                    nombre: '',
-                    children: rChildren,
-                }
+              oeIndicadorGroup,
+              {
+                id: `group-r-oe-${oe.id}`,
+                tipo: 'R',
+                badgeVariant: 'result-group' as const,
+                isGroup: true,
+                nombre: '',
+                children: rItems,
+              }
             ],
           } as LogicalFrameTreeItem
         })
 
-      const oeGroup: LogicalFrameTreeItem | null = {
-        id: `group-oe-og-${og.id}`,
-        tipo: 'Objetivos Específicos',
-        badgeVariant: 'oe-group' as const,
-        isGroup: true,
-        nombre: '',
-        children: oeChildren,
-      }
-
       return {
         id: `og-${og.id}`,
-        tipo: 'Obj. General',
+        tipo: 'OG',
         badgeVariant: 'og' as const,
         codigo: og.codigo,
         nombre: og.nombre,
-        children: [oeGroup],
+        children: [
+          ogIndicadorGroup,
+          {
+            id: `group-oe-og-${og.id}`,
+            tipo: 'OE',
+            badgeVariant: 'oe-group' as const,
+            isGroup: true,
+            nombre: '',
+            children: oeItems,
+          }
+        ],
       } as LogicalFrameTreeItem
     })
 
-    // Wrap all OGs in a top-level group
     return [
+      spIndicadorGroup,
       {
         id: 'group-og',
-        tipo: 'Objetivos Generales',
+        tipo: 'OG',
         badgeVariant: 'og-group' as const,
         isGroup: true,
         nombre: '',
         children: ogItems,
       }
     ]
-  }, [isFiltered, localObjGeneral, localObjEspecifico, localResultados, localActividades, localSubactividades])
+  }, [isFiltered, subprojectFilter, localObjGeneral, localObjEspecifico, localResultados, localActividades, localSubactividades, localIndicadores])
 
   const handleSelectAll = () => {
     if (headerChecked) {
@@ -780,11 +1179,11 @@ export function LogicalFrameView() {
   }
 
   const getNewButtonLabel = (tipo: string) => {
-    if (tipo === 'Objetivos Generales') return 'Nuevo Obj. General'
-    if (tipo === 'Objetivos Específicos') return 'Nuevo Obj. Específico'
-    if (tipo === 'Resultados') return 'Nuevo Resultado'
-    if (tipo === 'Actividad') return 'Nueva Actividad'
-    if (tipo === 'Subactividades') return 'Nueva Subactividad'
+    if (tipo === 'OG') return 'Nuevo OG'
+    if (tipo === 'OE') return 'Nuevo OE'
+    if (tipo === 'R') return 'Nuevo R'
+    if (tipo === 'ACT') return 'Nueva ACT'
+    if (tipo === 'SUBACT') return 'Nueva SUBACT'
     return `Nuevo ${tipo}`
   }
 
@@ -820,35 +1219,110 @@ export function LogicalFrameView() {
               <Badge variant={item.badgeVariant}>{item.tipo}</Badge>
             </div>
           </div>
-          <div className={styles.td} style={{ width: '120px' }}>
-            {item.codigo || ''}
+          <div className={styles.td} style={{ flex: 1, minWidth: 0 }}>
+            {item.codigo ? `${item.codigo} - ` : ''} {item.nombre}
           </div>
-          <div className={styles.td} style={{ flex: 1, minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-            {item.nombre}
+          <div className={styles.td} style={{ width: '150px' }}>
+            {item.unidad || ''}
           </div>
-          <div className={styles.td} style={{ width: '240px', textAlign: 'right' }}>
+          <div className={styles.td} style={{ width: '150px' }}>
+            {item.tipoValor || ''}
+          </div>
+          <div className={styles.td} style={{ width: '180px', textAlign: 'right' }}>
             <div className={styles.actions}>
-              {item.isGroup ? (
-                <button className={styles.newButton} onClick={() => handleClickNew(item.tipo, item)}>
-                  <Plus size={14} /> {getNewButtonLabel(item.tipo)}
-                </button>
-              ) : (
-                <>
-                  <Eye size={18} className={styles.actionIcon} onClick={() => handleViewDetails(item)} />
-                  <Pencil size={18} className={styles.actionIcon} onClick={() => {
-                    if (item.tipo === 'Obj. General') handleEditOG(item)
-                    if (item.tipo === 'Obj. Específico') handleEditOE(item)
-                    if (item.tipo === 'Resultado') handleEditR(item)
-                    if (item.id.startsWith('act-')) handleEditAct(item)
-                    if (item.id.startsWith('subact-')) handleEditSubact(item)
-                  }} />
-                  <Trash2 
-                    size={18} 
-                    className={`${styles.actionIcon} ${styles.deleteIcon}`} 
-                    onClick={() => handleDelete(item)}
-                  />
-                </>
-              )}
+              <Eye 
+                size={18} 
+                className={styles.actionIcon} 
+                onClick={() => handleViewDetails(item)} 
+              />
+              
+              <div className={styles.menuWrapper}>
+                <MoreHorizontal 
+                  size={18} 
+                  className={styles.actionIcon} 
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setOpenMenuId(openMenuId === item.id ? null : item.id)
+                  }} 
+                />
+                
+                {openMenuId === item.id && (
+                  <div className={styles.menu} onClick={(e) => e.stopPropagation()}>
+                    {item.isGroup ? (
+                      <button 
+                        className={styles.menuItem} 
+                        onClick={() => {
+                          handleClickNew(item.tipo, item)
+                          setOpenMenuId(null)
+                        }}
+                      >
+                        <Plus size={14} /> {getNewButtonLabel(item.tipo)}
+                      </button>
+                    ) : (
+                      <>
+                        {item.id.includes('ind-') && (
+                          <button 
+                            className={styles.menuItem} 
+                            onClick={() => {
+                              const numericId = Number(item.id.split('-').pop())
+                              const indicator = localIndicadores.find(i => i.id === numericId)
+                              if (indicator) {
+                                setFormulaIndicator(indicator)
+                                setTimeout(() => {
+                                  if (formulaRef.current) {
+                                    const formula = indicator.formula || '='
+                                    const html = formula.replace(/\[(.*?)\]/g, (_, code) => {
+                                      return `<span contenteditable="false" class="${styles.formulaTokenBadge}" data-code="${code}">${code}<span class="${styles.tokenRemove}" style="cursor: pointer; margin-left: 6px; font-weight: bold;">×</span></span>`
+                                    })
+                                    formulaRef.current.innerHTML = html
+
+                                    // Add click listeners to initial badges
+                                    formulaRef.current.querySelectorAll(`.${styles.tokenRemove}`).forEach(btn => {
+                                      (btn as HTMLElement).addEventListener('click', (e: MouseEvent) => {
+                                        e.stopPropagation()
+                                          ; (btn as HTMLElement).parentElement?.remove()
+                                      })
+                                    })
+                                  }
+                                }, 0)
+                                setIsFormulaModalOpen(true)
+                              }
+                              setOpenMenuId(null)
+                            }}
+                          >
+                            <Calculator size={14} /> Fórmulas
+                          </button>
+                        )}
+                        <button 
+                          className={styles.menuItem} 
+                          onClick={() => {
+                            if (item.tipo === 'OG') handleEditOG(item)
+                            else if (item.tipo === 'OE') handleEditOE(item)
+                            else if (item.tipo === 'R') handleEditR(item)
+                            else if (item.id.startsWith('act-')) handleEditAct(item)
+                            else if (item.id.startsWith('subact-')) handleEditSubact(item)
+                            else if (item.id.startsWith('ind-')) handleEditIndicator(item)
+                            setOpenMenuId(null)
+                          }}
+                        >
+                          <Pencil size={14} /> Editar
+                        </button>
+                        <div className={styles.menuDivider} />
+                        <button 
+                          className={styles.menuItem} 
+                          data-variant="danger"
+                          onClick={() => {
+                            handleDelete(item)
+                            setOpenMenuId(null)
+                          }}
+                        >
+                          <Trash2 size={14} /> Eliminar
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -870,71 +1344,93 @@ export function LogicalFrameView() {
   const totalItems = filteredData.length > 0 ? countItems(filteredData) : 0
 
   return (
-    <div className={styles.root}>
-      <header style={{ padding: '16px 16px 0' }}>
-        <PageHeader
-          title="Marco Lógico"
-          subtitle="Gestión de Objetivos, Resultados, Actividades y Subactividades"
-        />
-      </header>
+    <div className={isEmbedded ? styles.embeddedRoot : styles.root}>
+      {!isEmbedded && (
+        <>
+          <header style={{ padding: '16px 16px 0' }}>
+            <PageHeader
+              title="Marco Lógico"
+              subtitle="Gestión de Objetivos, Resultados, Actividades y Subactividades"
+            />
+          </header>
 
-      <Toolbar
-        onExport={() => { }}
-        onRefresh={() => { }}
-        onFilterToggle={() => { }}
-        onColumnToggle={() => { }}
-      >
-        <div style={{ flex: 1, display: 'flex', gap: '12px', flexWrap: 'nowrap', minWidth: 0, alignItems: 'flex-end' }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <FilterSelect
-              label="Programa"
-              options={programOptions}
-              value={programFilter}
-              onChange={handleProgramChange}
-              width="100%"
-            />
+          <div style={{ padding: '0 16px 12px' }}>
+            <Toolbar
+              onExport={() => { }}
+              onRefresh={() => { }}
+              onFilterToggle={() => { }}
+              onColumnToggle={() => { }}
+            >
+              <div style={{ flex: 1, display: 'flex', gap: '12px', flexWrap: 'nowrap', minWidth: 0, alignItems: 'flex-end' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <FilterSelect
+                    label="Programa"
+                    options={programOptions}
+                    value={programFilter}
+                    onChange={handleProgramChange}
+                    width="100%"
+                  />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <FilterSelect
+                    label="Proyecto"
+                    options={projectOptions}
+                    value={projectFilter}
+                    onChange={handleProjectChange}
+                    width="100%"
+                  />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <FilterSelect
+                    label="Subproyecto"
+                    options={subprojectOptions}
+                    value={subprojectFilter}
+                    onChange={handleSubprojectChange}
+                    width="100%"
+                  />
+                </div>
+                <button
+                  className={styles.filterButton}
+                  onClick={handleFilter}
+                  disabled={!programFilter && !projectFilter && !subprojectFilter}
+                >
+                  Filtrar
+                </button>
+              </div>
+            </Toolbar>
           </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <FilterSelect
-              label="Proyecto"
-              options={projectOptions}
-              value={projectFilter}
-              onChange={handleProjectChange}
-              width="100%"
-            />
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <FilterSelect
-              label="Subproyecto"
-              options={subprojectOptions}
-              value={subprojectFilter}
-              onChange={handleSubprojectChange}
-              width="100%"
-            />
-          </div>
-          <button
-            className={styles.filterButton}
-            onClick={handleFilter}
-            disabled={!programFilter && !projectFilter && !subprojectFilter}
-          >
-            Filtrar
-          </button>
-        </div>
-      </Toolbar>
+        </>
+      )}
 
-      <div className={styles.tableContainer}>
+      <div className={styles.tableContainer} style={{ height: isEmbedded ? '100%' : undefined, overflowY: 'auto' }}>
         <div className={styles.treeTable}>
-          <div style={{ display: 'flex', backgroundColor: '#fafafa', borderBottom: '1px solid #f0f0f0' }}>
+          <div style={{ display: 'flex', backgroundColor: '#fafafa', borderBottom: '1px solid #f0f0f0', position: 'sticky', top: 0, zIndex: 10 }}>
             <div className={styles.th} style={{ width: '48px', padding: '16px 0 16px 24px' }}>
               <Checkbox
                 checked={headerChecked}
                 onChange={handleSelectAll}
               />
             </div>
-            <div className={styles.th} style={{ whiteSpace: 'nowrap' }}>Tipo</div>
-            <div className={styles.th} style={{ width: '120px' }}>Código</div>
-            <div className={styles.th} style={{ flex: 1 }}>Nombre</div>
-            <div className={styles.th} style={{ width: '240px', textAlign: 'right', paddingRight: '32px' }}>Acciones</div>
+            <div className={styles.th} style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ArrowUpDown size={14} /> TIPO <Pin size={14} />
+              </div>
+            </div>
+            <div className={styles.th} style={{ width: '150px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ArrowUpDown size={14} /> UNIDAD <Pin size={14} />
+              </div>
+            </div>
+            <div className={styles.th} style={{ width: '150px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ArrowUpDown size={14} /> TIPO DE VALOR <Pin size={14} />
+              </div>
+            </div>
+            <div className={styles.th} style={{ width: '180px', textAlign: 'right', paddingRight: '32px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'flex-end' }}>
+                ACCIONES <Pin size={14} />
+              </div>
+            </div>
           </div>
           {!isFiltered && (
             <div className={styles.emptyState}>
@@ -1224,14 +1720,229 @@ export function LogicalFrameView() {
       <SideSheet
         isOpen={isSheetOpen}
         onClose={() => setIsSheetOpen(false)}
-        title={selectedSheetItem ? `${selectedSheetItem.codigo ? selectedSheetItem.codigo + ' - ' : ''}${selectedSheetItem.nombre}` : ''}
+        title={selectedSheetItem ? `${selectedSheetItem.codigo ? selectedSheetItem.codigo + ' - ' : ''}${selectedSheetItem.nombre || selectedSheetItem.tipo}` : ''}
         subtitle={selectedSheetItem?.tipo}
-        onEdit={handleEditFromSheet}
+        onEdit={selectedSheetItem?.isGroup ? undefined : handleEditFromSheet}
       >
         {renderSheetContent()}
       </SideSheet>
 
-      {/* Modal de confirmación (Eliminar) */}
+      {/* Modal de Indicadores */}
+      <Modal
+        isOpen={isIndicatorModalOpen}
+        onClose={() => setIsIndicatorModalOpen(false)}
+        title={editingIndicator ? 'Editar Indicador' : 'Nuevo Indicador'}
+        subtitle="Ingresa todos los detalles técnicos y de jerarquía"
+        onSave={handleSaveIndicator}
+        isSaveDisabled={!indicatorForm.tipo || !indicatorForm.codigo || !indicatorForm.nombre || !indicatorForm.subproyecto}
+        width="1420px"
+      >
+        <div className={styles.modalTwoColumns}>
+          {/* Columna Izquierda: Datos Técnicos */}
+          <div className={styles.modalColumn}>
+            <div className={styles.columnHeader}>Datos Técnicos</div>
+            <div className={styles.modalFields}>
+              <FilterSelect
+                label="Tipo de Indicador"
+                options={[
+                  'Indicador de Subproyecto',
+                  'Indicador de Objetivo General',
+                  'Indicador de Objetivo Específico',
+                  'Indicador de Resultado'
+                ]}
+                value={indicatorForm.tipo}
+                onChange={(val) => setIndicatorForm({ ...indicatorForm, tipo: val as any, objetivoGeneral: '', objetivoEspecifico: '', resultado: '' })}
+                width="600px"
+              />
+              <Input
+                label="Código"
+                value={indicatorForm.codigo || ''}
+                onChange={(val) => setIndicatorForm({ ...indicatorForm, codigo: val })}
+                width="600px"
+              />
+              <Input
+                label="Nombre"
+                value={indicatorForm.nombre || ''}
+                onChange={(val) => setIndicatorForm({ ...indicatorForm, nombre: val })}
+                width="600px"
+              />
+              <FilterSelect
+                label="Unidad"
+                options={unidadesData.map(u => u.nombre)}
+                value={indicatorForm.unidad}
+                onChange={(val) => setIndicatorForm({ ...indicatorForm, unidad: val })}
+                width="600px"
+              />
+              <FilterSelect
+                label="Tipo de Valor"
+                options={tiposDeValorData.map(t => t.nombre)}
+                value={indicatorForm.tipoValor}
+                onChange={(val) => setIndicatorForm({ ...indicatorForm, tipoValor: val })}
+                width="600px"
+              />
+            </div>
+          </div>
+
+          {/* Columna Derecha: Jerarquía */}
+          <div className={styles.modalColumn}>
+            <div className={styles.columnHeader}>Jerarquía y Contexto</div>
+            <div className={styles.modalFields}>
+              <FilterSelect
+                label="Subproyecto"
+                options={subprojectModalOptions}
+                value={indicatorForm.subproyecto ? `${indicatorForm.subproyecto} - ${planesAnualesData.find(p => p.codigosubproyecto === indicatorForm.subproyecto)?.subproyecto || ''}` : ''}
+                onChange={(val) => {
+                  const code = val.split(' - ')[0]
+                  setIndicatorForm({ ...indicatorForm, subproyecto: code })
+                }}
+                width="600px"
+                readOnly
+              />
+
+              {(indicatorForm.tipo === 'Indicador de Objetivo General' ||
+                indicatorForm.tipo === 'Indicador de Objetivo Específico' ||
+                indicatorForm.tipo === 'Indicador de Resultado') && (
+                  <FilterSelect
+                    label="Objetivo General"
+                    options={ogOptionsForModal}
+                    value={indicatorForm.objetivoGeneral}
+                    onChange={(val) => setIndicatorForm({ ...indicatorForm, objetivoGeneral: val, objetivoEspecifico: '', resultado: '' })}
+                    width="600px"
+                  />
+                )}
+
+              {(indicatorForm.tipo === 'Indicador de Objetivo Específico' ||
+                indicatorForm.tipo === 'Indicador de Resultado') && (
+                  <FilterSelect
+                    label="Objetivo Específico"
+                    options={oeOptionsForModal}
+                    value={indicatorForm.objetivoEspecifico}
+                    onChange={(val) => setIndicatorForm({ ...indicatorForm, objetivoEspecifico: val, resultado: '' })}
+                    width="600px"
+                  />
+                )}
+
+              {indicatorForm.tipo === 'Indicador de Resultado' && (
+                <FilterSelect
+                  label="Resultado"
+                  options={resultadoOptionsForModal}
+                  value={indicatorForm.resultado}
+                  onChange={(val) => setIndicatorForm({ ...indicatorForm, resultado: val })}
+                  width="600px"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </Modal>
+      {/* Modal de Indicadores */}
+      <Modal
+        isOpen={isIndicatorModalOpen}
+        onClose={() => setIsIndicatorModalOpen(false)}
+        title={editingIndicator ? 'Editar Indicador' : 'Nuevo Indicador'}
+        subtitle="Ingresa todos los detalles técnicos y de jerarquía"
+        onSave={handleSaveIndicator}
+        isSaveDisabled={!indicatorForm.tipo || !indicatorForm.codigo || !indicatorForm.nombre || !indicatorForm.subproyecto}
+        width="1420px"
+      >
+        <div className={styles.modalTwoColumns}>
+          {/* Columna Izquierda: Datos Técnicos */}
+          <div className={styles.modalColumn}>
+            <div className={styles.columnHeader}>Datos Técnicos</div>
+            <div className={styles.modalFields}>
+              <FilterSelect
+                label="Tipo de Indicador"
+                options={[
+                  'Indicador de Subproyecto',
+                  'Indicador de Objetivo General',
+                  'Indicador de Objetivo Específico',
+                  'Indicador de Resultado'
+                ]}
+                value={indicatorForm.tipo}
+                onChange={(val) => setIndicatorForm({ ...indicatorForm, tipo: val as any, objetivoGeneral: '', objetivoEspecifico: '', resultado: '' })}
+                width="600px"
+              />
+              <Input
+                label="Código"
+                value={indicatorForm.codigo || ''}
+                onChange={(val) => setIndicatorForm({ ...indicatorForm, codigo: val })}
+                width="600px"
+              />
+              <Input
+                label="Nombre"
+                value={indicatorForm.nombre || ''}
+                onChange={(val) => setIndicatorForm({ ...indicatorForm, nombre: val })}
+                width="600px"
+              />
+              <FilterSelect
+                label="Unidad"
+                options={unidadesData.map(u => u.nombre)}
+                value={indicatorForm.unidad}
+                onChange={(val) => setIndicatorForm({ ...indicatorForm, unidad: val })}
+                width="600px"
+              />
+              <FilterSelect
+                label="Tipo de Valor"
+                options={tiposDeValorData.map(t => t.nombre)}
+                value={indicatorForm.tipoValor}
+                onChange={(val) => setIndicatorForm({ ...indicatorForm, tipoValor: val })}
+                width="600px"
+              />
+            </div>
+          </div>
+
+          {/* Columna Derecha: Jerarquía */}
+          <div className={styles.modalColumn}>
+            <div className={styles.columnHeader}>Jerarquía y Contexto</div>
+            <div className={styles.modalFields}>
+              <FilterSelect
+                label="Subproyecto"
+                options={subprojectModalOptions}
+                value={indicatorForm.subproyecto ? `${indicatorForm.subproyecto} - ${planesAnualesData.find(p => p.codigosubproyecto === indicatorForm.subproyecto)?.subproyecto || ''}` : ''}
+                onChange={(val) => {
+                  const code = val.split(' - ')[0]
+                  setIndicatorForm({ ...indicatorForm, subproyecto: code })
+                }}
+                width="600px"
+                readOnly
+              />
+
+              {(indicatorForm.tipo === 'Indicador de Objetivo General' ||
+                indicatorForm.tipo === 'Indicador de Objetivo Específico' ||
+                indicatorForm.tipo === 'Indicador de Resultado') && (
+                  <FilterSelect
+                    label="Objetivo General"
+                    options={ogOptionsForModal}
+                    value={indicatorForm.objetivoGeneral}
+                    onChange={(val) => setIndicatorForm({ ...indicatorForm, objetivoGeneral: val, objetivoEspecifico: '', resultado: '' })}
+                    width="600px"
+                  />
+                )}
+
+              {(indicatorForm.tipo === 'Indicador de Objetivo Específico' ||
+                indicatorForm.tipo === 'Indicador de Resultado') && (
+                  <FilterSelect
+                    label="Objetivo Específico"
+                    options={oeOptionsForModal}
+                    value={indicatorForm.objetivoEspecifico}
+                    onChange={(val) => setIndicatorForm({ ...indicatorForm, objetivoEspecifico: val, resultado: '' })}
+                    width="600px"
+                  />
+                )}
+
+              {indicatorForm.tipo === 'Indicador de Resultado' && (
+                <FilterSelect
+                  label="Resultado"
+                  options={resultadoOptionsForModal}
+                  value={indicatorForm.resultado}
+                  onChange={(val) => setIndicatorForm({ ...indicatorForm, resultado: val })}
+                  width="600px"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </Modal>
       <AlertModal
         isOpen={showDeleteAlert}
         onClose={() => setShowDeleteAlert(false)}
@@ -1247,6 +1958,53 @@ export function LogicalFrameView() {
           onClick: () => setShowDeleteAlert(false)
         }}
       />
+      
+      {/* Modal de Fórmulas */}
+      <Modal
+        isOpen={isFormulaModalOpen}
+        onClose={() => setIsFormulaModalOpen(false)}
+        title={`Configurar Fórmula: ${formulaIndicator?.codigo || ''}`}
+        subtitle="Construye tu fórmula personalizada arrastrando indicadores y escribiendo operadores"
+        onSave={handleSaveFormula}
+        width="900px"
+      >
+        <div className={styles.formulaModalContent}>
+          <div className={styles.indicatorSelectorTop}>
+            <FilterSelect
+              label="Agregar Indicador"
+              value={(() => {
+                if (!formulaRef.current) return [];
+                return Array.from(formulaRef.current.querySelectorAll(`.${styles.formulaTokenBadge}`))
+                  .map(b => {
+                    const code = (b as HTMLElement).dataset.code;
+                    const match = allIndicatorsForFormula.find(i => (i.original as any).codigo === code);
+                    return match?.label || '';
+                  }).filter(Boolean);
+              })()}
+              onChange={handleFormulaIndicatorsChange}
+              options={allIndicatorsForFormula.map(i => i.label)}
+              width="100%"
+              isMulti={true}
+            />
+          </div>
+
+          <div className={styles.formulaEditorBox}>
+            <div
+              ref={formulaRef}
+              className={styles.formulaEditable}
+              contentEditable
+              onBlur={saveSelection}
+              onKeyUp={saveSelection}
+              onMouseUp={saveSelection}
+              onKeyDown={handleFormulaKeyDown}
+            />
+          </div>
+
+          <p className={styles.formulaHint}>
+            Puedes escribir operadores (+, -, *, /) y números directamente entre los indicadores.
+          </p>
+        </div>
+      </Modal>
     </div>
   )
 }

@@ -1,22 +1,215 @@
+/* --- BOGART --- */
+@font-face {
+  font-family: 'Bogart';
+  src: url('../assets/fonts/Bogart-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bogart';
+  src: url('../assets/fonts/Bogart-Semibold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --- DM MONO --- */
+@font-face {
+  font-family: 'DM Mono';
+  src: url('../assets/fonts/DMMono-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DM Mono';
+  src: url('../assets/fonts/DMMono-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  /* Tokens (light) — exportados desde Figma (design system-ui) */
 
-  /* Tipografía (familias) */
-  --font-bogart: "Bogart";
-  --font-dm-mono: "DM Mono";
+  /* --- Tipografía (Tipos) --- */
+  --font-bogart: 'Bogart', serif;
+  --font-mono: 'DM Mono', monospace;
 
-  /* Tipografía (shorthands) */
-  --typography-bogart-h4: 500 16px/24px var(--font-bogart), ui-sans-serif, system-ui;
-  --typography-bogart-body-m: 400 14px/20px var(--font-bogart), ui-sans-serif, system-ui;
-  --typography-bogart-body-sm: 500 13px/20px var(--font-bogart), ui-sans-serif, system-ui;
-  --typography-bogart-body-xs: 500 12px/18px var(--font-bogart), ui-sans-serif, system-ui;
-  --typography-bogart-caption-s: 400 11px/16px var(--font-bogart), ui-sans-serif, system-ui;
-  --typography-bogart-micro: 400 10px/16px var(--font-bogart), ui-sans-serif, system-ui;
+  /* Tipografía (Bogart) */
+  .text-h1 {
+    font-family: var(--font-bogart);
+    /* Bogart */
+    font-weight: 600;
+    /* Semibold */
+    font-size: 1.5rem;
+    /* 24px (24/16) */
+    line-height: 2.25rem;
+    /* 36px (36/16) */
+  }
 
-  --typography-dm-mono-h4: 400 16px/24px var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  --typography-dm-mono-body-m: 400 14px/20px var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  --typography-dm-mono-caption-m: 400 12px/18px var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  --typography-dm-mono-micro: 400 10px/16px var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  .text-h2 {
+    font-family: var(--font-bogart);
+    font-weight: 600;
+    font-size: 1.25rem;
+    /* 20px */
+    line-height: 1.875rem;
+    /* 30px */
+  }
+
+  /* subjeting m: regular, size 16, height 24 */
+  .text-subjecting-m {
+    font-family: var(--font-bogart);
+    font-weight: 400;
+    font-size: 1rem;
+    /* 16px */
+    line-height: 1.5rem;
+    /* 24px */
+  }
+
+  /* subjeting s: semibold, size 14, height 20 */
+  .text-subjecting-s {
+    font-family: var(--font-bogart);
+    font-weight: 600;
+    font-size: 0.875rem;
+    /* 14px */
+    line-height: 1.25rem;
+    /* 20px */
+  }
+
+  /* body m: regular, size 14, height 20 */
+  .text-body-m {
+    font-family: var(--font-bogart);
+    font-weight: 400;
+    font-size: 0.875rem;
+    /* 14px */
+    line-height: 1.25rem;
+    /* 20px */
+  }
+
+  /* body sm: semibold, size 13, height 20 */
+  .text-body-sm {
+    font-family: var(--font-bogart);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    /* 13px */
+    line-height: 1.25rem;
+    /* 20px */
+  }
+
+  /* body s: regular, size 13, height 20 */
+  .text-body-s {
+    font-family: var(--font-bogart);
+    font-weight: 400;
+    font-size: 0.8125rem;
+    /* 13px */
+    line-height: 1.25rem;
+    /* 20px */
+  }
+
+  /* body xs: semibold, size 12, height 18 */
+  .text-body-xs {
+    font-family: var(--font-bogart);
+    font-weight: 600;
+    font-size: 0.75rem;
+    /* 12px */
+    line-height: 1.125rem;
+    /* 18px */
+  }
+
+  /* caption m: regular, size 12, height 18 */
+  .text-caption-m {
+    font-family: var(--font-bogart);
+    font-weight: 400;
+    font-size: 0.75rem;
+    /* 12px */
+    line-height: 1.125rem;
+    /* 18px */
+  }
+
+  /* caption s: regular, size 11, height 16 */
+  .text-caption-s {
+    font-family: var(--font-bogart);
+    font-weight: 400;
+    font-size: 0.6875rem;
+    /* 11px */
+    line-height: 1rem;
+    /* 16px */
+  }
+
+  /* micro: regular, size 10, height 16 */
+  .text-micro {
+    font-family: var(--font-bogart);
+    font-weight: 400;
+    font-size: 0.625rem;
+    /* 10px */
+    line-height: 1rem;
+    /* 16px */
+  }
+
+  /* Tipografía (DM Mono) */
+
+  /* subjeting m: regular, size 16, height 24 */
+  .mono-subjecting-m {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 1rem;
+    /* 16px */
+    line-height: 1.5rem;
+    /* 24px */
+  }
+
+  /* body m: regular, size 14, height 20 */
+  .mono-body-m {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 0.875rem;
+    /* 14px */
+    line-height: 1.25rem;
+    /* 20px */
+  }
+
+  /* body s: regular, size 13, height 20 */
+  .mono-body-s {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 0.8125rem;
+    /* 13px */
+    line-height: 1.25rem;
+    /* 20px */
+  }
+
+  /* caption m: regular, size 12, height 18 */
+  .mono-caption-m {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 0.75rem;
+    /* 12px */
+    line-height: 1.125rem;
+    /* 18px */
+  }
+
+  /* caption s: regular, size 11, height 16 */
+  .mono-caption-s {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 0.6875rem;
+    /* 11px */
+    line-height: 1rem;
+    /* 16px */
+  }
+
+  /* micro: regular, size 10, height 16 */
+  .mono-micro {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 0.625rem;
+    /* 10px */
+    line-height: 1rem;
+    /* 16px */
+  }
 
   /* Layout */
   --layout-espaciado-xs: 2px;
@@ -107,8 +300,15 @@
   --ds-danger: var(--color-estados-error);
   --ds-warning: var(--color-estados-warning);
 
-  --ds-font: var(--font-bogart), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  --ds-font: var(--font-bogart),
+  ui-sans-serif,
+  system-ui,
+  -apple-system,
+  "Segoe UI",
+  Roboto,
+  Arial,
+  "Apple Color Emoji",
+  "Segoe UI Emoji";
 
   /* App (demo) */
   --app-bg: #f5f5f5;
@@ -140,4 +340,3 @@ html[data-theme='dark'] {
   --app-muted: #b3b3b3;
   --app-border: rgba(255, 255, 255, 0.12);
 }
-
