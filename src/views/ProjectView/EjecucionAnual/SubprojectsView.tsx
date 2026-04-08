@@ -6,7 +6,7 @@ import { FilterSelect } from '../../../components/FilterSelect/FilterSelect'
 import { Table } from '../../../components/Table/Table'
 import type { Column } from '../../../components/Table/Table'
 import { Pagination } from '../../../components/Pagination/Pagination'
-import { Eye, EllipsisVertical, RotateCcw, Download, Table as TableIcon } from 'lucide-react'
+import { Eye, EllipsisVertical, RotateCcw, Download, Table as TableIcon, Upload, FileText, FileSpreadsheet, File, Trash2 } from 'lucide-react'
 import {
   planesAnualesData,
   strategicLinesData,
@@ -26,7 +26,7 @@ import { Badge } from '../../../components/Badge/Badge'
 import styles from './SubprojectsView.module.css'
 import { LogicalFrameView } from './LogicalFrameView'
 
-const ActionMenu = ({ onInfoGeneral, onMarcoLogico }: { onInfoGeneral: () => void, onMarcoLogico: () => void }) => {
+const ActionMenu = ({ onInfoGeneral, onMarcoLogico, onDocumentacion }: { onInfoGeneral: () => void, onMarcoLogico: () => void, onDocumentacion: () => void }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [position, setPosition] = useState({ top: 0, right: 0 })
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -113,7 +113,7 @@ const ActionMenu = ({ onInfoGeneral, onMarcoLogico }: { onInfoGeneral: () => voi
       {isOpen && createPortal(
         <div ref={menuRef} style={menuStyle}>
           <button style={itemStyle} onClick={() => { setIsOpen(false); onInfoGeneral() }}>Información general</button>
-          <button style={itemStyle} onClick={() => setIsOpen(false)}>Documentación</button>
+          <button style={itemStyle} onClick={() => { setIsOpen(false); onDocumentacion() }}>Documentación</button>
           <button style={itemStyle} onClick={() => { setIsOpen(false); onMarcoLogico() }}>Marco Lógico</button>
           <button style={itemStyle} onClick={() => setIsOpen(false)}>Ver dashboard</button>
         </div>,
@@ -130,6 +130,7 @@ export function SubprojectsView() {
   const [projectFilter, setProjectFilter] = useState('')
   const [subprojectFilter, setSubprojectFilter] = useState('')
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
+  const [isDocsModalOpen, setIsDocsModalOpen] = useState(false)
   const [infoForm, setInfoForm] = useState({
     gerenteSubproyecto: '',
     responsableMeal: '',
@@ -327,7 +328,7 @@ export function SubprojectsView() {
               ubicaciones: []
             })
             setIsInfoModalOpen(true)
-          }} onMarcoLogico={() => { setSelectedItem(item); setViewMode('marco') }} />
+          }} onMarcoLogico={() => { setSelectedItem(item); setViewMode('marco') }} onDocumentacion={() => setIsDocsModalOpen(true)} />
         </div>
       )
     }
@@ -642,6 +643,86 @@ export function SubprojectsView() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </Modal>
+
+      {/* MODAL DE DOCUMENTACIÓN */}
+      <Modal
+        isOpen={isDocsModalOpen}
+        onClose={() => setIsDocsModalOpen(false)}
+        title="Documentación de formulación"
+        showFooter={false}
+        onSave={() => {}}
+        width="600px"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', padding: '8px' }}>
+          {/* DRAG AND DROP AREA */}
+          <div style={{
+            border: '2px dashed #e0e0e0',
+            borderRadius: '8px',
+            padding: '40px 24px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '12px',
+            backgroundColor: '#fafafa',
+            cursor: 'pointer'
+          }}>
+            <Upload size={32} color="#666" />
+            <div style={{ fontSize: '14px', color: '#333' }}>
+              Arrastra archivos aquí o <span style={{ color: '#db5e4e', textDecoration: 'underline' }}>selecciona desde tu equipo</span>
+            </div>
+            <div style={{ fontSize: '12px', color: '#888' }}>
+              Formatos permitidos: .pdf, .docx, .xlsx
+            </div>
+          </div>
+
+          {/* LIST OF DOCUMENTS */}
+          <div>
+            <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#333', marginBottom: '16px' }}>Documentos (3)</h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', padding: '16px', border: '1px solid #e0e0e0', borderRadius: '8px', gap: '16px' }}>
+                <FileText size={20} color="#db5e4e" />
+                <div style={{ flex: 1, fontSize: '14px', fontWeight: 500, color: '#333' }}>Marco Lógico v2.pdf</div>
+                <div style={{ fontSize: '12px', color: '#888' }}>2.4 MB</div>
+                <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><Download size={16} color="#db5e4e" /></button>
+                <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><Trash2 size={16} color="#db5e4e" /></button>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', padding: '16px', border: '1px solid #e0e0e0', borderRadius: '8px', gap: '16px' }}>
+                <FileSpreadsheet size={20} color="#2eaa63" />
+                <div style={{ flex: 1, fontSize: '14px', fontWeight: 500, color: '#333' }}>Presupuesto_2024.xlsx</div>
+                <div style={{ fontSize: '12px', color: '#888' }}>1.1 MB</div>
+                <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><Download size={16} color="#db5e4e" /></button>
+                <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><Trash2 size={16} color="#db5e4e" /></button>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', padding: '16px', border: '1px solid #e0e0e0', borderRadius: '8px', gap: '16px' }}>
+                <File size={20} color="#4582eb" />
+                <div style={{ flex: 1, fontSize: '14px', fontWeight: 500, color: '#333' }}>Formulación_narrativa.docx</div>
+                <div style={{ fontSize: '12px', color: '#888' }}>850 KB</div>
+                <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><Download size={16} color="#db5e4e" /></button>
+                <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><Trash2 size={16} color="#db5e4e" /></button>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid #e0e0e0', paddingTop: '16px', marginTop: '8px' }}>
+            <button 
+              onClick={() => setIsDocsModalOpen(false)}
+              style={{
+                padding: '8px 24px',
+                backgroundColor: 'white',
+                border: '1px solid #e0e0e0',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontWeight: 600,
+                color: '#333',
+                cursor: 'pointer'
+              }}
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       </Modal>
