@@ -332,7 +332,8 @@ export function InstitutionalIndicatorsView() {
       >
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '32px', alignItems: 'stretch' }}>
           {/* Columna Izquierda */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: 0, border: '1px solid #eaeaea', borderRadius: '4px', padding: '24px' }}>
+            <div style={{ fontSize: '14px', color: '#382e2c', fontWeight: 500, marginBottom: '8px' }}>Información general</div>
             <FilterSelect
               label="GAP"
               options={gapsData.map(g => g.nombre)}
@@ -382,8 +383,9 @@ export function InstitutionalIndicatorsView() {
           </div>
 
           {/* Columna Derecha (Variantes) */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: 0, height: '100%' }}>
-            <div style={{ flex: 1, minHeight: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', minWidth: 0, minHeight: 0, height: '100%', border: '1px solid #eaeaea', borderRadius: '4px', padding: '24px' }}>
+            <div style={{ fontSize: '14px', color: '#382e2c', fontWeight: 500, marginBottom: '8px' }}>Variantes de idioma</div>
+            <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
               <Input
                 label="Variante Español"
                 value={formData.vares}
@@ -394,7 +396,7 @@ export function InstitutionalIndicatorsView() {
                 grow
               />
             </div>
-            <div style={{ flex: 1, minHeight: 0 }}>
+            <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
               <Input
                 label="Variante Inglés"
                 value={formData.varen}
@@ -403,7 +405,7 @@ export function InstitutionalIndicatorsView() {
                 grow
               />
             </div>
-            <div style={{ flex: 1, minHeight: 0 }}>
+            <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
               <Input
                 label="Variante Francés"
                 value={formData.varfra}
