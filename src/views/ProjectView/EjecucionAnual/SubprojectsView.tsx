@@ -26,7 +26,7 @@ import { Badge } from '../../../components/Badge/Badge'
 import styles from './SubprojectsView.module.css'
 import { LogicalFrameView } from './LogicalFrameView'
 
-const ActionMenu = ({ onInfoGeneral, onMarcoLogico, onDocumentacion }: { onInfoGeneral: () => void, onMarcoLogico: () => void, onDocumentacion: () => void }) => {
+const ActionMenu = ({ onInfoGeneral, onDocumentacion }: { onInfoGeneral: () => void, onDocumentacion: () => void }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [position, setPosition] = useState({ top: 0, right: 0 })
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -114,7 +114,6 @@ const ActionMenu = ({ onInfoGeneral, onMarcoLogico, onDocumentacion }: { onInfoG
         <div ref={menuRef} style={menuStyle}>
           <button style={itemStyle} onClick={() => { setIsOpen(false); onInfoGeneral() }}>Información general</button>
           <button style={itemStyle} onClick={() => { setIsOpen(false); onDocumentacion() }}>Documentación</button>
-          <button style={itemStyle} onClick={() => { setIsOpen(false); onMarcoLogico() }}>Marco Lógico</button>
           <button style={itemStyle} onClick={() => setIsOpen(false)}>Ver dashboard</button>
         </div>,
         document.body
@@ -138,6 +137,7 @@ export function SubprojectsView() {
     inicioAno: '2027',
     finMes: '',
     finAno: '',
+    involucrarSubactividades: false,
     implementadores: [] as string[],
     financiadoresSecundarios: [] as string[],
     ubicaciones: [] as Array<{ id: number, region: string, pais: string, departamento: string, provincia: string, distrito: string }>
@@ -290,6 +290,37 @@ export function SubprojectsView() {
       }
     },
     {
+      key: 'marcoLogico',
+      header: 'MARCO LÓGICO',
+      sticky: 'right',
+      width: '180px',
+      render: (_: any, item: PlanAnual) => (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setSelectedItem(item);
+            setViewMode('marco');
+          }}
+          style={{
+            border: '1px solid #f87c56',
+            backgroundColor: 'transparent',
+            color: '#382e2c',
+            borderRadius: '20px',
+            padding: '4px 16px',
+            fontSize: '13px',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            whiteSpace: 'nowrap',
+            fontFamily: 'monospace'
+          }}
+        >
+          Ver marco lógico
+        </button>
+      )
+    },
+    {
       key: 'actions',
       header: 'ACCIONES',
       sticky: 'right',
@@ -323,12 +354,13 @@ export function SubprojectsView() {
               inicioAno: '2027',
               finMes: '',
               finAno: '',
+              involucrarSubactividades: false,
               implementadores: [],
               financiadoresSecundarios: [],
               ubicaciones: []
             })
             setIsInfoModalOpen(true)
-          }} onMarcoLogico={() => { setSelectedItem(item); setViewMode('marco') }} onDocumentacion={() => setIsDocsModalOpen(true)} />
+          }} onDocumentacion={() => setIsDocsModalOpen(true)} />
         </div>
       )
     }
@@ -598,6 +630,39 @@ export function SubprojectsView() {
                   <FilterSelect label="Año" options={['2027', '2028', '2029', '2030']} value={infoForm.finAno} onChange={(v) => setInfoForm(p => ({ ...p, finAno: v as string }))} />
                 </div>
               </div>
+            </div>
+            
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
+              <span style={{ fontSize: '14px', color: '#382e2c' }}>Involucrar subactividades</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={infoForm.involucrarSubactividades}
+                onClick={() => setInfoForm(p => ({ ...p, involucrarSubactividades: !p.involucrarSubactividades }))}
+                style={{
+                  width: '44px',
+                  height: '24px',
+                  backgroundColor: infoForm.involucrarSubactividades ? '#00737a' : '#e0e0e0',
+                  borderRadius: '12px',
+                  border: 'none',
+                  position: 'relative',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s',
+                  padding: 0
+                }}
+              >
+                <div style={{
+                  width: '20px',
+                  height: '20px',
+                  backgroundColor: 'white',
+                  borderRadius: '50%',
+                  position: 'absolute',
+                  top: '2px',
+                  left: infoForm.involucrarSubactividades ? '22px' : '2px',
+                  transition: 'left 0.2s',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                }} />
+              </button>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', border: '1px solid #eaeaea', borderRadius: '8px', padding: '24px' }}>

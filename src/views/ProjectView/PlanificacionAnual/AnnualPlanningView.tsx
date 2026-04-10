@@ -6,7 +6,7 @@ import type { Column } from '../../../components/Table/Table'
 import { FilterSelect } from '../../../components/FilterSelect/FilterSelect'
 import { Pagination } from '../../../components/Pagination/Pagination'
 import { Modal } from '../../../components/Modal/Modal'
-import { Send, Eye, Pencil, CircleMinus, Trash2, EllipsisVertical } from 'lucide-react'
+import { Send, Eye, Pencil, CircleMinus, Trash2, EllipsisVertical, ChevronRight, ChevronDown } from 'lucide-react'
 import { Input } from '../../../components/Input/Input'
 import { AlertModal } from '../../../components/AlertDialog/AlertModal'
 import { Button } from '../../../components/Button/Button'
@@ -146,6 +146,7 @@ export function AnnualPlanningView() {
   // --- List Mode States ---
   const [projectFilter, setProjectFilter] = useState('')
   const [items, setItems] = useState<PlanAnual[]>(planesAnualesData)
+  const [expandedPrograms, setExpandedPrograms] = useState<Set<string>>(new Set())
   const [itemToDelete, setItemToDelete] = useState<PlanAnual | null>(null)
   const [showDeleteAlert, setShowDeleteAlert] = useState(false)
   const [editingItem, setEditingItem] = useState<PlanAnual | null>(null)
@@ -188,10 +189,10 @@ export function AnnualPlanningView() {
   const [itemToSend, setItemToSend] = useState<PlanAnual | null>(null)
   const [isReadOnly, setIsReadOnly] = useState(false)
 
-  // Metas: año fijo 2027
-  const [selectedYears] = useState<string[]>(['2027'])
+  // Metas: año seleccionable
+  const [selectedYear, setSelectedYear] = useState<string>('2027')
 
-  const availableYears = useMemo(() => ['2027'], [])
+  const yearOptions = useMemo(() => ['2025', '2026', '2027', '2028', '2029', '2030'], [])
 
   const indicatorTipos = useMemo(() => Array.from(new Set(institutionalIndicatorsData.map(i => i.tipo))), [])
   const indicatorOptionsByTipo = useMemo(() => {
@@ -215,10 +216,10 @@ export function AnnualPlanningView() {
   // ------------------------------------------
   // LIST MODE HELPERS
   // ------------------------------------------
-  
+
   const getInitialIndicators = (lineaNombre: string) => {
     const lineObj = strategicLinesData.find(l => l.nombre === lineaNombre || `${l.codigo} - ${l.nombre}` === lineaNombre)
-    
+
     // Helper to find best matching indicator from institutional base
     const findBest = (tipo: string, excludeIds: number[] = []) => {
       const candidates = institutionalIndicatorsData.filter(i => i.tipo === tipo && !excludeIds.includes(i.id))
@@ -233,7 +234,7 @@ export function AnnualPlanningView() {
     }
 
     const base: any[] = []
-    
+
     // 1 LE Indicator
     const le = findBest('Indicador de Línea Estratégica')
     base.push({
@@ -281,7 +282,37 @@ export function AnnualPlanningView() {
       y2027: '0 000',
       isDefault: true
     })
-    
+
+    base.push({
+      id: Date.now() + 4,
+      tipo: 'Beneficiario',
+      indicador: 'BEN-T-Personas beneficiarias',
+      unidad: 'Personas',
+      tipoValor: 'Numérico',
+      y2027: '0 000',
+      isDefault: true
+    })
+
+    base.push({
+      id: Date.now() + 5,
+      tipo: 'Beneficiario',
+      indicador: 'BEN-H-Hombres beneficiarios',
+      unidad: 'Hombres',
+      tipoValor: 'Numérico',
+      y2027: '0 000',
+      isDefault: true
+    })
+
+    base.push({
+      id: Date.now() + 6,
+      tipo: 'Beneficiario',
+      indicador: 'BEN-M-Mujeres beneficiarias',
+      unidad: 'Mujeres',
+      tipoValor: 'Numérico',
+      y2027: '0 000',
+      isDefault: true
+    })
+
     return base
   }
 
@@ -289,6 +320,26 @@ export function AnnualPlanningView() {
     if (!projectFilter) return items
     return items.filter(item => item.proyecto.includes(projectFilter) || item.proyecto === projectFilter)
   }, [projectFilter, items])
+
+  // Group filteredData by programa
+  const programGroups = useMemo(() => {
+    const map = new Map<string, PlanAnual[]>()
+    filteredData.forEach(item => {
+      const existing = map.get(item.programa) || []
+      existing.push(item)
+      map.set(item.programa, existing)
+    })
+    return Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0]))
+  }, [filteredData])
+
+  const toggleProgram = (progName: string) => {
+    setExpandedPrograms(prev => {
+      const next = new Set(prev)
+      if (next.has(progName)) next.delete(progName)
+      else next.add(progName)
+      return next
+    })
+  }
 
   const handleNew = () => {
     setIsReadOnly(false)
@@ -481,7 +532,8 @@ export function AnnualPlanningView() {
     const hasLine = inds.some(i => i.tipo.includes('Línea Estratégica'))
     const hasResult = inds.some(i => i.tipo.includes('Resultado'))
     const hasProduct = inds.some(i => i.tipo.includes('Producto'))
-    if (!hasLine || !hasResult || !hasProduct) return false
+    const hasBeneficiary = inds.some(i => i.tipo === 'Beneficiario')
+    if (!hasLine || !hasResult || !hasProduct || !hasBeneficiary) return false
 
     const startYearKey = `y${data.inicioAno}`
     const allFilled = inds.every(i => {
@@ -492,7 +544,7 @@ export function AnnualPlanningView() {
     return allFilled
   }
 
-  
+
 
   const handleSaveWizard = () => {
     if (editingItem) {
@@ -581,7 +633,7 @@ export function AnnualPlanningView() {
   // RENDER HELPERS
   // ------------------------------------------
 
-  
+
 
   const getStatusBadge = (status: string) => {
     const colors: Record<string, { bg: string, text: string }> = {
@@ -631,7 +683,7 @@ export function AnnualPlanningView() {
     }
     return filtered.map(s => `${s.codigo} - ${s.nombre}`)
   }, [formData.programa, formData.proyecto])
-  
+
 
 
   // List columns
@@ -735,6 +787,7 @@ export function AnnualPlanningView() {
           let variant: any = 'line'
           if (val === 'Indicador de Resultado') variant = 'result'
           if (val === 'Indicador de Producto') variant = 'product'
+          if (val === 'Beneficiario') variant = 'product'
           return <Badge variant={variant}>{val}</Badge>
         }
       },
@@ -743,7 +796,10 @@ export function AnnualPlanningView() {
         header: 'INDICADOR ↑↓',
         render: (val: string, row: any) => {
           if (!isReadOnly && row.tipo !== 'Indicador de Línea Estratégica') {
-            const opts = indicatorOptionsByTipo[row.tipo] || institutionalIndicatorsData.filter(i => i.tipo === row.tipo).map(i => `${i.codigo} - ${i.nombre}`)
+            let opts = indicatorOptionsByTipo[row.tipo] || institutionalIndicatorsData.filter(i => i.tipo === row.tipo).map(i => `${i.codigo} - ${i.nombre}`)
+            if (row.tipo === 'Beneficiario') {
+              opts = ['BEN-T-Personas beneficiarias', 'BEN-H-Hombres beneficiarios', 'BEN-M-Mujeres beneficiarias']
+            }
             return (
               <div style={{ minWidth: 360 }}>
                 <FilterSelect
@@ -752,9 +808,16 @@ export function AnnualPlanningView() {
                   value={row.indicador === 'Seleccionar' ? '' : row.indicador}
                   placeholder="Seleccionar"
                   onChange={(v) => {
-                    const matched = institutionalIndicatorsData.find(x => `${x.codigo} - ${x.nombre}` === v)
-                    const unidad = (matched as any)?.unidad || unidadesData[0]?.nombre || 'Personas'
-                    const tipoValor = (matched as any)?.tipoValor || tiposDeValorData[0]?.nombre || 'Numérico'
+                    let unidad = 'Personas'
+                    let tipoValor = 'Numérico'
+                    if (row.tipo === 'Beneficiario') {
+                      if (v === 'BEN-H-Hombres beneficiarios') unidad = 'Hombres'
+                      else if (v === 'BEN-M-Mujeres beneficiarias') unidad = 'Mujeres'
+                    } else {
+                      const matched = institutionalIndicatorsData.find(x => `${x.codigo} - ${x.nombre}` === v)
+                      unidad = (matched as any)?.unidad || unidadesData[0]?.nombre || 'Personas'
+                      tipoValor = (matched as any)?.tipoValor || tiposDeValorData[0]?.nombre || 'Numérico'
+                    }
                     setIndicators(prev => prev.map(i => i.id === row.id ? { ...i, indicador: v, unidad, tipoValor } : i))
                   }}
                 />
@@ -774,7 +837,7 @@ export function AnnualPlanningView() {
       }
     )
 
-    const yearsToShow = ['2027']
+    const yearsToShow = [selectedYear]
 
     const yearCols = [...yearsToShow].sort().map(year => ({
       key: `y${year}`,
@@ -834,7 +897,7 @@ export function AnnualPlanningView() {
     }
 
     return cols
-  }, [selectedYears, availableYears, isReadOnly])
+  }, [selectedYear, isReadOnly])
 
   // Main Render Branching
   if (viewMode === 'list') {
@@ -866,12 +929,115 @@ export function AnnualPlanningView() {
         </Toolbar>
 
         <div className={styles.tableContainer}>
-          <Table
-            columns={listColumns}
-            data={filteredData}
-            onEdit={handleEditList}
-            onDelete={handleDeleteList}
-          />
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '1000px' }}>
+            <thead>
+              <tr>
+                {listColumns.map((col, i) => {
+                  const isStickyRight = col.sticky === 'right' || col.key === 'actions'
+                  let rightOffset = 0
+                  if (isStickyRight) {
+                    const colIdx = listColumns.findIndex(c => c.key === col.key)
+                    for (let k = colIdx + 1; k < listColumns.length; k++) {
+                      const nc = listColumns[k]
+                      if (nc.sticky === 'right' || nc.key === 'actions') {
+                        rightOffset += parseInt(nc.width || '80')
+                      }
+                    }
+                  }
+                  return (
+                    <th
+                      key={i}
+                      className={styles.th}
+                      style={{
+                        width: col.width,
+                        minWidth: col.width,
+                        maxWidth: col.width,
+                        textAlign: col.key === 'actions' ? 'right' : 'left',
+                        paddingRight: col.key === 'actions' ? '32px' : '16px',
+                        ...(isStickyRight ? { position: 'sticky', right: rightOffset, zIndex: 2, backgroundColor: '#fafafa' } : {})
+                      }}
+                    >
+                      {col.header}
+                    </th>
+                  )
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {programGroups.map(([progName, groupItems]) => {
+                const isExpanded = expandedPrograms.has(progName)
+                return (
+                  <> 
+                    {/* Program group separator row */}
+                    <tr
+                      key={`group-${progName}`}
+                      onClick={() => toggleProgram(progName)}
+                      style={{ cursor: 'pointer', userSelect: 'none' }}
+                    >
+                      <td
+                        colSpan={listColumns.length}
+                        style={{
+                          padding: '12px 16px',
+                          borderBottom: '1px solid #f0f0f0',
+                          fontSize: '14px',
+                          fontWeight: 600,
+                          color: '#382e2c',
+                          backgroundColor: '#fff'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          {isExpanded
+                            ? <ChevronDown size={18} color="#999" />
+                            : <ChevronRight size={18} color="#999" />
+                          }
+                          {progName}
+                        </div>
+                      </td>
+                    </tr>
+
+                    {/* Data rows for this program */}
+                    {isExpanded && groupItems.map((item) => (
+                      <tr key={item.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                        {listColumns.map((col, j) => {
+                          const isStickyRight = col.sticky === 'right' || col.key === 'actions'
+                          let rightOffset = 0
+                          if (isStickyRight) {
+                            const colIdx = listColumns.findIndex(c => c.key === col.key)
+                            for (let k = colIdx + 1; k < listColumns.length; k++) {
+                              const nc = listColumns[k]
+                              if (nc.sticky === 'right' || nc.key === 'actions') {
+                                rightOffset += parseInt(nc.width || '80')
+                              }
+                            }
+                          }
+                          return (
+                            <td
+                              key={j}
+                              className={styles.td}
+                              style={{
+                                width: col.width,
+                                minWidth: col.width,
+                                maxWidth: col.width,
+                                textAlign: col.key === 'actions' ? 'right' : 'left',
+                                paddingLeft: j === 0 ? '32px' : '16px',
+                                whiteSpace: 'nowrap',
+                                ...(isStickyRight ? { position: 'sticky', right: rightOffset, zIndex: 1, backgroundColor: '#fff' } : {})
+                              }}
+                            >
+                              {col.render
+                                ? col.render(item[col.key as keyof PlanAnual] as any, item)
+                                : (item[col.key as keyof PlanAnual] as any)
+                              }
+                            </td>
+                          )
+                        })}
+                      </tr>
+                    ))}
+                  </>
+                )
+              })}
+            </tbody>
+          </table>
         </div>
 
         <Pagination total={filteredData.length} range={`1-${filteredData.length}`} />
@@ -956,6 +1122,13 @@ export function AnnualPlanningView() {
                   options={subprojectOptions}
                   value={formData.subproyecto}
                   onChange={handleSubprojectChange}
+                  readOnly={isReadOnly}
+                />
+                <FilterSelect
+                  label="Año"
+                  options={yearOptions}
+                  value={selectedYear}
+                  onChange={(v) => setSelectedYear(v as string)}
                   readOnly={isReadOnly}
                 />
               </div>
