@@ -5,7 +5,7 @@ import styles from './Table.module.css'
 import type { ReactNode } from 'react'
 
 export type Column<T> = {
-  key: keyof T | 'actions' | 'checkbox'
+  key: keyof T | 'actions' | 'checkbox' | 'marcoLogico'
   header: ReactNode
   render?: (value: any, item: T) => ReactNode
   width?: string

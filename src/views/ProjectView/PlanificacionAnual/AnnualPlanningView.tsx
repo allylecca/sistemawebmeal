@@ -604,7 +604,7 @@ export function AnnualPlanningView() {
         unidad: resolvedUnidad,
         tipoValor: resolvedTipoValor
       }
-      selectedYears.forEach(year => newInd[`y${year}`] = '0 000')
+      newInd[`y${selectedYear}`] = '0 000'
       setIndicators([...indicators, newInd])
     }
     setIsIndicatorModalOpen(false)
