@@ -102,9 +102,9 @@ export function StrategicLinesView() {
 
   const columns: Column<StrategicLine>[] = [
     { key: 'checkbox', header: '' },
-    { key: 'gap', header: 'GAP' },
     { key: 'codigo', header: 'Código', width: '120px' },
     { key: 'nombre', header: 'Nombre' },
+    { key: 'gap', header: 'GAP' },
     { key: 'actions', header: 'Acciones' },
   ]
 

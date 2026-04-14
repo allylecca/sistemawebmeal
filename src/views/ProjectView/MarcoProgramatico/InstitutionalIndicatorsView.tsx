@@ -241,9 +241,8 @@ export function InstitutionalIndicatorsView() {
 
   const columns: Column<InstitutionalIndicator>[] = [
     { key: 'checkbox', header: '' },
-    { key: 'gap', header: 'GAP' },
-    { key: 'lineaEstrategica', header: 'Línea estratégica' },
     { key: 'codigo', header: 'Código' },
+    { key: 'nombre', header: 'Nombre' },
     {
       key: 'tipo',
       header: 'Tipo',
@@ -272,7 +271,8 @@ export function InstitutionalIndicatorsView() {
       header: 'Tipo de valor',
       render: (val) => val || 'Numérico'
     },
-    { key: 'nombre', header: 'Nombre' },
+    { key: 'gap', header: 'GAP' },
+    { key: 'lineaEstrategica', header: 'Línea estratégica' },
     { key: 'vares', header: 'Variante Español' },
     { key: 'varen', header: 'Variante Inglés' },
     { key: 'varfra', header: 'Variante Francés' },

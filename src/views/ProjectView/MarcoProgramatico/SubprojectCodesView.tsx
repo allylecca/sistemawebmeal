@@ -175,13 +175,13 @@ export function SubprojectCodesView() {
 
   const columns: Column<SubprojectCode>[] = [
     { key: 'checkbox', header: '' },
-    { key: 'programa', header: 'Programa' },
+    { key: 'codigo', header: 'Código' },
+    { key: 'nombre', header: 'Nombre' },
     { key: 'gap', header: 'GAP' },
+    { key: 'programa', header: 'Programa' },
     { key: 'linea', header: 'Línea Estratégica' },
     { key: 'proyecto', header: 'Proyecto' },
-    { key: 'codigo', header: 'Código' },
     { key: 'financiador', header: 'Financiador Principal' },
-    { key: 'nombre', header: 'Nombre' },
     { key: 'actions', header: 'Acciones' },
   ]
 

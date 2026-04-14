@@ -146,9 +146,9 @@ export function ProgramsView() {
 
   const columns: Column<Program>[] = [
     { key: 'checkbox', header: '' },
+    { key: 'nombre', header: 'Nombre' },
     { key: 'region', header: 'Región' },
     { key: 'pais', header: 'País' },
-    { key: 'nombre', header: 'Nombre' },
     { key: 'actions', header: 'Acciones' },
   ]
 

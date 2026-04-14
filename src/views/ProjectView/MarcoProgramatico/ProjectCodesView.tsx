@@ -33,10 +33,22 @@ export function ProjectCodesView() {
   const [codeToDelete, setCodeToDelete] = useState<ProjectCode | null>(null)
 
   const COUNTRY_CODES: Record<string, string> = {
-    'Perú': '03', 'Bolivia': '04', 'Colombia': '10', 'Ecuador': '02',
-    'España': '01', 'Portugal': '50', 'Etiopía': '32', 'Malí': '36',
-    'Costa Rica': '14', 'El Salvador': '05', 'Honduras': '07', 'Nicaragua': '06',
-    'Guatemala': '25', 'México': '08', 'Mozambique': '33', 'Níger': '35'
+    'Perú': '03',
+    'Bolivia': '04',
+    'Colombia': '10',
+    'Ecuador': '02',
+    'España': '01',
+    'Portugal': '50',
+    'Etiopía': '32',
+    'Malí': '36',
+    'Costa Rica': '14',
+    'El Salvador': '05',
+    'Honduras': '07',
+    'Nicaragua': '06',
+    'Guatemala': '25',
+    'México': '08',
+    'Mozambique': '33',
+    'Níger': '35'
   }
 
   // Auto-generate Tipología y Código
