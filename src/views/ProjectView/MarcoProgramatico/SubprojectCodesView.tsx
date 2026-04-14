@@ -177,11 +177,11 @@ export function SubprojectCodesView() {
     { key: 'checkbox', header: '' },
     { key: 'codigo', header: 'Código' },
     { key: 'nombre', header: 'Nombre' },
-    { key: 'gap', header: 'GAP' },
-    { key: 'programa', header: 'Programa' },
-    { key: 'linea', header: 'Línea Estratégica' },
-    { key: 'proyecto', header: 'Proyecto' },
     { key: 'financiador', header: 'Financiador Principal' },
+    { key: 'gap', header: 'GAP' },
+    { key: 'linea', header: 'Línea Estratégica' },
+    { key: 'programa', header: 'Programa' },
+    { key: 'proyecto', header: 'Proyecto' },
     { key: 'actions', header: 'Acciones' },
   ]
 

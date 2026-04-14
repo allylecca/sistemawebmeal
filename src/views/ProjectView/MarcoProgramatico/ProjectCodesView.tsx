@@ -175,11 +175,11 @@ export function ProjectCodesView() {
 
   const columns: Column<ProjectCode>[] = [
     { key: 'checkbox', header: '' },
+    { key: 'codigo', header: 'Código' },
+    { key: 'nombre', header: 'Nombre' },
     { key: 'programa', header: 'Programa' },
     { key: 'gap', header: 'GAP' },
     { key: 'linea', header: 'Línea Estratégica' },
-    { key: 'codigo', header: 'Código' },
-    { key: 'nombre', header: 'Nombre' },
     { key: 'tipologia', header: 'Tipología' },
     { key: 'actions', header: 'Acciones' },
   ]
