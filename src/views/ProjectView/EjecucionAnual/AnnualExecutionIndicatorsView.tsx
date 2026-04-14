@@ -364,7 +364,7 @@ export function AnnualExecutionIndicatorsView() {
     { key: 'codigo', header: 'Código', width: '120px' },
     { key: 'nombre', header: 'Nombre', width: '300px' },
     { key: 'unidad', header: 'Unidad', width: '120px' },
-    { key: 'tipoValor', header: 'Tipo de Valor', width: '120px' },
+    { key: 'tipoValor', header: 'Tipo de Dato', width: '120px' },
     { key: 'programa', header: 'Programa', width: '150px' },
     { key: 'proyecto', header: 'Proyecto', width: '150px' },
     { key: 'subproyecto', header: 'Subproyecto', width: '150px' },
@@ -518,7 +518,7 @@ export function AnnualExecutionIndicatorsView() {
                 width="600px"
               />
               <FilterSelect
-                label="Tipo de Valor"
+                label="Tipo de Dato"
                 options={tiposDeValorData.map(t => t.nombre)}
                 value={indicatorForm.tipoValor}
                 onChange={(val) => setIndicatorForm({ ...indicatorForm, tipoValor: val })}

@@ -268,7 +268,7 @@ export function InstitutionalIndicatorsView() {
     },
     {
       key: 'tipoValor',
-      header: 'Tipo de valor',
+      header: 'Tipo de dato',
       render: (val) => val || 'Numérico'
     },
     { key: 'gap', header: 'GAP' },
@@ -373,7 +373,7 @@ export function InstitutionalIndicatorsView() {
               onChange={(val) => setFormData({ ...formData, unidad: val })}
             />
             <FilterSelect
-              label="Tipo de Valor"
+              label="Tipo de Dato"
               options={tiposDeValorData.map(t => t.nombre)}
               value={formData.tipoValor}
               onChange={(val) => setFormData({ ...formData, tipoValor: val })}

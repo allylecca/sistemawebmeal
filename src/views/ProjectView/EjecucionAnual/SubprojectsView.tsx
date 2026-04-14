@@ -557,7 +557,7 @@ export function SubprojectsView() {
                     }
                   },
                   { key: 'unidad', header: 'UNIDAD' },
-                  { key: 'tipoValor', header: 'TIPO DE VALOR' },
+                  { key: 'tipoValor', header: 'TIPO DE DATO' },
                   { 
                     key: 'y2026', 
                     header: '2026',

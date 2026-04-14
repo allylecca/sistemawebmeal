@@ -864,7 +864,7 @@ export function LogicalFrameView({ isEmbedded = false, initialSubproject }: { is
                   <span className={styles.fieldValue}>{originalData?.unidad}</span>
                 </div>
                 <div className={styles.field}>
-                  <span className={styles.fieldLabel}>Tipo de Valor</span>
+                  <span className={styles.fieldLabel}>Tipo de Dato</span>
                   <span className={styles.fieldValue}>{originalData?.tipoValor}</span>
                 </div>
               </>
@@ -1423,7 +1423,7 @@ export function LogicalFrameView({ isEmbedded = false, initialSubproject }: { is
             </div>
             <div className={styles.th} style={{ width: '150px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <ArrowUpDown size={14} /> TIPO DE VALOR <Pin size={14} />
+                <ArrowUpDown size={14} /> TIPO DE DATO <Pin size={14} />
               </div>
             </div>
             <div className={styles.th} style={{ width: '180px', textAlign: 'right', paddingRight: '32px' }}>
@@ -1583,7 +1583,7 @@ export function LogicalFrameView({ isEmbedded = false, initialSubproject }: { is
               width="600px"
             />
             <FilterSelect
-              label="Tipo de Valor"
+              label="Tipo de Dato"
               options={tiposValorOptions}
               value={actForm.tipoValor}
               onChange={(val) => setActForm({ ...actForm, tipoValor: val })}
@@ -1663,7 +1663,7 @@ export function LogicalFrameView({ isEmbedded = false, initialSubproject }: { is
               width="600px"
             />
             <FilterSelect
-              label="Tipo de Valor"
+              label="Tipo de Dato"
               options={tiposValorOptions}
               value={subactForm.tipoValor}
               onChange={(val) => setSubactForm({ ...subactForm, tipoValor: val })}
@@ -1774,7 +1774,7 @@ export function LogicalFrameView({ isEmbedded = false, initialSubproject }: { is
                 width="600px"
               />
               <FilterSelect
-                label="Tipo de Valor"
+                label="Tipo de Dato"
                 options={tiposDeValorData.map(t => t.nombre)}
                 value={indicatorForm.tipoValor}
                 onChange={(val) => setIndicatorForm({ ...indicatorForm, tipoValor: val })}
@@ -1882,7 +1882,7 @@ export function LogicalFrameView({ isEmbedded = false, initialSubproject }: { is
                 width="600px"
               />
               <FilterSelect
-                label="Tipo de Valor"
+                label="Tipo de Dato"
                 options={tiposDeValorData.map(t => t.nombre)}
                 value={indicatorForm.tipoValor}
                 onChange={(val) => setIndicatorForm({ ...indicatorForm, tipoValor: val })}
