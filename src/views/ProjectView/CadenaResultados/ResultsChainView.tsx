@@ -55,19 +55,7 @@ const statusLabels: Record<StatusType, string> = {
   nodata: 'Sin data'
 }
 
-const buildLocationLabel = (loc: typeof locationsData[0], depth = 0): string[] => {
-  const result: string[] = []
-  const visit = (node: typeof locationsData[0], path: string) => {
-    const currentPath = path ? `${path}, ${node.label}` : node.label
-    if (!node.children || node.children.length === 0) {
-      result.push(currentPath)
-    } else {
-      node.children.forEach(c => visit(c, currentPath))
-    }
-  }
-  visit(loc, '')
-  return result
-}
+
 
 const locationOptions = locationsData.flatMap(r => {
   const base = [r.label]
@@ -342,7 +330,7 @@ export function ResultsChainView() {
             </tr>
           </thead>
           <tbody>
-            {activities.map((act, idx) => {
+            {activities.map((act) => {
               const state = actStates.find(s => s.activityId === act.id)
               const totals = getTotals(act.id)
               const status = getStatus(totals.y2025, totals.y2026, totals.y2027)

@@ -10,8 +10,7 @@ import {
   planesAnualesData,
   strategicLinesData,
   institutionalIndicatorsData,
-  unidadesData,
-  tiposDeValorData
+  unidadesData
 } from '../../../data/mockData'
 import styles from './MonthlyGoalsView.module.css'
 
