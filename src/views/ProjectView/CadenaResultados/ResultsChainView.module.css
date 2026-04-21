@@ -1,0 +1,413 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #ffffff;
+}
+
+.filtersGroup {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.filterItem {
+  min-width: 200px;
+}
+
+/* ─── Custom Tree Table ───────────────────────── */
+.tableWrapper {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+.chainTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  table-layout: fixed;
+}
+
+.chainTable thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.chainTable thead th {
+  background-color: #f9f5f0;
+  color: #7a6e6a;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 10px 12px;
+  border-bottom: 1px solid #ece6df;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.chainTable thead th:first-child {
+  padding-left: 16px;
+}
+
+.colActividad {
+  width: 50%;
+}
+
+.colYear {
+  width: 12%;
+  text-align: center !important;
+}
+
+.colTotal {
+  width: 14%;
+  text-align: center !important;
+}
+
+/* ─── Sort / Filter Icons in Header ────────────── */
+.thContent {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.thIcon {
+  color: #b5a99d;
+  cursor: pointer;
+  display: inline-flex;
+}
+
+.thIcon:hover {
+  color: #7a6e6a;
+}
+
+/* ─── Activity Row ─────────────────────────────── */
+.activityRow {
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.activityRow:hover {
+  background-color: #fef9f4;
+}
+
+.activityRow td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0ece6;
+  vertical-align: middle;
+}
+
+.activityRow td:first-child {
+  padding-left: 16px;
+}
+
+.activityCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chevronBtn {
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  color: #b5a99d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+
+.chevronBtn:hover {
+  background-color: #f0ece6;
+  color: #7a6e6a;
+}
+
+.infoBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #b5a99d;
+  display: inline-flex;
+  align-items: center;
+}
+
+.infoBtn:hover {
+  color: #7a6e6a;
+}
+
+.activityCode {
+  font-weight: 600;
+  color: #382e2c;
+  white-space: nowrap;
+}
+
+.activityName {
+  color: #382e2c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─── Badges ─────────────────────────────────── */
+.badgeUnit {
+  display: inline-flex;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  background-color: #f0e6d8;
+  color: #8a7260;
+  border: 1px solid #e0d4c4;
+}
+
+.badgeType {
+  display: inline-flex;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  background-color: #e6e0f0;
+  color: #6a5a8a;
+  border: 1px solid #d4cce4;
+}
+
+/* ─── Status Badge ────────────────────────────── */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.statusCompleted {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.statusCompleted .statusDot {
+  background-color: #4caf50;
+}
+
+.statusIncomplete {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.statusIncomplete .statusDot {
+  background-color: #ff9800;
+}
+
+.statusNodata {
+  background-color: #f5f5f5;
+  color: #9e9e9e;
+}
+
+.statusNodata .statusDot {
+  background-color: #bdbdbd;
+}
+
+/* ─── Year Value Cell ─────────────────────────── */
+.yearCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.sigmaValue {
+  font-weight: 500;
+  color: #382e2c;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Implementer Sub-Row ─────────────────────── */
+.implRow td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f5f0ea;
+  vertical-align: middle;
+  background-color: #fdfbf8;
+}
+
+.implRow td:first-child {
+  padding-left: 48px;
+}
+
+.implCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.implIcon {
+  color: #c0b8b0;
+  flex-shrink: 0;
+}
+
+.implSelect {
+  padding: 6px 10px;
+  border: 1px solid #e0dcd6;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #382e2c;
+  background-color: #fff;
+  cursor: pointer;
+  min-width: 150px;
+  appearance: auto;
+}
+
+.implSelect:focus {
+  outline: none;
+  border-color: #f87c56;
+}
+
+/* ─── Editable Value ──────────────────────────── */
+.editableValue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.valueInput {
+  width: 60px;
+  padding: 4px 6px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 13px;
+  text-align: right;
+  background-color: #fff;
+  color: #382e2c;
+  font-variant-numeric: tabular-nums;
+}
+
+.valueInput:focus {
+  outline: none;
+  border-color: #f87c56;
+  box-shadow: 0 0 0 2px rgba(248, 124, 86, 0.1);
+}
+
+/* ─── Status indicator circles ─────────────────── */
+.statusCircle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.statusCircle.green {
+  background-color: #4caf50;
+}
+
+.statusCircle.orange {
+  background-color: #ff9800;
+}
+
+.statusCircle.red {
+  color: #e53935;
+}
+
+/* ─── Add Implementer Link ─────────────────────── */
+.addImplRow td {
+  padding: 6px 12px;
+  border-bottom: 1px solid #f0ece6;
+  background-color: #fdfbf8;
+}
+
+.addImplRow td:first-child {
+  padding-left: 48px;
+}
+
+.addImplBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #b5a99d;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.addImplBtn:hover {
+  color: #7a6e6a;
+}
+
+/* ─── Totals Row ───────────────────────────────── */
+.totalsRow td {
+  padding: 12px 12px;
+  border-top: 2px solid #ece6df;
+  font-weight: 600;
+  background-color: #f9f5f0;
+  color: #382e2c;
+  vertical-align: middle;
+}
+
+/* ─── Highlighted cell (total column) ─────────── */
+.totalHighlight {
+  background-color: #fff8e1 !important;
+}
+
+/* ─── Footer ──────────────────────────────────── */
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #ece6df;
+  background-color: #fbf9f6;
+}
+
+.cancelBtn {
+  padding: 10px 32px;
+  background-color: #fff;
+  border: 1px solid #e0dcd6;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #382e2c;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cancelBtn:hover {
+  background-color: #f5f5f5;
+}
+
+.saveBtn {
+  padding: 10px 32px;
+  background-color: #00737a;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.saveBtn:hover {
+  background-color: #005b61;
+}

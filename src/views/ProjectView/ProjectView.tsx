@@ -12,6 +12,9 @@ import { SubprojectCodesView } from './MarcoProgramatico/SubprojectCodesView'
 import { AnnualPlanningView } from './PlanificacionAnual/AnnualPlanningView'
 import { SubprojectsView } from './EjecucionAnual/SubprojectsView'
 
+import { ResultsChainView } from './CadenaResultados/ResultsChainView'
+import { MonthlyGoalsView } from './CadenaResultados/MonthlyGoalsView'
+
 export function ProjectView() {
   const [activeSubItem, setActiveSubItem] = useState<string>('gaps')
 
@@ -31,11 +34,16 @@ export function ProjectView() {
         return <ProjectCodesView />
       case 'codigos-subproy':
         return <SubprojectCodesView />
-      case 'planificacion':
+      case 'planificacion-anual':
         return <AnnualPlanningView />
 
       case 'subproyectos':
         return <SubprojectsView />
+
+      case 'cadena-resultados':
+        return <ResultsChainView />
+      case 'metas-mensuales':
+        return <MonthlyGoalsView />
 
       default:
         return (

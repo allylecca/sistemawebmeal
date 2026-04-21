@@ -3,7 +3,7 @@ import { LoginView } from './views/Login/LoginView'
 import { ProjectView } from './views/ProjectView/ProjectView'
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'login' | 'project'>('project')
+  const [currentView, setCurrentView] = useState<'login' | 'project'>('login')
 
   const handleLogin = () => {
     setCurrentView('project')

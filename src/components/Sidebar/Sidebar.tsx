@@ -41,6 +41,7 @@ const menuItems: MenuItem[] = [
     subItems: [
       { id: 'gaps', label: 'GAPS' },
       { id: 'lineas', label: 'Líneas Estratégicas' },
+      { id: 'tipologias', label: 'Tipologías de Proyecto' },
       { id: 'indicadores-inst', label: 'Nombres de Indicadores Institucionales' },
       { id: 'ubicaciones', label: 'Ubicaciones' },
       { id: 'programas', label: 'Programas' },
@@ -48,21 +49,68 @@ const menuItems: MenuItem[] = [
       { id: 'codigos-subproy', label: 'Códigos de Subproyectos' },
     ]
   },
-  { id: 'planificacion', label: 'Planificación Anual', icon: <NotebookTabs size={20} /> },
+  {
+    id: 'planificacion',
+    label: 'Planificación Anual',
+    icon: <NotebookTabs size={20} />,
+    subItems: [
+      { id: 'planificacion-anual', label: 'Planificación Anual' },
+    ]
+  },
   {
     id: 'ejecucion',
-    label: 'Ejecución Anual',
+    label: 'Marco Lógico',
     icon: <BookOpenCheck size={20} />,
     subItems: [
       { id: 'subproyectos', label: 'Subproyectos' },
     ]
   },
-  { id: 'cadena', label: 'Cadena de Resultados', icon: <Goal size={20} /> },
+  {
+    id: 'cadena',
+    label: 'Cadena de Resultados',
+    icon: <Goal size={20} />,
+    subItems: [
+      { id: 'cadena-resultados', label: 'Cadena de Resultados' },
+      { id: 'metas-mensuales', label: 'Metas Mensuales' },
+    ]
+  },
   { id: 'monitoreo', label: 'Monitoreo', icon: <ListTodo size={20} /> },
   { id: 'beneficiarios', label: 'Beneficiarios', icon: <Users size={20} /> },
-  { id: 'presupuesto', label: 'Presupuesto', icon: <DollarSign size={20} /> },
-  { id: 'seguridad', label: 'Seguridad', icon: <Shield size={20} /> },
-  { id: 'administracion', label: 'Administración', icon: <FileSliders size={20} /> },
+  {
+    id: 'presupuesto',
+    label: 'Presupuesto',
+    icon: <DollarSign size={20} />,
+    subItems: [
+      { id: 'financiadores', label: 'Financiadores' },
+      { id: 'financiaciones', label: 'Financiaciones' },
+      { id: 'monedas', label: 'Monedas' },
+      { id: 'tipos-subvencion', label: 'Tipos de Subvención' },
+    ]
+  },
+  {
+    id: 'seguridad',
+    label: 'Seguridad',
+    icon: <Shield size={20} />,
+    subItems: [
+      { id: 'usuarios', label: 'Usuarios' },
+      { id: 'cargos', label: 'Cargos' },
+      { id: 'roles', label: 'Roles' },
+    ]
+  },
+  {
+    id: 'administracion',
+    label: 'Administración',
+    icon: <FileSliders size={20} />,
+    subItems: [
+      { id: 'unidades-globales', label: 'Unidades Globales' },
+      { id: 'unidades-programa', label: 'Unidades de Programa' },
+      { id: 'tipos-datos', label: 'Tipos de Datos' },
+      { id: 'categorias', label: 'Categorías' },
+      { id: 'gestion-tipos', label: 'Gestión de Tipos' },
+      { id: 'implementadores-globales', label: 'Implementadores Globales' },
+      { id: 'implementadores-programa', label: 'Implementadores de Programa' },
+    ]
+  },
   { id: 'mantenimiento', label: 'Mantenimiento', icon: <Database size={20} /> },
   { id: 'tutoriales', label: 'Tutoriales', icon: <FileSpreadsheet size={20} /> },
   { id: 'gestion', label: 'Gestión del Sistema', icon: <BrickWallShield size={20} /> },

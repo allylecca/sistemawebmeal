@@ -1,0 +1,25 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #ffffff;
+}
+
+.tableContainer {
+  flex: 1;
+  padding: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+  position: relative;
+}
+
+.filtersGroup {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.filterItem {
+  min-width: 200px;
+}
