@@ -13,7 +13,6 @@ import styles from './LoginView.module.css'
 
 import loginPhoto from '../../assets/login-photo.png'
 import loginLogo from '../../assets/login-logo.svg'
-import isologo from '../../assets/isologo.svg'
 import { InputText } from '../../components/InputText/InputText'
 import { Button } from '../../components/Button/Button'
 import { Checkbox } from '../../components/Checkbox/Checkbox'
@@ -66,9 +65,8 @@ export function LoginView({ onLogin }: LoginViewProps) {
             <div className={styles.pillGroup} aria-label="Theme">
               <button
                 type="button"
-                className={`${styles.pillIconButton} ${
-                  themeMode === 'light' ? styles.pillIconButtonActive : ''
-                }`}
+                className={`${styles.pillIconButton} ${themeMode === 'light' ? styles.pillIconButtonActive : ''
+                  }`}
                 onClick={() => setThemeMode('light')}
                 aria-pressed="true"
                 title="Light"
@@ -77,9 +75,8 @@ export function LoginView({ onLogin }: LoginViewProps) {
               </button>
               <button
                 type="button"
-                className={`${styles.pillIconButton} ${
-                  themeMode === 'dark' ? styles.pillIconButtonActive : ''
-                }`}
+                className={`${styles.pillIconButton} ${themeMode === 'dark' ? styles.pillIconButtonActive : ''
+                  }`}
                 onClick={() => setThemeMode('dark')}
                 aria-pressed={themeMode === 'dark'}
                 title="Dark"
@@ -88,9 +85,8 @@ export function LoginView({ onLogin }: LoginViewProps) {
               </button>
               <button
                 type="button"
-                className={`${styles.pillIconButton} ${
-                  themeMode === 'system' ? styles.pillIconButtonActive : ''
-                }`}
+                className={`${styles.pillIconButton} ${themeMode === 'system' ? styles.pillIconButtonActive : ''
+                  }`}
                 onClick={() => setThemeMode('system')}
                 aria-pressed={themeMode === 'system'}
                 title="System"
@@ -136,7 +132,6 @@ export function LoginView({ onLogin }: LoginViewProps) {
               <Button
                 variant="primary"
                 fullWidth
-                leftIcon={<img src={isologo} alt="" className={styles.ssoIcon} />}
                 className={styles.ssoButton}
                 onClick={handleLogin}
               >

@@ -25,9 +25,9 @@
 
 .chainTable {
   width: 100%;
+  min-width: max-content;
   border-collapse: collapse;
   font-size: 13px;
-  table-layout: fixed;
 }
 
 .chainTable thead {
@@ -37,7 +37,7 @@
 }
 
 .chainTable thead th {
-  background-color: #f9f5f0;
+  background-color: #f7f7f7;
   color: #7a6e6a;
   font-weight: 600;
   font-size: 12px;
@@ -54,17 +54,21 @@
 }
 
 .colActividad {
-  width: 50%;
+  /* Auto width to fit content */
 }
 
 .colYear {
   width: 12%;
-  text-align: center !important;
+  text-align: right !important;
 }
 
 .colTotal {
   width: 14%;
-  text-align: center !important;
+  text-align: right !important;
+  position: sticky;
+  right: 0;
+  z-index: 3;
+  box-shadow: -2px 0 5px -2px rgba(0, 0, 0, 0.1);
 }
 
 /* ─── Sort / Filter Icons in Header ────────────── */
@@ -91,13 +95,14 @@
 }
 
 .activityRow:hover {
-  background-color: #fef9f4;
+  background-color: #f5f5f5;
 }
 
 .activityRow td {
   padding: 10px 12px;
   border-bottom: 1px solid #f0ece6;
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 .activityRow td:first-child {
@@ -108,6 +113,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .chevronBtn {
@@ -155,81 +161,48 @@
   text-overflow: ellipsis;
 }
 
-/* ─── Badges ─────────────────────────────────── */
-.badgeUnit {
+/* ─── Icon Badges ────────────────────────────── */
+.iconBadgeGroup {
   display: inline-flex;
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 500;
-  white-space: nowrap;
-  background-color: #f0e6d8;
-  color: #8a7260;
-  border: 1px solid #e0d4c4;
+  gap: 6px;
+  margin-left: auto;
 }
 
-.badgeType {
-  display: inline-flex;
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 500;
-  white-space: nowrap;
-  background-color: #e6e0f0;
-  color: #6a5a8a;
-  border: 1px solid #d4cce4;
-}
-
-/* ─── Status Badge ────────────────────────────── */
-.statusBadge {
+.iconBadge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 12px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.statusDot {
-  width: 8px;
-  height: 8px;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
+  cursor: help;
 }
 
-.statusCompleted {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-}
-
-.statusCompleted .statusDot {
-  background-color: #4caf50;
-}
-
-.statusIncomplete {
-  background-color: #fff3e0;
-  color: #e65100;
-}
-
-.statusIncomplete .statusDot {
-  background-color: #ff9800;
-}
-
-.statusNodata {
+.iconBadgeUnit {
   background-color: #f5f5f5;
-  color: #9e9e9e;
+  color: #382e2c;
 }
 
-.statusNodata .statusDot {
-  background-color: #bdbdbd;
+.iconBadgeCompleted {
+  background-color: #e8f5e9;
+  color: #4caf50;
+}
+
+.iconBadgeIncomplete {
+  background-color: #fff3e0;
+  color: #ff9800;
+}
+
+.iconBadgeNodata {
+  background-color: #f5f5f5;
+  color: #bdbdbd;
 }
 
 /* ─── Year Value Cell ─────────────────────────── */
 .yearCell {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 4px;
 }
 
@@ -244,7 +217,8 @@
   padding: 8px 12px;
   border-bottom: 1px solid #f5f0ea;
   vertical-align: middle;
-  background-color: #fdfbf8;
+  background-color: #f9f9f9;
+  white-space: nowrap;
 }
 
 .implRow td:first-child {
@@ -257,9 +231,23 @@
   gap: 10px;
 }
 
-.implIcon {
-  color: #c0b8b0;
+.deleteImplBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #e53935;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  opacity: 0.75;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.deleteImplBtn:hover {
+  opacity: 1;
+  transform: scale(1.15);
 }
 
 .implSelect {
@@ -283,7 +271,7 @@
 .editableValue {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 4px;
 }
 
@@ -332,7 +320,7 @@
 .addImplRow td {
   padding: 6px 12px;
   border-bottom: 1px solid #f0ece6;
-  background-color: #fdfbf8;
+  background-color: #f9f9f9;
 }
 
 .addImplRow td:first-child {
@@ -360,14 +348,26 @@
   padding: 12px 12px;
   border-top: 2px solid #ece6df;
   font-weight: 600;
-  background-color: #f9f5f0;
+  background-color: #f7f7f7;
   color: #382e2c;
   vertical-align: middle;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  white-space: nowrap;
 }
 
 /* ─── Highlighted cell (total column) ─────────── */
 .totalHighlight {
   background-color: #fff8e1 !important;
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  box-shadow: -2px 0 5px -2px rgba(0, 0, 0, 0.1);
+}
+
+.totalsRow .totalHighlight {
+  z-index: 11;
 }
 
 /* ─── Footer ──────────────────────────────────── */
@@ -398,7 +398,7 @@
 
 .saveBtn {
   padding: 10px 32px;
-  background-color: #00737a;
+  background-color: #FFC658;
   border: none;
   border-radius: 6px;
   font-size: 14px;
@@ -409,5 +409,328 @@
 }
 
 .saveBtn:hover {
-  background-color: #005b61;
+  background-color: #e5b24f;
+}
+
+/* ─── Budget Icon Button ───────────────────────── */
+.budgetIconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.budgetIconBtn:hover {
+  transform: scale(1.15);
+  filter: brightness(0.9);
+}
+
+/* Green: has budget + value filled */
+.budgetGreen {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+/* Yellow: has budget but value = 0 */
+.budgetYellow {
+  background-color: #f5a623;
+  color: #fff;
+}
+
+/* Gray: no budget assigned */
+.budgetGray {
+  background-color: #d0ccc8;
+  color: #fff;
+}
+
+/* ─── Budget Tooltip ───────────────────────────── */
+.budgetTooltip {
+  position: fixed;
+  z-index: 9999;
+  background: #fff;
+  border: 1px solid #e0dcd6;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 0;
+  min-width: 280px;
+  font-size: 12px;
+  pointer-events: auto;
+  overflow: hidden;
+}
+
+.tooltipHeader {
+  background: #f7f7f7;
+  border-bottom: 1px solid #ece6df;
+  padding: 8px 14px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #382e2c;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.tooltipNoBudget {
+  padding: 12px 14px;
+  color: #9e9e9e;
+  font-style: italic;
+  text-align: center;
+}
+
+.tooltipTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.tooltipTable th {
+  background: #f5f5f5;
+  color: #7a6e6a;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 6px 14px;
+  text-align: left;
+  border-bottom: 1px solid #ece6df;
+}
+
+.tooltipTable th:last-child {
+  text-align: right;
+}
+
+.tooltipTable td {
+  padding: 7px 14px;
+  color: #382e2c;
+  border-bottom: 1px solid #f5f0ea;
+}
+
+.tooltipTable td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.tooltipTable tr:last-child td {
+  border-bottom: none;
+}
+
+.tooltipTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  border-top: 2px solid #ece6df;
+  background: #f5f5f5;
+  font-weight: 700;
+  font-size: 12px;
+  color: #382e2c;
+}
+
+/* ─── Indicator Detail Modal ───────────────────── */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 20, 15, 0.45);
+  backdrop-filter: blur(3px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modalPanel {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 860px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalIn 0.2s ease;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #ece6df;
+  background: #f9f9f9;
+  flex-shrink: 0;
+}
+
+.modalTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #382e2c;
+  margin: 0 0 4px;
+}
+
+.modalSubtitle {
+  font-size: 12px;
+  color: #9e9e9e;
+  margin: 0;
+}
+
+.modalCloseBtn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #9e9e9e;
+  display: inline-flex;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.modalCloseBtn:hover {
+  background: #f0ece6;
+  color: #382e2c;
+}
+
+.modalTableWrapper {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.modalTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.modalTable thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.modalTable thead th {
+  background: #f7f7f7;
+  color: #7a6e6a;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 10px 16px;
+  border-bottom: 1px solid #ece6df;
+  text-align: left;
+}
+
+.modalColTipo {
+  width: 200px;
+}
+
+.modalColIndicador {
+  /* flex fill */
+}
+
+.modalColMeta {
+  width: 120px;
+  text-align: center !important;
+}
+
+.modalIndicatorRow td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f5f0ea;
+  vertical-align: middle;
+}
+
+.modalIndicatorRow:last-child td {
+  border-bottom: none;
+}
+
+.modalIndicatorRow:hover td {
+  background-color: #f9f9f9;
+}
+
+.modalIndicadorCell {
+  line-height: 1.4;
+}
+
+.indicadorCodigo {
+  font-weight: 600;
+  color: #382e2c;
+  white-space: nowrap;
+}
+
+.indicadorNombre {
+  color: #5a5250;
+}
+
+/* ─── Tipo Badges ──────────────────────────────── */
+.tipoBadge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.tipo_lineaEstrategica {
+  background-color: #fff0ef;
+  color: #c0392b;
+  border-color: #f5c0bb;
+}
+
+.tipo_resultado {
+  background-color: #fff4eb;
+  color: #d4640a;
+  border-color: #f5d5b5;
+}
+
+.tipo_producto {
+  background-color: #eef2ff;
+  color: #3a5bd9;
+  border-color: #c7d2fa;
+}
+
+.tipo_beneficiario {
+  background-color: #e8f8f5;
+  color: #1a8f7a;
+  border-color: #b2dfdb;
+}
+
+/* ─── Meta Input ───────────────────────────────── */
+.metaInputWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.metaInput {
+  width: 80px;
+  padding: 5px 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 12px;
+  text-align: center;
+  background-color: #f9f9f9;
+  color: #7a6e6a;
+  font-variant-numeric: tabular-nums;
+  cursor: default;
 }
