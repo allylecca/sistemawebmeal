@@ -16,9 +16,7 @@ import {
   CheckCircle2,
   AlertCircle,
   X,
-  PencilRuler,
-  ChevronsDown,
-  ChevronsUp
+  PencilRuler
 } from 'lucide-react'
 import {
   actividadData,

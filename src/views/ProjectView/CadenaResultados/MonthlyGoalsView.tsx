@@ -15,9 +15,7 @@ import {
   MinusCircle,
   CheckCircle2,
   AlertCircle,
-  PencilRuler,
-  ChevronsDown,
-  ChevronsUp
+  PencilRuler
 } from 'lucide-react'
 import {
   actividadData,
@@ -786,7 +784,6 @@ export function MonthlyGoalsView() {
                   onDeleteImpl={(implId) => deleteImplementor(act.id, implId)}
                   renderStatusIcon={renderStatusIcon}
                   renderUnitIcon={renderUnitIcon}
-                  renderMonthCell={renderMonthCell}
                 />
               )
             })}
@@ -902,13 +899,12 @@ interface ActivityRowGroupProps {
   onDeleteImpl: (implId: number) => void
   renderStatusIcon: (status: StatusType) => React.ReactNode
   renderUnitIcon: (activity: Actividad) => React.ReactNode
-  renderMonthCell: (value: number, showInfo?: boolean) => React.ReactNode
 }
 
 function ActivityRowGroup({
   activity, isExpanded, implRows, totals, status,
   onToggle, onAddImpl, onUpdateImpl, onDeleteImpl,
-  renderStatusIcon, renderUnitIcon, renderMonthCell,
+  renderStatusIcon, renderUnitIcon,
 }: ActivityRowGroupProps) {
   return (
     <>
