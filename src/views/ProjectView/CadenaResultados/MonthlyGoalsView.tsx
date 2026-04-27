@@ -659,14 +659,6 @@ export function MonthlyGoalsView() {
       }}>
         <div style={{ minWidth: '180px', flex: 1 }}>
           <FilterSelect
-            label="Año"
-            options={yearOptions}
-            value={yearFilter}
-            onChange={setYearFilter}
-          />
-        </div>
-        <div style={{ minWidth: '180px', flex: 1 }}>
-          <FilterSelect
             label="Programa"
             options={programOptions}
             value={programFilter}
@@ -687,6 +679,14 @@ export function MonthlyGoalsView() {
             options={subprojectOptions}
             value={subprojectFilter}
             onChange={setSubprojectFilter}
+          />
+        </div>
+        <div style={{ minWidth: '180px', flex: 1 }}>
+          <FilterSelect
+            label="Año"
+            options={yearOptions}
+            value={yearFilter}
+            onChange={setYearFilter}
           />
         </div>
         <div style={{ display: 'flex', gap: '8px', paddingBottom: '2px' }}>
