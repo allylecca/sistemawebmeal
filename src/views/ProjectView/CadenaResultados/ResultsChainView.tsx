@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useRef, useEffect, Fragment } from 'react'
-import { createPortal } from 'react-dom'
 import { PageHeader } from '../../../components/PageTitle/PageTitle'
 import { FilterSelect } from '../../../components/FilterSelect/FilterSelect'
 import {
@@ -11,15 +10,12 @@ import {
   ArrowUpDown,
   ListFilter,
   Info,
-  CheckCircle2,
-  AlertCircle,
   X,
   PencilRuler
 } from 'lucide-react'
 import {
   actividadData,
   implementadoresData,
-  locationsData,
   planesAnualesData,
   subactividadData
 } from '../../../data/mockData'
@@ -42,7 +38,6 @@ interface ActivityState {
   implementors: ImplRow[]
 }
 
-type StatusType = 'completed' | 'incomplete' | 'nodata'
 
 /* ─── Budget Mock Data ────────────────────────── */
 interface Partida {
@@ -88,8 +83,6 @@ const budgetMock: Record<string, BudgetByYear> = {
   // actId 2 en 2026 y 2027: sin presupuesto asignado
 }
 
-const getBudget = (actId: number, year: number): BudgetByYear | null =>
-  budgetMock[`${actId}_${year}`] ?? null
 
 /* ─── Indicator Mock Data (Selección de indicadores y metas) ─ */
 type IndicatorType = 'lineaEstrategica' | 'resultado' | 'producto' | 'beneficiario'
@@ -183,40 +176,8 @@ function IndicatorDetailModal({ year, onClose }: { year: number; onClose: () => 
 }
 
 /* ─── Shared tooltip hook ─────────────────────── */
-function useTooltipPos(tooltipW = 300, tooltipH = 220) {
-  const [visible, setVisible] = useState(false)
-  const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({})
-  const btnRef = useRef<HTMLButtonElement>(null)
-  const tooltipRef = useRef<HTMLDivElement>(null)
-  const GAP = 8; const M = 12
-  const handleMouseEnter = () => {
-    if (!btnRef.current) return
-    const rect = btnRef.current.getBoundingClientRect()
-    const vw = window.innerWidth; const vh = window.innerHeight
-    let top = rect.bottom + GAP
-    if (top + tooltipH > vh - M) top = rect.top - tooltipH - GAP
-    top = Math.max(M, top)
-    let left = rect.left - 60
-    if (left + tooltipW > vw - M) left = vw - tooltipW - M
-    left = Math.max(M, left)
-    setTooltipStyle({ top, left })
-    setVisible(true)
-  }
-  const handleMouseLeave = (e: React.MouseEvent) => {
-    if (tooltipRef.current?.contains(e.relatedTarget as Node)) return
-    setVisible(false)
-  }
-  const tooltipMouseLeave = () => setVisible(false)
-  useEffect(() => {
-    const hide = () => setVisible(false)
-    window.addEventListener('scroll', hide, true)
-    return () => window.removeEventListener('scroll', hide, true)
-  }, [])
-  return { visible, tooltipStyle, btnRef, tooltipRef, handleMouseEnter, handleMouseLeave, tooltipMouseLeave }
-}
 
 /* ─── BudgetIcon with Tooltip ─────────────────── */
-type IconStatus = 'filled' | 'pending' | 'nobudget'
 
 
 const implOptions = implementadoresData.map(i => i.nombre)
@@ -671,7 +632,7 @@ export function ResultsChainView() {
     return actividadData.filter(a => a.unidad && a.tipoValor)
   }, [])
 
-  const [actStates, setActStates] = useState<ActivityState[]>(() => {
+  const [actStates] = useState<ActivityState[]>(() => {
     return activities.map((a, idx) => {
       const hasData = idx < 2
       return {
@@ -699,31 +660,6 @@ export function ResultsChainView() {
     })
   })
 
-  const getTotals = (activity: Actividad) => {
-    const state = actStates.find(s => s.activityId === activity.id)
-    if (!state || state.implementors.length === 0) return { y2025: 0, y2026: 0, y2027: 0, total: 0 }
-
-    if (activity.tipoValor === 'Porcentaje') {
-      const active25 = state.implementors.filter(i => i.y2025 > 0)
-      const y2025 = active25.length > 0 ? active25.reduce((s, i) => s + i.y2025, 0) / active25.length : 0
-
-      const active26 = state.implementors.filter(i => i.y2026 > 0)
-      const y2026 = active26.length > 0 ? active26.reduce((s, i) => s + i.y2026, 0) / active26.length : 0
-
-      const active27 = state.implementors.filter(i => i.y2027 > 0)
-      const y2027 = active27.length > 0 ? active27.reduce((s, i) => s + i.y2027, 0) / active27.length : 0
-
-      const years = [y2025, y2026, y2027].filter(v => v > 0)
-      const total = years.length > 0 ? years.reduce((s, y) => s + y, 0) / years.length : 0
-
-      return { y2025: Math.round(y2025), y2026: Math.round(y2026), y2027: Math.round(y2027), total: Math.round(total) }
-    } else {
-      const y2025 = state.implementors.reduce((sum, i) => sum + i.y2025, 0)
-      const y2026 = state.implementors.reduce((sum, i) => sum + i.y2026, 0)
-      const y2027 = state.implementors.reduce((sum, i) => sum + i.y2027, 0)
-      return { y2025, y2026, y2027, total: y2025 + y2026 + y2027 }
-    }
-  }
 
 
   return (

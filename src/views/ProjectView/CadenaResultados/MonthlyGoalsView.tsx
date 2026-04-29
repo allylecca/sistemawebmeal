@@ -15,8 +15,6 @@ import {
 } from 'lucide-react'
 import {
   actividadData,
-  implementadoresData,
-  locationsData,
   planesAnualesData,
   subactividadData
 } from '../../../data/mockData'
@@ -414,7 +412,6 @@ export function MonthlyGoalsView() {
     const state = itemStates.find(s => s.itemId === id)
     const isExpanded = state?.expanded || false
     const implRows = state?.implementors || []
-    const totals = getTotals(id, tipoValor)
 
     const programmedTotal = monthKeys.reduce((sum, mk) => sum + (parseFloat(quantities[`${id}-${mk.key}`]) || 0), 0);
     const annualGoal = (() => {
@@ -455,8 +452,6 @@ export function MonthlyGoalsView() {
             </div>
           </td>
           {monthKeys.map(mk => {
-            const mQtyStr = quantities[`${id}-${mk.key}`] || '';
-
             return (
               <td key={mk.key} style={{ textAlign: 'right', backgroundColor: '#f9f9f9', borderLeft: '1px solid #f0f0f0' }} onClick={(e) => e.stopPropagation()}>
                 <div className={styles.editableValue} style={{ justifyContent: 'flex-end', paddingRight: '0' }}>
@@ -550,7 +545,6 @@ export function MonthlyGoalsView() {
                     <FormattedInput
                       className={styles.valueInput}
                       value={impl[mk.key]}
-                      tipoValor={tipoValor || 'Numérico'}
                       max={cellMax}
                       onChange={(v) => updateImplField(id, impl.id, mk.key, v)}
                     />
@@ -601,16 +595,6 @@ export function MonthlyGoalsView() {
     setItemStates(prev => prev.map(s => {
       if (s.itemId !== itemId) return s
 
-      // Calculate total item meta (Annual Goal)
-      const itemMeta = (() => {
-        if (itemId.startsWith('inst-')) {
-          const instId = parseInt(itemId.replace('inst-', ''))
-          const item = indicatorsMock.find(i => i.id === instId)
-          return item ? (item as any)[`y${yearFilter}`] : 600
-        }
-        // For activities, sum of metaAnual of auto rows (which is totalGoal)
-        return s.implementors.reduce((sum, i) => sum + (i.isAuto ? i.metaAnual : 0), 0) || 600
-      })();
 
       const updatedImplementors = s.implementors.map(imp => {
         if (imp.id !== implId) return imp;
@@ -715,16 +699,6 @@ export function MonthlyGoalsView() {
     )
   }
 
-  const renderMonthCell = (value: number, showInfo = true) => (
-    <div className={styles.yearCell}>
-      <span className={styles.sigmaValue}>{value.toLocaleString('es')}</span>
-      {showInfo && (
-        <button className={styles.infoBtn} title="Ver detalle">
-          <Info size={13} />
-        </button>
-      )}
-    </div>
-  )
 
   return (
     <div className={styles.root}>
@@ -881,7 +855,6 @@ export function MonthlyGoalsView() {
             {expandedCategories['act'] && activities.map((act) => {
               const itemId = `act-${act.id}`
               const state = itemStates.find(s => s.itemId === itemId)
-              const totals = getTotals(itemId, act.tipoValor)
               const isExpanded = state?.expanded || false
 
               return (
@@ -890,7 +863,6 @@ export function MonthlyGoalsView() {
                   activity={act}
                   isExpanded={isExpanded}
                   implRows={state?.implementors || []}
-                  totals={totals}
                   onToggle={() => toggleExpand(itemId)}
                   onAddImpl={() => addImplementor(itemId)}
                   onUpdateImpl={(implId, field, value) => updateImplField(itemId, implId, field, value)}
@@ -934,9 +906,8 @@ export function MonthlyGoalsView() {
 }
 
 /* ─── Formatted Input Component ─────────────────── */
-function FormattedInput({ value, tipoValor, onChange, max, style, className }: {
+function FormattedInput({ value, onChange, max, style, className }: {
   value: number
-  tipoValor: string
   onChange: (v: number) => void
   max?: number
   style?: React.CSSProperties
@@ -991,7 +962,6 @@ interface ActivityRowGroupProps {
   activity: Actividad
   isExpanded: boolean
   implRows: ImplRow[]
-  totals: Record<MonthKey, number> & { total: number }
   onToggle: () => void
   onAddImpl: () => void
   onUpdateImpl: (implId: number, field: keyof ImplRow, value: any) => void
@@ -1002,7 +972,7 @@ interface ActivityRowGroupProps {
 }
 
 function ActivityRowGroup({
-  activity, isExpanded, implRows, totals,
+  activity, isExpanded, implRows,
   onToggle, onAddImpl, onUpdateImpl, onDeleteImpl,
   renderUnitIcon,
   onQuantityChange, quantities
@@ -1038,8 +1008,6 @@ function ActivityRowGroup({
           </div>
         </td>
         {monthKeys.map(mk => {
-          const mQtyStr = quantities[`act-${activity.id}-${mk.key}`] || '';
-
           return (
             <td key={mk.key} style={{ textAlign: 'right', backgroundColor: '#f9f9f9', borderLeft: '1px solid #f0f0f0' }} onClick={(e) => e.stopPropagation()}>
               <div className={styles.editableValue} style={{ justifyContent: 'flex-end', paddingRight: '0' }}>
@@ -1141,7 +1109,6 @@ function ActivityRowGroup({
                     <FormattedInput
                       className={styles.valueInput}
                       value={impl[mk.key]}
-                      tipoValor={activity.tipoValor || 'Numérico'}
                       max={cellMax}
                       onChange={(v) => onUpdateImpl(impl.id, mk.key, v)}
                     />
