@@ -15,7 +15,6 @@ import {
 } from 'lucide-react'
 import {
   actividadData,
-  implementadoresData,
   planesAnualesData,
   subactividadData
 } from '../../../data/mockData'
@@ -120,7 +119,6 @@ function IndicatorDetailModal({ year, onClose }: { year: number; onClose: () => 
 /* ─── BudgetIcon with Tooltip ─────────────────── */
 
 
-const implOptions = implementadoresData.map(i => i.nombre)
 
 const IMPLEMENTORS = ['AEA Perú', 'AEA Bolivia', 'Power Mas'];
 const LOCATIONS = ['Perú, La Libertad, Trujillo', 'Perú, La Libertad, Chepén'];
@@ -568,9 +566,6 @@ export function ResultsChainView() {
     []
   )
 
-  const activities = useMemo(() => {
-    return actividadData.filter(a => a.unidad && a.tipoValor)
-  }, [])
 
 
 
