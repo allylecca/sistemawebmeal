@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef, useEffect, Fragment } from 'react'
+import React, { useMemo, useState, useEffect, Fragment } from 'react'
 import { PageHeader } from '../../../components/PageTitle/PageTitle'
 import { FilterSelect } from '../../../components/FilterSelect/FilterSelect'
 import {
@@ -19,69 +19,9 @@ import {
   planesAnualesData,
   subactividadData
 } from '../../../data/mockData'
-import type { Actividad } from '../../../data/types'
 import styles from './ResultsChainView.module.css'
 
-/* ─── Types ───────────────────────────────────── */
-interface ImplRow {
-  id: number
-  implementador: string
-  ubicacion: string
-  y2025: number
-  y2026: number
-  y2027: number
-}
 
-interface ActivityState {
-  activityId: number
-  expanded: boolean
-  implementors: ImplRow[]
-}
-
-
-/* ─── Budget Mock Data ────────────────────────── */
-interface Partida {
-  codigo: string
-  nombre: string
-  monto: number
-}
-
-interface BudgetByYear {
-  partidas: Partida[]
-  total: number
-}
-
-/** Mock budget per activity-id × year. Key: `${actId}_${year}` */
-const budgetMock: Record<string, BudgetByYear> = {
-  '1_2025': {
-    partidas: [
-      { codigo: '2.3.1', nombre: 'Bienes y servicios', monto: 3200 },
-      { codigo: '2.3.2', nombre: 'Contratación de servicios', monto: 1800 },
-    ],
-    total: 5000,
-  },
-  '1_2026': {
-    partidas: [
-      { codigo: '2.3.1', nombre: 'Bienes y servicios', monto: 3000 },
-      { codigo: '2.3.2', nombre: 'Contratación de servicios', monto: 2000 },
-    ],
-    total: 5000,
-  },
-  '1_2027': {
-    partidas: [
-      { codigo: '2.3.1', nombre: 'Bienes y servicios', monto: 2500 },
-      { codigo: '2.3.2', nombre: 'Contratación de servicios', monto: 2500 },
-    ],
-    total: 5000,
-  },
-  '2_2025': {
-    partidas: [
-      { codigo: '2.3.1', nombre: 'Bienes y servicios', monto: 500 },
-    ],
-    total: 500,
-  },
-  // actId 2 en 2026 y 2027: sin presupuesto asignado
-}
 
 
 /* ─── Indicator Mock Data (Selección de indicadores y metas) ─ */
@@ -632,33 +572,7 @@ export function ResultsChainView() {
     return actividadData.filter(a => a.unidad && a.tipoValor)
   }, [])
 
-  const [actStates] = useState<ActivityState[]>(() => {
-    return activities.map((a, idx) => {
-      const hasData = idx < 2
-      return {
-        activityId: a.id,
-        expanded: idx < 2,
-        implementors: hasData ? [
-          {
-            id: 1,
-            implementador: implOptions[idx % implOptions.length],
-            ubicacion: 'Perú, La Libertad, Trujillo',
-            y2025: idx === 0 ? 5000 : 300,
-            y2026: idx === 0 ? 5000 : 0,
-            y2027: idx === 0 ? 5000 : 0,
-          },
-          {
-            id: 2,
-            implementador: implOptions[1] ?? 'ADRA Perú',
-            ubicacion: 'Perú, La Libertad, Virú',
-            y2025: 0,
-            y2026: 0,
-            y2027: 0,
-          }
-        ] : []
-      }
-    })
-  })
+
 
 
 

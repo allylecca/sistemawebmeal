@@ -648,46 +648,7 @@ export function MonthlyGoalsView() {
     }))
   }
 
-  const getTotals = (itemId: string, tipoValor?: string) => {
-    const state = itemStates.find(s => s.itemId === itemId)
-    const init = { ene: 0, feb: 0, mar: 0, abr: 0, may: 0, jun: 0, jul: 0, ago: 0, sep: 0, oct: 0, nov: 0, dic: 0, total: 0 }
-    if (!state || state.implementors.length === 0) {
-      const totals = { ...init }
-      monthKeys.forEach(mk => {
-        totals[mk.key] = parseFloat(quantities[`${itemId}-${mk.key}`]) || 0
-      })
-      if (tipoValor === 'Porcentaje') {
-        const vals = monthKeys.map(mk => totals[mk.key]).filter(v => v > 0)
-        totals.total = vals.length > 0 ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : 0
-      } else {
-        totals.total = monthKeys.reduce((sum, mk) => sum + totals[mk.key], 0)
-      }
-      return totals
-    }
 
-    if (tipoValor === 'Porcentaje') {
-      const active = state.implementors.filter(i => i.implementador !== '')
-      const result = { ...init }
-
-      monthKeys.forEach(mk => {
-        const valid = active.filter(i => i[mk.key] > 0)
-        result[mk.key] = valid.length > 0 ? Math.round(valid.reduce((sum, i) => sum + i[mk.key], 0) / valid.length) : 0
-      })
-
-      const years = monthKeys.map(mk => result[mk.key]).filter(v => v > 0)
-      result.total = years.length > 0 ? Math.round(years.reduce((s, y) => s + y, 0) / years.length) : 0
-      return result
-    } else {
-      const result = { ...init }
-      state.implementors.forEach(impl => {
-        monthKeys.forEach(mk => {
-          result[mk.key] += (impl[mk.key] || 0)
-        })
-      })
-      result.total = monthKeys.reduce((sum, mk) => sum + result[mk.key], 0)
-      return result
-    }
-  }
 
 
 
