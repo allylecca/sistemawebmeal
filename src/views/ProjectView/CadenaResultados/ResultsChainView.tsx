@@ -11,8 +11,6 @@ import {
   ArrowUpDown,
   ListFilter,
   Info,
-  PlusCircle,
-  MinusCircle,
   CheckCircle2,
   AlertCircle,
   X,
@@ -23,8 +21,6 @@ import {
   implementadoresData,
   locationsData,
   planesAnualesData,
-  institutionalIndicatorsData,
-  indicadoresAnualesData,
   subactividadData
 } from '../../../data/mockData'
 import type { Actividad } from '../../../data/types'
@@ -222,228 +218,6 @@ function useTooltipPos(tooltipW = 300, tooltipH = 220) {
 /* ─── BudgetIcon with Tooltip ─────────────────── */
 type IconStatus = 'filled' | 'pending' | 'nobudget'
 
-interface BudgetIconProps {
-  actId: number
-  year: number
-  value: number
-  isEmptyRow?: boolean
-}
-
-function BudgetIcon({ actId, year, value, isEmptyRow }: BudgetIconProps) {
-  const budget = isEmptyRow ? null : getBudget(actId, year)
-  const { visible, tooltipStyle, btnRef, tooltipRef, handleMouseEnter, handleMouseLeave, tooltipMouseLeave } = useTooltipPos(350, 240)
-
-  let status: IconStatus
-  if (!budget) {
-    status = 'nobudget'
-  } else if (value > 0) {
-    status = 'filled'
-  } else {
-    status = 'pending'
-  }
-
-  const iconEl =
-    status === 'filled' ? (
-      <CheckCircle2 size={16} />
-    ) : (
-      <AlertCircle size={16} />
-    )
-
-  const btnCls = [
-    styles.budgetIconBtn,
-    status === 'filled'
-      ? styles.budgetGreen
-      : status === 'pending'
-        ? styles.budgetYellow
-        : styles.budgetGray,
-  ].join(' ')
-
-  return (
-    <>
-      <button
-        ref={btnRef}
-        className={btnCls}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {iconEl}
-      </button>
-
-      {visible && createPortal(
-        <div
-          ref={tooltipRef}
-          className={styles.budgetTooltip}
-          style={tooltipStyle}
-          onMouseLeave={tooltipMouseLeave}
-        >
-          <div className={styles.tooltipHeader}>
-            Presupuesto {year}
-          </div>
-          {!budget ? (
-            <div className={styles.tooltipNoBudget}>Sin presupuesto asignado</div>
-          ) : (
-            <>
-              <table className={styles.tooltipTable}>
-                <thead>
-                  <tr>
-                    <th>Partida</th>
-                    <th>Descripción</th>
-                    <th>Monto</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {budget.partidas.map((p) => (
-                    <tr key={p.codigo}>
-                      <td>{p.codigo}</td>
-                      <td>{p.nombre}</td>
-                      <td>{p.monto.toLocaleString('es')}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className={styles.tooltipTotal}>
-                <span>Total presupuestado</span>
-                <span>{budget.total.toLocaleString('es')}</span>
-              </div>
-            </>
-          )}
-        </div>,
-        document.body
-      )}
-    </>
-  )
-}
-
-
-/* ─── YearInfoTooltip (fila de actividad, columnas de año) ─ */
-function YearInfoTooltip({ year, implRows, tipoValor }: { year: number; implRows: ImplRow[], tipoValor?: string }) {
-  const { visible, tooltipStyle, btnRef, tooltipRef, handleMouseEnter, handleMouseLeave, tooltipMouseLeave } = useTooltipPos()
-  const key = `y${year}` as 'y2025' | 'y2026' | 'y2027'
-  const active = implRows.filter(i => i.implementador)
-
-  let total = 0;
-  if (tipoValor === 'Porcentaje') {
-    const valid = active.filter(i => i[key] > 0)
-    total = valid.length > 0 ? Math.round(valid.reduce((sum, i) => sum + i[key], 0) / valid.length) : 0
-  } else {
-    total = active.reduce((sum, i) => sum + i[key], 0)
-  }
-
-  const formatVal = (v: number) => tipoValor === 'Porcentaje' ? `${v}%` : v.toLocaleString('es')
-
-  return (
-    <>
-      <button ref={btnRef} className={styles.infoBtn} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={e => e.stopPropagation()} title="Ver detalle"><Info size={13} /></button>
-      {visible && createPortal(
-        <div ref={tooltipRef} className={styles.budgetTooltip} style={tooltipStyle} onMouseLeave={tooltipMouseLeave}>
-          <div className={styles.tooltipHeader}>Detalle {year}</div>
-          {active.length === 0 ? (
-            <div className={styles.tooltipNoBudget}>Sin implementadores asignados</div>
-          ) : (
-            <>
-              <table className={styles.tooltipTable}>
-                <thead><tr><th>Implementador</th><th>Ubicación</th><th>Valor</th></tr></thead>
-                <tbody>
-                  {active.map(impl => (
-                    <tr key={impl.id}><td>{impl.implementador}</td><td>{impl.ubicacion || '—'}</td><td>{formatVal(impl[key])}</td></tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className={styles.tooltipTotal}><span>Total {year}</span><span>{formatVal(total)}</span></div>
-            </>
-          )}
-        </div>,
-        document.body
-      )}
-    </>
-  )
-}
-
-/* ─── ImplTotalInfoIcon (columna TOTAL de sub-fila) ── */
-function ImplTotalInfoIcon({ impl, tipoValor }: { impl: ImplRow, tipoValor?: string }) {
-  const { visible, tooltipStyle, btnRef, tooltipRef, handleMouseEnter, handleMouseLeave, tooltipMouseLeave } = useTooltipPos()
-  const years = [2025, 2026, 2027] as const
-
-  let total = 0;
-  if (tipoValor === 'Porcentaje') {
-    const valid = years.map(yr => impl[`y${yr}` as 'y2025' | 'y2026' | 'y2027']).filter(v => v > 0)
-    total = valid.length > 0 ? Math.round(valid.reduce((sum, v) => sum + v, 0) / valid.length) : 0
-  } else {
-    total = impl.y2025 + impl.y2026 + impl.y2027
-  }
-
-  const formatVal = (v: number) => tipoValor === 'Porcentaje' ? `${v}%` : v.toLocaleString('es')
-
-  return (
-    <>
-      <button ref={btnRef} className={styles.infoBtn} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={e => e.stopPropagation()} title="Ver detalle"><Info size={13} /></button>
-      {visible && createPortal(
-        <div ref={tooltipRef} className={styles.budgetTooltip} style={tooltipStyle} onMouseLeave={tooltipMouseLeave}>
-          <div className={styles.tooltipHeader}>Resumen implementador</div>
-          <div className={styles.tooltipImplInfo}>
-            <div className={styles.tooltipImplRow}><span className={styles.tooltipImplLabel}>Implementador</span><span className={styles.tooltipImplValue}>{impl.implementador || '—'}</span></div>
-            <div className={styles.tooltipImplRow}><span className={styles.tooltipImplLabel}>Ubicación</span><span className={styles.tooltipImplValue}>{impl.ubicacion || '—'}</span></div>
-          </div>
-          <table className={styles.tooltipTable}>
-            <thead><tr><th>Año</th><th style={{ textAlign: 'right' }}>Valor registrado</th></tr></thead>
-            <tbody>
-              {years.map(yr => {
-                const k = `y${yr}` as 'y2025' | 'y2026' | 'y2027'
-                return <tr key={yr}><td>{yr}</td><td>{formatVal(impl[k])}</td></tr>
-              })}
-            </tbody>
-          </table>
-          <div className={styles.tooltipTotal}><span>Total</span><span>{formatVal(total)}</span></div>
-        </div>,
-        document.body
-      )}
-    </>
-  )
-}
-
-/* ─── Helpers ─────────────────────────────────── */
-/**
- * Status is driven by budget assignments, checked per implementor row:
- *  - 'nodata'     → no year has budget assigned
- *  - 'incomplete' → any active implementor has a budget-year still at 0
- *  - 'completed'  → every active implementor has all budget-years > 0
- */
-const getStatus = (actId: number, implRows: ImplRow[]): StatusType => {
-  const years = [2025, 2026, 2027] as const
-  const budgetedYears = years.filter(y => getBudget(actId, y) !== null)
-  if (budgetedYears.length === 0) return 'nodata'
-  const active = implRows.filter(i => i.implementador !== '')
-  if (active.length === 0) return 'incomplete'
-  const allFilled = active.every(impl =>
-    budgetedYears.every(yr => {
-      const key = `y${yr}` as 'y2025' | 'y2026' | 'y2027'
-      return impl[key] > 0
-    })
-  )
-  return allFilled ? 'completed' : 'incomplete'
-}
-
-const statusLabels: Record<StatusType, string> = {
-  completed: 'Completado',
-  incomplete: 'Incompleto',
-  nodata: 'Sin data'
-}
-
-const locationOptions = locationsData.flatMap(r => {
-  const base = [r.label]
-  if (r.children) {
-    r.children.forEach(p => {
-      base.push(`${r.label}, ${p.label}`)
-      if (p.children) {
-        p.children.forEach(d => {
-          base.push(`${r.label}, ${p.label}, ${d.label}`)
-        })
-      }
-    })
-  }
-  return base
-})
 
 const implOptions = implementadoresData.map(i => i.nombre)
 
@@ -655,7 +429,6 @@ export function ResultsChainView() {
       rowBalances.push(isBalanced);
     });
 
-    const isTopComplete = rowBalances.length > 0 && rowBalances.every(b => b);
 
     const topColSums: Record<string, number> = {};
     YEARS.forEach(y => {
@@ -926,50 +699,6 @@ export function ResultsChainView() {
     })
   })
 
-  const toggleExpand = (actId: number) => {
-    setActStates(prev => prev.map(s =>
-      s.activityId === actId ? { ...s, expanded: !s.expanded } : s
-    ))
-  }
-
-  const expandAll = () => setActStates(prev => prev.map(s => ({ ...s, expanded: true })))
-  const collapseAll = () => setActStates(prev => prev.map(s => ({ ...s, expanded: false })))
-  const isAllExpanded = actStates.every(s => s.expanded)
-
-  const deleteImplementor = (actId: number, implId: number) => {
-    const confirmed = window.confirm('¿Estás seguro de que deseas eliminar este implementador?')
-    if (!confirmed) return
-    setActStates(prev => prev.map(s => {
-      if (s.activityId !== actId) return s
-      return { ...s, implementors: s.implementors.filter(imp => imp.id !== implId) }
-    }))
-  }
-
-  const addImplementor = (actId: number) => {
-    setActStates(prev => prev.map(s => {
-      if (s.activityId !== actId) return s
-      return {
-        ...s,
-        implementors: [
-          ...s.implementors,
-          { id: Date.now(), implementador: '', ubicacion: '', y2025: 0, y2026: 0, y2027: 0 }
-        ]
-      }
-    }))
-  }
-
-  const updateImplField = (actId: number, implId: number, field: keyof ImplRow, value: any) => {
-    setActStates(prev => prev.map(s => {
-      if (s.activityId !== actId) return s
-      return {
-        ...s,
-        implementors: s.implementors.map(imp =>
-          imp.id === implId ? { ...imp, [field]: value } : imp
-        )
-      }
-    }))
-  }
-
   const getTotals = (activity: Actividad) => {
     const state = actStates.find(s => s.activityId === activity.id)
     if (!state || state.implementors.length === 0) return { y2025: 0, y2026: 0, y2027: 0, total: 0 }
@@ -996,62 +725,6 @@ export function ResultsChainView() {
     }
   }
 
-  const grandTotals = useMemo(() => {
-    return actStates.reduce(
-      (acc, s) => {
-        const act = activities.find(a => a.id === s.activityId)
-        if (!act) return acc
-        const t = getTotals(act)
-        return {
-          y2025: acc.y2025 + t.y2025,
-          y2026: acc.y2026 + t.y2026,
-          y2027: acc.y2027 + t.y2027,
-          total: acc.total + t.total
-        }
-      },
-      { y2025: 0, y2026: 0, y2027: 0, total: 0 }
-    )
-  }, [actStates, activities])
-
-  const renderStatusIcon = (status: StatusType) => {
-    const cls = status === 'completed' ? styles.iconBadgeCompleted
-      : status === 'incomplete' ? styles.iconBadgeIncomplete
-        : styles.iconBadgeNodata
-
-    const Icon = status === 'completed' ? CheckCircle2 : AlertCircle
-
-    return (
-      <div className={`${styles.iconBadge} ${cls}`} title={`Estado: ${statusLabels[status]}`}>
-        <Icon size={16} fill="currentColor" color="#fff" />
-      </div>
-    )
-  }
-
-  const renderUnitIcon = (activity: Actividad) => {
-    return (
-      <div
-        className={`${styles.iconBadge} ${styles.iconBadgeUnit}`}
-        onMouseEnter={(e) => handleUnitIconMouseEnter(e, `act-${activity.id}`, activity.nombre, activity.unidad || '', activity.tipoValor || '')}
-        onMouseLeave={handleUnitIconMouseLeave}
-        style={{ cursor: 'help' }}
-      >
-        <PencilRuler size={14} strokeWidth={2.5} />
-      </div>
-    )
-  }
-
-  const renderYearCell = (value: number, showInfo = true, tipoValor?: string) => (
-    <div className={styles.yearCell}>
-      <span className={styles.sigmaValue}>
-        {tipoValor === 'Porcentaje' ? `${value}%` : value.toLocaleString('es')}
-      </span>
-      {showInfo && (
-        <button className={styles.infoBtn} title="Ver detalle">
-          <Info size={13} />
-        </button>
-      )}
-    </div>
-  )
 
   return (
     <div className={styles.root}>
@@ -1358,76 +1031,6 @@ export function ResultsChainView() {
         <IndicatorDetailModal year={modalYear} onClose={() => setModalYear(null)} />
       )}
     </div>
-  )
-}
-
-/* ─── Formatted Input Component ─────────────────── */
-function FormattedInput({ value, tipoValor, onChange, className, onKeyDown, 'data-col-index': dataColIndex, style }: { value: number, tipoValor: string, onChange: (v: number) => void, className?: string, onKeyDown?: any, 'data-col-index'?: string, style?: React.CSSProperties }) {
-  const [localVal, setLocalVal] = useState(() => {
-    if (!value) return ''
-    if (tipoValor === 'Porcentaje') return value + '%'
-    if (tipoValor === 'Decimal' || tipoValor === 'Monto') return value.toString()
-    return value.toLocaleString('en-US')
-  })
-
-  useEffect(() => {
-    if (!value && localVal === '') return
-    const currentNum = parseFloat(localVal.replace(/,/g, '').replace('%', '')) || 0
-    if (currentNum !== value) {
-      if (!value) setLocalVal('')
-      else if (tipoValor === 'Porcentaje') setLocalVal(value + '%')
-      else if (tipoValor === 'Decimal' || tipoValor === 'Monto') setLocalVal(value.toString())
-      else setLocalVal(value.toLocaleString('en-US'))
-    }
-  }, [value, tipoValor])
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let raw = e.target.value;
-    if (tipoValor === 'Porcentaje') {
-      raw = raw.replace(/[^0-9.]/g, '')
-      let num = parseFloat(raw)
-      if (num > 100) {
-        num = 100;
-        raw = '100';
-      }
-      setLocalVal(raw ? raw + '%' : '')
-      onChange(isNaN(num) ? 0 : num)
-    } else if (tipoValor === 'Decimal' || tipoValor === 'Monto') {
-      raw = raw.replace(/[^0-9.]/g, '')
-      setLocalVal(raw)
-      onChange(parseFloat(raw) || 0)
-    } else {
-      raw = raw.replace(/[^0-9]/g, '')
-      let num = parseInt(raw, 10)
-      if (isNaN(num)) {
-        setLocalVal('')
-        onChange(0)
-      } else {
-        setLocalVal(num.toLocaleString('en-US'))
-        onChange(num)
-      }
-    }
-  }
-
-  const handleBlur = () => {
-    if (!value) setLocalVal('')
-    else if (tipoValor === 'Porcentaje') setLocalVal(value + '%')
-    else if (tipoValor === 'Decimal' || tipoValor === 'Monto') setLocalVal(value.toString())
-    else setLocalVal(value.toLocaleString('en-US'))
-  }
-
-  return (
-    <input
-      type="text"
-      className={className}
-      value={localVal}
-      onChange={handleChange}
-      onBlur={handleBlur}
-      onClick={(e) => e.stopPropagation()}
-      onKeyDown={onKeyDown}
-      data-col-index={dataColIndex}
-      style={style}
-    />
   )
 }
 
